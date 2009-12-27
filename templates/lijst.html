@@ -1,0 +1,11 @@
+{% extends "base_app.html" %}
+{% block content-data %}
+<a href="/{{proj}}/{{soort}}/new/" title="nieuw {{soort}}">Voer een nieuw(e) {{lijstitem}} op </a>
+{% if lijst %}, of kies een bestaande:<hr/>
+<ul>
+{% for x in lijst %}
+<li><a href="/{{proj}}/{{soort}}/{{x.id}}/" title="ga naar {{soort}}">{{x}}</a></li>
+{% endfor %}
+</ul>
+{% endif %}
+{% endblock %}

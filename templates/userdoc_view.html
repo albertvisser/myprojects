@@ -1,0 +1,18 @@
+{% extends "base_app.html" %}
+{% block content-data %}
+
+ <div class="left_view">Naam:&nbsp;</div>
+ <div class="right">{{ data.naam }}</div><div class="clear">&nbsp;</div>
+ <div class="left_view">Korte omschrijving:&nbsp;</div>
+ <div class="right">{{ data.oms }}</div><div class="clear">&nbsp;</div>
+ <div class="left_view">&nbsp;</div>
+ <div class="right"><a href="/{{proj}}/{{soort}}/{{ data.id }}/edit/"><input type="button" value="wijzigen"/></a></div><div class="clear">&nbsp;</div>
+
+ <div class="left_view">Zie:&nbsp;</div>
+ <div class="right">{% if data.link %}<a href="{{ data.link.url }}" title="download">{{ data.link.url }}</a>{%endif%}
+ </div><div class="clear">&nbsp;</div>
+ <hr/>
+ <div class="left_view">Tekst:&nbsp;</div>
+ <div class="right"><br/><br/>{{ data.tekst|linebreaksbr }}</div><div class="clear">&nbsp;</div>
+
+{% endblock %}

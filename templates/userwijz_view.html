@@ -1,0 +1,30 @@
+{% extends "base_app.html" %}
+{% block content-data %}
+
+ <div class="left_view">Nummer:&nbsp;</div>
+ <div class="right">{%if data%}{{ data.nummer }}{%else%}{{nummer}}{% endif %}
+ <input type="hidden" name="datum_in" id="datum_in" value="{{ data.datum_in }}"/> </div><div class="clear">&nbsp;</div>
+ <div class="left_view">Wens:&nbsp;</div>
+ <div class="right">{{ data.wens }}</div><div class="clear">&nbsp;</div>
+ <div class="left_view">Gereed:&nbsp;</div>
+ <div class="right">{{data.gereed|yesno:"Ja,Nee"}}
+
+ <input type="hidden" name="datum_gereed" id="datum_gereed" value="{{ data.datum_gereed }}"/></div><div class="clear">&nbsp;</div>
+ <div class="left_view">&nbsp;</div>
+ <div class="right"><a href="/{{proj}}/{{soort}}/{{ data.id }}/edit/"><input type="button" value="wijzigen"/></a></div><div class="clear">&nbsp;</div>
+ <hr/>
+ <div class="left_view">Toelichting:&nbsp;</div>
+ <div class="right"><br/><br/>{{ data.toelichting|linebreaksbr }}</div><div class="clear">&nbsp;</div>
+ <div class="left_view">Oplossing:&nbsp;</div>
+ <div class="right"><br/><br/>{{ data.oplossing|linebreaksbr }}</div><div class="clear">&nbsp;</div>
+ <div class="left_view">Functionele aspecten:&nbsp;</div>
+ <div class="right"><br/><br/>{{ data.ontwerp|linebreaksbr }}</div><div class="clear">&nbsp;</div>
+ <div class="left_view">Technische aspecten:&nbsp;</div>
+ <div class="right"><br/><br/>{{ data.realisatie|linebreaksbr }}</div><div class="clear">&nbsp;</div>
+ <div class="left_view">Realisatie aspecten:&nbsp;</div>
+ <div class="right"><br/><br/>{{ data.verslag|linebreaksbr }}</div><div class="clear">&nbsp;</div>
+ <div class="left_view">Opmerkingen:&nbsp;</div>
+ <div class="right"><br/><br/>{{ data.opmerkingen|linebreaksbr }}</div><div class="clear">&nbsp;</div>
+ <hr/>
+
+{% endblock %}

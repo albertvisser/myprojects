@@ -1,0 +1,45 @@
+{% extends "base_app.html" %}
+{% block content-data %}
+
+<div class="left_view">Naam entiteit:&nbsp;</div>
+<div class="right">{{ data.naam }}</div><div class="clear">&nbsp;</div>
+<div class="left_view">Korte omschrijving:&nbsp;</div>
+<div class="right">{{ data.kort }}</div><div class="clear">&nbsp;</div>
+<div class="left_view">&nbsp;</div>
+<div class="right"><a href="/{{proj}}/{{soort}}/{{ data.id }}/edit/"><input type="button" value="wijzigen"/></a></div><div class="clear">&nbsp;</div>
+<hr/>
+<div class="left_view">Functie:&nbsp;</div>
+<div class="right"><br/><br/>{{data.functie}}</div><div class="clear">&nbsp;</div>
+<div class="left_view">Levensloop:&nbsp;</div>
+<div class="right"><br/><br/>{{data.levensloop}}</div><div class="clear">&nbsp;</div>
+
+{%if not new%}
+    {%if attrs%}
+        <div class="left_view">Attributen:&nbsp;</div>
+        <div class="right">
+
+        {%for attr in attrs%}
+            <b>{{attr.naam}}</b>&nbsp;
+            (
+            {%ifequal attr.type 'A'%}Tekst{%endifequal%}
+            {%ifequal attr.type 'N'%}Aantal{%endifequal%}
+            {%ifequal attr.type 'D'%}Datum{%endifequal%}
+            {%ifequal attr.type 'B'%}Bedrag{%endifequal%}
+            )
+            {%if attr.primarykey%}
+                ,
+                {%ifequal attr.primarykey 1%}eerste{%endifequal%}
+                {%ifequal attr.primarykey 2%}tweede{%endifequal%}
+                {%ifequal attr.primarykey 3%}derde{%endifequal%}
+                {%ifequal attr.primarykey 4%}vierde{%endifequal%}
+                {%ifequal attr.primarykey 5%}vijfde{%endifequal%}
+                in sleutel
+            {%endif%}
+            {%if attr.relatie%},  is sleutel van relatie met {{attr.relatie.verbose_name}}{%endif%}
+            {%if attr.bereik%}: {{attr.bereik}}{%endif%}<br/>
+        {%endfor%}
+        </div><div class="clear">&nbsp;</div>
+    {%endif%}
+<hr/>
+{%endif%}
+{% endblock %}

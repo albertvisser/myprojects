@@ -1,0 +1,69 @@
+{% extends "base_app.html" %}
+{% block content-data %}
+<form action="{{form_addr}}" method="post" >
+<div class="left_view">Naam entiteit:&nbsp;</div>
+<div class="right"><input type="text" name="naam" id="naam" value="{{ data.naam }}" size="{{lengte.naam}}" /></div><div class="clear">&nbsp;</div>
+<div class="left_edit">Korte omschrijving:&nbsp;</div>
+<div class="right"><input type="text" name="kort" id="kort" value="{{ data.kort }}" size="{{lengte.kort}}" /></div><div class="clear">&nbsp;</div>
+<div class="left_edit">&nbsp;</div>
+<div class="right"><input type="submit" name="pbKort" id="pbKort" value="Alle wijzigingen opslaan" /></div><div class="clear">&nbsp;</div>
+<hr/>
+<div class="left_edit">Functie:&nbsp;</div>
+<div class="right"><textarea name="functie" id="functie" rows="8" cols="80" />{{ data.functie }}</textarea></div><div class="clear">&nbsp;</div>
+<div class="left_edit">Levensloop:&nbsp;</div>
+<div class="right"><textarea name="levensloop" id="levensloop" rows="8" cols="80" />{{ data.levensloop }}</textarea></div><div class="clear">&nbsp;</div>
+</form>
+    {%if not new%}
+
+        <div class="left_edit">Attributen:&nbsp;</div>
+        <div class="right">
+        <table width="100%">
+        <form action="/{{proj}}/entiteit/{{data.id}}/attribuut/add/" method="post">
+        <tr><td colspan="5">Naam: <input name="naam" type="text" value=""/>
+            Type: <select name="type">
+            <option value="A" >Tekst</option>
+            <option value="N" >Aantal</option>
+            <option value="D" >Datum</option>
+            <option value="B" >Bedrag</option>
+            </select>
+            Sleutel: <select name="key"><option>--kies--</option>
+            <option >1</option>
+            <option >2</option>
+            <option >3</option>
+            <option >4</option>
+            <option >5</option></select>
+            Relatie met: <select name="rel">{%if andere%}<option>--kies--</option>{%endif%}
+            {%for y in andere%}<option>{{y}}</option>{%endfor%}</select>
+            <input type="submit" value="Voer op"/><br/>
+            Details (o.a. gegevensbereik):<br/>
+            <textarea name="bereik" rows="3" cols="80"></textarea></td>
+        </tr></form>
+        {%for attr in attrs%}
+        <form action="/{{proj}}/entiteit/{{data.id}}/attribuut/{{attr.id}}/edit/" method="post">
+        <tr><td colspan="5">
+            Naam: <input name="naam" type="text" value="{{attr.naam}}"/>
+            Type: <select  name="type">
+            <option value="A" {%ifequal attr.type 'A'%}selected="selected"{%endifequal%}>Tekst</option>
+            <option value="N" {%ifequal attr.type 'N'%}selected="selected"{%endifequal%}>Aantal</option>
+            <option value="D" {%ifequal attr.type 'D'%}selected="selected"{%endifequal%}>Datum</option>
+            <option value="B" {%ifequal attr.type 'B'%}selected="selected"{%endifequal%}>Bedrag</option>
+            </select>
+            Sleutel: <select name="key"><option>--kies--</option>
+            <option {%ifequal attr.primarykey 1%}selected="selected"{%endifequal%}>1</option>
+            <option {%ifequal attr.primarykey 2%}selected="selected"{%endifequal%}>2</option>
+            <option {%ifequal attr.primarykey 3%}selected="selected"{%endifequal%}>3</option>
+            <option {%ifequal attr.primarykey 4%}selected="selected"{%endifequal%}>4</option>
+            <option {%ifequal attr.primarykey 5%}selected="selected"{%endifequal%}>5</option>
+            </select>
+            Relatie met: <select name="rel">{%if andere%}<option>--kies--</option>{%endif%}{%for y in andere%}
+            <option {%ifequal attr.relatie.naam y%}selected="selected"{%endifequal%}>{{y}}</option>{%endfor%}
+            </select>
+            <input type="submit" value="Wijzig"/><br/>Details (o.a. gegevensbereik):<br/>
+            <textarea name="bereik" rows="3" cols="80">{{attr.bereik}}</textarea>
+        </td></tr></form>
+        {%endfor%}
+        </table>
+    </div><div class="clear">&nbsp;</div>
+    {%endif%}
+<hr/>
+{% endblock %}

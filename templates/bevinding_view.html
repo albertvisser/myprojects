@@ -1,0 +1,28 @@
+{% extends "base_app.html" %}
+{% block content-data %}
+
+ <div class="left_view">Nummer:&nbsp;</div>
+ <div class="right">{%if data%}{{ data.nummer }}{%else%}{{nummer}}{% endif %}
+ <input type="hidden" name="datum_in" id="datum_in" value="{{ data.datum_in }}"/>
+ </div><div class="clear">&nbsp;</div>
+ <div class="left_view">Korte omschrijving:&nbsp;</div>
+ <div class="right">{{ data.kort }}{{e_fld.kort}}</div><div class="clear">&nbsp;</div>
+ <div class="left_view">Gereed:&nbsp;</div>
+ <div class="right">{{data.gereed|yesno:"Ja,Nee"}}
+
+ <input type="hidden" name="datum_gereed" id="datum_gereed" value="{{ data.datum_gereed }}"/></div><div class="clear">&nbsp;</div>
+
+ <div class="left_view">&nbsp;</div>
+ <div class="right"><a href="/{{proj}}/{{soort}}/{{ data.id }}/edit/"><input type="button" value="wijzigen"/></a></div><div class="clear">&nbsp;</div>
+ <hr/>
+ <div class="left_view">Melding:&nbsp;</div>
+ <div class="right"><br/><br/>{{ data.melding|linebreaksbr }}</div><div class="clear">&nbsp;</div>
+ <div class="left_view">Analyse:&nbsp;</div>
+ <div class="right"><br/><br/>{{ data.analyse|linebreaksbr }}</div><div class="clear">&nbsp;</div>
+ <div class="left_view">Oplossing:&nbsp;</div>
+ <div class="right"><br/><br/>{{ data.oplossing|linebreaksbr }}</div><div class="clear">&nbsp;</div>
+ <div class="left_view">Opmerking/&nbsp;<br/>eventueel vervolg:&nbsp;</div>
+ <div class="right"><br/><br/>{{ data.vervolg|linebreaksbr }}</div><div class="clear">&nbsp;</div>
+ <hr/>
+
+{% endblock %}

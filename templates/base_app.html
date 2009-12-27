@@ -1,0 +1,105 @@
+{%extends "base_site.html" %}{% load i18n %}{%block extrahead%}<script type="text/javascript">
+function subsel() {
+    var s = document.getElementById("selSectie").value;
+    var selects = new Array('selUser','selFunc','selTech','selTest');
+    document.getElementById("txtEn").style.display = 'none';
+    for (x in selects) {
+        sel = selects[x];
+        document.getElementById(sel).style.display = 'none';
+        if (sel == s) {
+            document.getElementById(sel).style.display = 'inline';
+            document.getElementById("txtEn").style.display = 'inline';
+        }
+    }
+}
+function submit_form(x) {
+    var s = document.getElementById(x).value;
+    document.getElementById(x).form.action = s;
+    document.getElementById(x).form.submit();
+}
+// getElementById(x).style.visiblity= visible|hidden
+// getElementById(x).style.display= none|inline
+</script>{%endblock%}
+{%block branding%}{%endblock%}
+{%block breadcrumbs%}<a name="top"></a>&nbsp;&nbsp;&nbsp;
+<a href="/" title="startpagina doctool">DocTool start</a>
+{%if proj%} &rsaquo; <a href="/{{proj}}/" title="project homepage">project</a> {%endif%}
+{%if ref%} &rsaquo; <a href="/{{proj}}/{{ref.0}}/" title="selectielijst">lijst {{ref.1}}</a>
+{%if ref.2%} &rsaquo; <a href="/{{proj}}/{{ref.0}}/{{ref.2}}/" title="item">item</a>{%endif%}{%endif%}
+{%if lijst%} &rsaquo; <a href="/{{proj}}/{{soort}}/" title="lijst items">lijst {{lijstvan}}</a>{%endif%}
+{%if sect%} &rsaquo; <a href="/{{proj}}/{{sect}}/" title="project onderdeel">item</a>{%endif%}
+<br/>
+{%endblock%}
+{% block content_title %}{% if title %}<h3>{{ title|escape }}</h3>{% endif %}{% endblock %}
+{%block content %}
+{% if not start %}
+<form id="selector" method="post">
+<div id = "bar1">
+    <select id="selActie" name="actie" onchange="submit_form('selActie')">
+        <option value="0">-- kies een actie --</option>
+{% if prev %}<option value="/{{proj}}/{{soort|default:""}}{%if soort%}/{%endif%}{{prev}}/">vorige</option> {% endif %}
+{% if notnw %}<option value="/{%if soort%}{{proj}}/{{soort|default:""}}/{%else%}proj/{%endif%}{{notnw}}/ ">nieuw</option>{% endif %}
+{% if view %}<option value="/{{proj}}/{{sect|default:""}}{%if sect%}/{%endif%}{{view}}/">wijzig</option>{% endif %}
+{% if edit %}<option value="/{{proj}}/{{sect|default:""}}{%if sect%}/{%endif%}">bekijk</option>{% endif %}
+{% if next %}<option value="/{{proj}}/{{soort|default:""}}{%if soort%}/{%endif%}{{next}}/">volgende</option>{% endif %}
+    </select>{%ifnotequal proj "proj"%}{%if sctn%} of ga naar{%else%} of{%endif%}
+    <select id="selSectie" name="sectie" onchange="subsel();">
+        <option value="0">-- kies een sectie --</option>
+        <option value="selUser" {%ifequal sctn 'user' %}selected="selected"{%endifequal%}>specificaties e.d.</option>
+        <option value="selFunc" {%ifequal sctn 'func' %}selected="selected"{%endifequal%}>functioneel ontwerp</option>
+        <option value="selTech" {%ifequal sctn 'tech' %}selected="selected"{%endifequal%}>realisatie</option>
+        <option value="selTest" {%ifequal sctn 'test' %}selected="selected"{%endifequal%}>testen</option>
+    </select>{% endifnotequal %}
+    <span id="txtEn" style="display: none"> en </span>
+    <select id="selUser" name="usersect" {%ifnotequal sctn 'user'%}style="display: none"{%endifnotequal%} onchange="submit_form('selUser')">
+        <option value="0">-- kies een onderdeel --</option>
+        <option value="/{{proj}}/userspec/" {%ifequal soort 'userspec'%}selected="selected"{%endifequal%}>eisen/wensen</option>
+        <option value="/{{proj}}/userdoc/"{%ifequal soort 'userdoc'%}selected="selected"{%endifequal%}>div. naslag</option>
+        <option value="/{{proj}}/userwijz/"{%ifequal soort 'userwijz'%}selected="selected"{%endifequal%}>aanvraag wijzigingen</option>
+        <option value="/{{proj}}/userprob/"{%ifequal soort 'userprob'%}selected="selected"{%endifequal%}>incidenten/problemen</option>
+    </select>
+    <select id="selFunc" name="funcsect" {%ifnotequal sctn 'func'%}style="display: none"{%endifnotequal%} onchange="submit_form('selFunc')">
+        <option value="0">-- kies een onderdeel --</option>
+        <option value="/{{proj}}/funcdoc/"{%ifequal soort 'funcdoc'%}selected="selected"{%endifequal%}>div. documenten</option>
+        <option value="/{{proj}}/gebrtaak/"{%ifequal soort 'gebrtaak'%}selected="selected"{%endifequal%}>gebruikerstaken</option>
+        <option value="/{{proj}}/funcproc/"{%ifequal soort 'funcproc'%}selected="selected"{%endifequal%}>processen</option>
+        <option value="/{{proj}}/entiteit/"{%ifequal soort 'entiteit'%}selected="selected"{%endifequal%}>gegevensmodel</option>
+    </select>
+    <select id="selTech" name="techsect" {%ifnotequal sctn 'tech'%}style="display: none"{%endifnotequal%} onchange="submit_form('selTech')">
+        <option value="0">-- kies een onderdeel --</option>
+        <option value="/{{proj}}/techtaak/"{%ifequal soort 'techtaak'%}selected="selected"{%endifequal%}>taken/procedures/transacties</option>
+        <option value="/{{proj}}/techproc/"{%ifequal soort 'techproc'%}selected="selected"{%endifequal%}>processen</option>
+        <option value="/{{proj}}/dataitem/"{%ifequal soort 'dataitem'%}selected="selected"{%endifequal%}>data-items</option>
+        <option value="/{{proj}}/layout/"{%ifequal soort 'layout'%}selected="selected"{%endifequal%}>layouts</option>
+        <option value="/{{proj}}/programma/"{%ifequal soort 'programma'%}selected="selected"{%endifequal%}>programma's</option>
+    </select>
+    <select id="selTest" name="testsect" {%ifnotequal sctn 'test'%}style="display: none"{%endifnotequal%} onchange="submit_form('selTest')">
+        <option value="0">-- kies een onderdeel --</option>
+        <option value="/{{proj}}/testplan/"{%ifequal soort 'testplan'%}selected="selected"{%endifequal%}>testplannen</option>
+        <option value="/{{proj}}/testcase/"{%ifequal soort 'testcase'%}selected="selected"{%endifequal%}>testgevallen</option>
+        <option value="/{{proj}}/bevinding/"{%ifequal soort 'bevinding'%}selected="selected"{%endifequal%}>testbevindingen</option>
+    </select>
+</div>
+<div id="bar2">
+    <select name="selProj" id="selProj" onchange="submit_form('selProj')">
+        <option value="0">-- Kies eventueel een ander project --</option>
+{% for x in projecten %}<option value='/{{x.id}}/'>{{x}}</option>{% endfor %}
+    </select>
+</div>
+</form>
+{% endif %}
+{%if meld%}<br/><span style="color: red; font-weight: bold"> {{meld}}</span>{%endif%}
+{%if not start and not lijst%}<hr/>{%endif%}
+{% autoescape off %}
+{%block content-data%}{%endblock%}
+{%if view%}
+{%if fkeys_to or m2ms_to or fkeys_from or m2ms_from %}
+<hr/><div class="head">Relaties</div><hr/>{%endif%}
+{%for x in fkeys_to %}<p><span class="headr">{{x.text}}:</span> {{x.btn}}{%for y in x.links%} {{y}} {%endfor%}</p>{%endfor%}
+{%for x in m2ms_to %}<p><span class="headr">{{x.text}}:</span> {{x.btn}}{%for y in x.links%} {{y}} {%endfor%}</p>{%endfor%}
+{%for x in fkeys_from %}<p><span class="headr">{{x.text}}:</span> {{x.btn}}{%for y in x.links%} {{y}} {%endfor%}</p>{%endfor%}
+{%for x in m2ms_from %}<p><span class="headr">{{x.text}}:</span> {{x.btn}}{%for y in x.links%} {{y}} {%endfor%}</p>{%endfor%}
+{%if buttons%}<p>{%for x in buttons%}&nbsp;{{x}}&nbsp;{%endfor%}</p>{%endif%}
+{%endif%}
+{% endautoescape %}
+{%endblock%}

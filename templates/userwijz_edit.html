@@ -1,0 +1,30 @@
+{% extends "base_app.html" %}
+{% block content-data %}
+ <form action="{{form_addr}}" method="post" enctype="multipart/form-data">
+ <div class="left_view">Nummer:&nbsp;</div>
+ <div class="right"><input type="text" name="nummer" id="nummer" value="{%if data%}{{ data.nummer }}{%else%}{{nummer}}{%endif%}" size="10" readonly="readonly" />
+ <input type="hidden" name="datum_in" id="datum_in" value="{{ data.datum_in }}"/> </div><div class="clear">&nbsp;</div>
+ <div class="left_edit">Wens:&nbsp;</div>
+ <div class="right"><textarea name="wens" id="wens" rows="8" cols="80" />{{ data.wens }}</textarea></div><div class="clear">&nbsp;</div>
+ <div class="left_edit">Gereed:&nbsp;</div>
+ <div class="right"><select name="gereed" id="gereed"><option value="0">Nee</option>
+ <option value="1"{%if data.gereed%} selected="selected"{%endif%}>Ja</option></select>
+ <input type="hidden" name="datum_gereed" id="datum_gereed" value="{{ data.datum_gereed }}"/></div><div class="clear">&nbsp;</div>
+ <div class="left_edit">&nbsp;</div>
+ <div class="right"><input type="submit" name="pbKort" id="pbKort" value="Alle wijzigingen opslaan" /></div><div class="clear">&nbsp;</div>
+ <hr/>
+ <div class="left_edit">Toelichting:&nbsp;</div>
+ <div class="right"><textarea name="toelichting" id="toelichting" rows="8" cols="80" />{{ data.toelichting }}</textarea></div><div class="clear">&nbsp;</div>
+ <div class="left_edit">Oplossing:&nbsp;</div>
+ <div class="right"><textarea name="oplossing" id="oplossing" rows="8" cols="80" />{{ data.oplossing }}</textarea></div><div class="clear">&nbsp;</div>
+ <div class="left_edit">Functionele aspecten:&nbsp;</div>
+ <div class="right"><textarea name="ontwerp" id="ontwerp" rows="8" cols="80" />{{ data.ontwerp }}</textarea></div><div class="clear">&nbsp;</div>
+ <div class="left_edit">Technische aspecten:&nbsp;</div>
+ <div class="right"><textarea name="realisatie" id="realisatie" rows="8" cols="80" />{{ data.realisatie }}</textarea></div><div class="clear">&nbsp;</div>
+ <div class="left_edit">Realisatie aspecten:&nbsp;</div>
+ <div class="right"><textarea name="verslag" id="verslag" rows="8" cols="80" />{{ data.verslag }}</textarea></div><div class="clear">&nbsp;</div>
+ <div class="left_edit">Opmerkingen:&nbsp;</div>
+ <div class="right"><textarea name="opmerkingen" id="opmerkingen" rows="8" cols="80" />{{ data.opmerkingen }}</textarea></div><div class="clear">&nbsp;</div>
+ <hr/>
+ </form><a href="#top">Naar het begin van de pagina</a>
+{% endblock %}

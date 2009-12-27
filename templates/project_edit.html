@@ -1,0 +1,26 @@
+{%extends "base_app.html" %}
+{% block content-data %}
+<form action="{{form_addr}}" method="post" >
+<div class="left_view">Naam Project:&nbsp;</div>
+<div class="right"><input type="text" name="naam" id="naam" value="{{ data.naam }}" size="{{lengte.naam}}" /></div><div class="clear">&nbsp;</div>
+<div class="left_edit">Korte kenschets:&nbsp;</div>
+<div class="right"><input type="text" name="kort" id="kort" value="{{ data.kort }}" size="{{lengte.kort}}" /></div><div class="clear">&nbsp;</div>
+<div class="left_edit">&nbsp;</div>
+<div class="right"><input type="submit" name="pbKort" id="pbKort" value="Alle wijzigingen opslaan" /></div><div class="clear">&nbsp;</div>
+<hr/>
+<div class="left_edit">Omschrijving:&nbsp;</div>
+<div class="right"><textarea name="oms" id="oms" rows="8" cols="80" />{{data.oms}}</textarea></div><div class="clear">&nbsp;</div>
+<div class="left_edit">Opstarten met:&nbsp;</div>
+<div class="right"><input type="text" name="start" id="start" value="{{ data.start }}" size="{{lengte.start}}" /></div><div class="clear">&nbsp;</div>
+<div class="left_edit">Fysieke locatie:&nbsp;</div>
+<div class="right"><input type="text" name="fysloc" id="fysloc" value="{{ data.fysloc }}" size="{{lengte.fysloc}}" /></div><div class="clear">&nbsp;</div>
+<div class="left_edit">Opmerkingen:&nbsp;</div>
+<div class="right"><textarea name="status" id="status" rows="8" cols="80" />{{data.status}}</textarea></div><div class="clear">&nbsp;</div>
+ </form>
+ <br/>
+{%endblock%}
+
+
+
+
+

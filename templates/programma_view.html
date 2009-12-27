@@ -1,0 +1,31 @@
+{% extends "base_app.html" %}
+{% block content-data %}
+
+ <div class="left_view">Naam:&nbsp;</div>
+ <div class="right">{{ data.naam }}</div><div class="clear">&nbsp;</div>
+ <div class="left_view">Doel:&nbsp;</div>
+ <div class="right">{{ data.doel }}</div><div class="clear">&nbsp;</div>
+ <div class="left_view">&nbsp;</div>
+ <div class="right"><a href="/{{proj}}/{{soort}}/{{ data.id }}/edit/"><input type="button" value="wijzigen"/></a></div><div class="clear">&nbsp;</div>
+ <hr/>
+ <div class="left_view">Invoersituatie (o.a. aanroep-argumenten):&nbsp;</div>
+ <div class="right"><br/><br/>{{ data.invoer|linebreaksbr }}</div><div class="clear">&nbsp;</div>
+ <hr/>
+ <div class="left_view">Uitvoersituatie (incl. foutmeldingen):&nbsp;</div>
+ <div class="right"><br/><br/>{{ data.uitvoer|linebreaksbr }}</div><div class="clear">&nbsp;</div>
+ <hr/>
+ <div class="left_view">Werkwijze:&nbsp;</div>
+ <div class="right"><br/><br/>{{ data.werkwijze|linebreaksbr }}</div><div class="clear">&nbsp;</div>
+ <hr/>
+ <div class="left_view">Bijzonderheden:&nbsp;</div>
+ <div class="right"><br/><br/>{{ data.bijzonder|linebreaksbr }}</div><div class="clear">&nbsp;</div>
+ <hr/>
+ <div class="left_view">Hoe te testen (wanneer):&nbsp;</div>
+ <div class="right"><br/><br/>{{ data.hoetetesten|linebreaksbr }}</div><div class="clear">&nbsp;</div>
+ <hr/>
+ <div class="left_view">Waarmee te testen (testgevallen):&nbsp;</div>
+ <div class="right"><br/><br/>{{ data.testgevallen|linebreaksbr }}</div><div class="clear">&nbsp;</div>
+ <hr/>
+
+
+{% endblock %}

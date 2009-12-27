@@ -1,0 +1,19 @@
+{% extends "base_app.html" %}
+{% block content-data %}
+ <form action="{{form_addr}}" method="post"  enctype="multipart/form-data">
+ <div class="left_view">Naam:&nbsp;</div>
+ <div class="right"><input type="text" name="naam" id="naam" value="{{ data.naam }}" size="{{lengte.naam}}" /></div><div class="clear">&nbsp;</div>
+ <div class="left_edit">Korte omschrijving:&nbsp;</div>
+ <div class="right"><input type="text" name="kort" id="kort" value="{{ data.kort }}" size="{{lengte.kort}}" /></div><div class="clear">&nbsp;</div>
+ <div class="left_edit">&nbsp;</div>
+ <div class="right"><input type="submit" name="pbKort" id="pbKort" value="Alle wijzigingen opslaan" /></div><div class="clear">&nbsp;</div>
+<hr/>
+ <div class="left_edit">Zie:&nbsp;</div>
+ <div class="right">{%if data.link%}
+    huidige locatie: {{data.link.url}}<br/>{%endif%}
+    <input type="file" id="link_file" name="link_file" /></div><div class="clear">&nbsp;</div>
+ <div class="left_edit">Tekst:&nbsp;</div>
+ <div class="right"><textarea name="data" id="data" rows="8" cols="80" />{{ data.data }}</textarea></div><div class="clear">&nbsp;</div>
+<hr/>
+</form><a href="#top">Naar het begin van de pagina</a>
+{% endblock %}

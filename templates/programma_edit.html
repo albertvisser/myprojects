@@ -1,0 +1,30 @@
+{% extends "base_app.html" %}
+{% block content-data %}
+ <form action="{{form_addr}}" method="post" >
+ <div class="left_view">Naam:&nbsp;</div>
+ <div class="right"><input type="text" name="naam" id="naam" value="{{ data.naam }}" size="{{lengte.naam}}" /></div><div class="clear">&nbsp;</div>
+ <div class="left_edit">Doel:&nbsp;</div>
+ <div class="right"><input type="text" name="doel" id="doel" value="{{ data.doel }}" size="{{lengte.doel}}" readonly="readonly" /></div><div class="clear">&nbsp;</div>
+ <div class="left_edit">&nbsp;</div>
+ <div class="right"><input type="submit" name="pbKort" id="pbKort" value="Alle wijzigingen opslaan" /></div><div class="clear">&nbsp;</div>
+ <hr/>
+ <div class="left_edit">Invoersituatie (o.a. aanroep-argumenten):&nbsp;</div>
+ <div class="right"><textarea name="invoer" id="invoer" rows="8" cols="80" />{{ data.invoer }}</textarea></div><div class="clear">&nbsp;</div>
+ <hr/>
+ <div class="left_edit">Uitvoersituatie (incl. foutmeldingen):&nbsp;</div>
+ <div class="right"><textarea name="uitvoer" id="uitvoer" rows="8" cols="80" />{{ data.uitvoer }}</textarea></div><div class="clear">&nbsp;</div>
+ <hr/>
+ <div class="left_edit">Werkwijze:&nbsp;</div>
+ <div class="right"><textarea name="werkwijze" id="werkwijze" rows="8" cols="80" />{{ data.werkwijze }}</textarea></div><div class="clear">&nbsp;</div>
+ <hr/>
+ <div class="left_edit">Bijzonderheden:&nbsp;</div>
+ <div class="right"><textarea name="bijzonder" id="bijzonder" rows="8" cols="80" />{{ data.bijzonder }}</textarea></div><div class="clear">&nbsp;</div>
+ <hr/>
+ <div class="left_edit">Hoe te testen (wanneer):&nbsp;</div>
+ <div class="right"><textarea name="hoetetesten" id="hoetetesten" rows="8" cols="80" />{{ data.hoetetesten }}</textarea></div><div class="clear">&nbsp;</div>
+ <hr/>
+ <div class="left_edit">Waarmee te testen (testgevallen):&nbsp;</div>
+ <div class="right"><textarea name="testgevallen" id="testgevallen" rows="8" cols="80" />{{ data.testgevallen }}</textarea></div><div class="clear">&nbsp;</div>
+ <hr/>
+ </form><a href="#top">Naar het begin van de pagina</a>
+{% endblock %}

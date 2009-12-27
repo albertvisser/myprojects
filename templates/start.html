@@ -1,0 +1,11 @@
+{%extends "base_app.html" %}
+{% block content-data %}
+<br/>
+<a href="/proj/new/" title="nieuw project">Start een nieuw project </a>,
+of ga naar de startpagina van een bestaand project:<hr/>
+<ul>
+{% for x in projecten %}
+<li><a href="/{{x.id}}/" title="ga naar project">{{x}}</a></li>
+{% endfor %}
+</ul>
+{%endblock%}

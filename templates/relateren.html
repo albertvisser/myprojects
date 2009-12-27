@@ -1,0 +1,11 @@
+{% extends "base_app.html" %}
+{% block content-data %}
+{% if lijst %}
+Selecteer een {{lijstitem}}:<br/><br/>
+<ul>
+{% for x in lijst %}
+<li><a href="/{{proj}}/{{srt}}/{{id}}/rel/{{soort}}/{{x.id}}/" title="relateer">{{x}}</a></li>
+{% endfor %}
+</ul>
+{% endif %}
+{% endblock %}

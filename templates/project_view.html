@@ -1,0 +1,26 @@
+{%extends "base_app.html" %}
+{% block content-data %}
+
+<div class="left_view">Naam Project:&nbsp;</div>
+<div class="right">{{ data.naam }}</div><div class="clear">&nbsp;</div>
+<div class="left_view">Korte kenschets:&nbsp;</div>
+<div class="right">{{ data.kort }}</div><div class="clear">&nbsp;</div>
+<div class="left_view">&nbsp;</div>
+<div class="right"><a href="/{{ data.id }}/edit/"><input type="button" value="wijzigen"/></a></div><div class="clear">&nbsp;</div>
+<hr/>
+<div class="left_view">Omschrijving:&nbsp;</div>
+<div class="right"><br/><br/>{{ data.oms|linebreaksbr }}</div><div class="clear">&nbsp;</div>
+<div class="left_view">Opstarten met:&nbsp;</div>
+<div class="right">{{ data.start }}<br/></div><div class="clear">&nbsp;</div>
+<div class="left_view">Fysieke locatie:&nbsp;</div>
+<div class="right">{{ data.fysloc }}<br/></div><div class="clear">&nbsp;</div>
+<div class="left_view">Opmerkingen:&nbsp;</div>
+<div class="right"><br/><br/>{{ data.status|linebreaksbr }}</div><div class="clear">&nbsp;</div>
+
+ <br/>
+{%endblock%}
+
+
+
+
+
