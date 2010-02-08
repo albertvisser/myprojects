@@ -36,7 +36,7 @@
         </td></tr>
     </form>
     {%for attr in attrs%}
-    <form action="/{{proj}}/dataitem/{{data.id}}/element/{{attr.id}}/edit/" method="post">
+    <form action="/{{proj}}/dataitem/{{data.id}}/element/{{attr.id}}/mut/" method="post">
         <tr><td colspan="5">
             Naam: <input name="naam" type="text" value="{{attr.naam}}"/>
             Type: <input name="type" type="text" value="{{attr.soort}}"/>

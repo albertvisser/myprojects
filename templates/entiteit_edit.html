@@ -39,7 +39,7 @@
             <textarea name="bereik" rows="3" cols="80"></textarea></td>
         </tr></form>
         {%for attr in attrs%}
-        <form action="/{{proj}}/entiteit/{{data.id}}/attribuut/{{attr.id}}/edit/" method="post">
+        <form action="/{{proj}}/entiteit/{{data.id}}/attribuut/{{attr.id}}/mut/" method="post">
         <tr><td colspan="5">
             Naam: <input name="naam" type="text" value="{{attr.naam}}"/>
             Type: <select  name="type">
