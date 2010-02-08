@@ -319,7 +319,7 @@ def detail(request,proj='',edit='',soort='',id='',srt='',verw=''):
                         'btn': '',
                         'links': []}
                         result,morethan1 = get_relation(o,soort,srt)
-                        for item in result:
+                        for item in result.all():
                             y['links'].append(RELTXT.format(proj,srt,item.id,item))
                         fkeys_from.append(y)
                 info_dict['fkeys_from'] = fkeys_from
@@ -377,7 +377,34 @@ def detail(request,proj='',edit='',soort='',id='',srt='',verw=''):
         except AttributeError:
             info_dict['title'] = ": ".join((naam_ev, o.nummer))
         info_dict['data'] = o
-    if soort != 'project':
+    if soort == 'project':
+        if not edit:
+            all = my.Bevinding.objects.filter(project=proj)
+            solved = all.filter(gereed=True).count()
+            all = all.count()
+            if all == 0:
+                stats = "(nog) geen testbevindingen opgevoerd\n"
+            else:
+                stats = "{0} testbevindingen waarvan {1} opgelost\n".format(
+                    all,solved)
+            all = my.Userprob.objects.filter(project=proj)
+            solved = all.filter(gereed=True).count()
+            all = all.count()
+            if all == 0:
+                stats += "(nog) geen problemen gemeld\n"
+            else:
+                stats += "{0} probleemmeldingen waarvan {1} opgelost\n".format(
+                    all,solved)
+            all = my.Userwijz.objects.filter(project=proj)
+            solved = all.filter(gereed=True).count()
+            all = all.count()
+            if all == 0:
+                stats += "(nog) geen wijzigingsaanvragen ingediend"
+            else:
+                stats += "{0} wijzigingsaanvragen waarvan {1} gerealiseerd".format(
+                    all,solved)
+            info_dict['stats'] = stats
+    else:
         if srt != '':
             info_dict['ref'] = (soort,naam_mv,verw)
         else:

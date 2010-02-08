@@ -10,7 +10,7 @@ ADMINS = (
 MANAGERS = ADMINS
 
 DATABASE_ENGINE = 'sqlite3'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'ado_mssql'.
-DATABASE_NAME = 'q:/www/django/doctool/doctool.db'             # Or path to database file if using sqlite3.
+DATABASE_NAME = 'f:/www/django/doctool/doctool.db'             # Or path to database file if using sqlite3.
 DATABASE_USER = ''             # Not used with sqlite3.
 DATABASE_PASSWORD = ''         # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
@@ -37,7 +37,7 @@ USE_I18N = True
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
 # MEDIA_ROOT = 'q:/PortablePython_1.1_py2.6.1/App/Lib/site-packages/django/contrib/admin/media/'
-MEDIA_ROOT = "q:/www/django/doctool/files/"
+MEDIA_ROOT = "f:/www/django/doctool/files/"
 
 # URL that handles the media served from MEDIA_ROOT.
 # Example: "http://media.lawrence.com"
@@ -71,7 +71,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    "q:/www/django/doctool/templates",
+    "f:/www/django/doctool/templates",
 )
 
 INSTALLED_APPS = (

@@ -7,19 +7,19 @@ admin.autodiscover()
 urlpatterns = patterns('',
     # Example:
     # (r'^magiokis/', include('magiokis.foo.urls')),
-    (r'^$',                                                         'views.index'), # start
-    (r'^proj/$',                                                    'views.detail'), # start
-    (r'^(?P<proj>proj)/(?P<edit>new)/$',                            'views.detail'), # nieuw project
-    (r'^(?P<proj>\d+)/$',                                           'views.detail'),  # homepage project
-    (r'^(?P<proj>\d+)/(?P<edit>edit)/$',                            'views.detail'),  # homepage project opengezet voor wijzigen
-    (r'^(?P<proj>proj)/mut/$',                                      'views.edit_item'),# nieuw project (wijzigingen doorvoeren)
-    (r'^(?P<proj>\d+)/mut/$',                                       'views.edit_item'),# homepage project (wijzigen doorvoeren)
-    (r'^(?P<proj>\d+)/(?P<soort>\w+)/$',                            'views.lijst'), # lijst documenten bij project
-    (r'^(?P<proj>\d+)/(?P<soort>\w+)/(?P<edit>new)/$',              'views.detail'), # nieuw document  bij project
-    (r'^(?P<proj>\d+)/(?P<soort>\w+)/(?P<id>\d+)/$',                'views.detail'), # document  bij project
-    (r'^(?P<proj>\d+)/(?P<soort>\w+)/(?P<id>\d+)/(?P<edit>edit)/$', 'views.detail'), # document  bij project  opengezet voor wijzigen
-    (r'^(?P<proj>\d+)/(?P<soort>\w+)/mut/$',                        'views.edit_item'), # nieuw document  bij project (wijzigingen doorvoeren)
-    (r'^(?P<proj>\d+)/(?P<soort>\w+)/(?P<id>\d+)/mut/$',            'views.edit_item'), # document  bij project (wijzigingen doorvoeren)
+    (r'^$',                                                         'doctool.views.index'), # start
+    (r'^proj/$',                                                    'doctool.views.detail'), # start
+    (r'^(?P<proj>proj)/(?P<edit>new)/$',                            'doctool.views.detail'), # nieuw project
+    (r'^(?P<proj>\d+)/$',                                           'doctool.views.detail'),  # homepage project
+    (r'^(?P<proj>\d+)/(?P<edit>edit)/$',                            'doctool.views.detail'),  # homepage project opengezet voor wijzigen
+    (r'^(?P<proj>proj)/mut/$',                                      'doctool.views.edit_item'),# nieuw project (wijzigingen doorvoeren)
+    (r'^(?P<proj>\d+)/mut/$',                                       'doctool.views.edit_item'),# homepage project (wijzigen doorvoeren)
+    (r'^(?P<proj>\d+)/(?P<soort>\w+)/$',                            'doctool.views.lijst'), # lijst documenten bij project
+    (r'^(?P<proj>\d+)/(?P<soort>\w+)/(?P<edit>new)/$',              'doctool.views.detail'), # nieuw document  bij project
+    (r'^(?P<proj>\d+)/(?P<soort>\w+)/(?P<id>\d+)/$',                'doctool.views.detail'), # document  bij project
+    (r'^(?P<proj>\d+)/(?P<soort>\w+)/(?P<id>\d+)/(?P<edit>edit)/$', 'doctool.views.detail'), # document  bij project  opengezet voor wijzigen
+    (r'^(?P<proj>\d+)/(?P<soort>\w+)/mut/$',                        'doctool.views.edit_item'), # nieuw document  bij project (wijzigingen doorvoeren)
+    (r'^(?P<proj>\d+)/(?P<soort>\w+)/(?P<id>\d+)/mut/$',            'doctool.views.edit_item'), # document  bij project (wijzigingen doorvoeren)
 
     # opvoeren/wijzigen attribuut/element bij entiteit/dataitem
     (r'^(?P<proj>\d+)/(?P<srt1>\w+)/(?P<id1>\d+)/(?P<srt2>\w+)/add/',             'views.edit_sub'),
@@ -42,5 +42,5 @@ urlpatterns = patterns('',
 
     # media - static files to be served from development server
     (r'^files/(?P<path>.*)$', 'django.views.static.serve',
-        {'document_root': 'I:/www/django/doctool/files'}),
+        {'document_root': 'F:/www/django/doctool/files'}),
 )
