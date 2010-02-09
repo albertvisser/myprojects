@@ -542,22 +542,21 @@ def edit_sub(request,proj='',srt1='',id1='',srt2='',id2=''):
         o2 = my.rectypes[srt2]()
         o2.hoort_bij = o1
     ## return HttpResponse(str(o1.__dict__) + str(o2.__dict__))
+    o2.naam = data["naam"]
     if (srt1,srt2) == ('entiteit','attribuut'):
-        o2.naam = data["naam"]
         o2.type = data["type"]
         o2.bereik = data["bereik"]
-        if data["key"] in ('1','2','3','4','5'):
-            o2.primarykey = data["key"]
-        if 'rel' in data:
-            o2.relatie = my.rectypes[srt1].objects.get(naam__equals=data["rel"])
+        o2.primarykey = data["key"] if data["key"] in ('1','2','3','4','5') else '0'
     elif (srt1,srt2) == ('dataitem','element'):
-        o2.naam = data["naam"]
         o2.soort = data["type"]
         o2.omschrijving = data["oms"]
-        if data["sleutel"] in ('1','2','3','4','5'):
-            o2.sleutel = data["sleutel"]
-        if 'rel' in data:
-            o2.relatie = my.rectypes[srt1].objects.get(naam__equals=data["rel"])
+        o2.sleutel = data["sleutel"] if data["sleutel"] in ('1','2','3','4','5') else '0'
+    if "rel" in data:
+        if data[rel] in [x.naam for x in my.Entiteit.objects.filter(project=o1.project)]:
+        ## try:
+            o2.relatie = my.rectypes[srt1].objects.get(naam=data["rel"])
+        ## except ObjectDoesNotExist:
+            ## pass
     o2.save()
     doc = '/%s/%s/%s/edit/' % (proj,srt1,id1) if proj else '/%s/%s/edit/' % (srt1,id1)
     return HttpResponseRedirect(doc)
