@@ -250,6 +250,7 @@ def detail(request,proj='',edit='',soort='',id='',srt='',verw=''):
         info_dict["start"] = ''
         soort = 'project'
     else:         # other: read object(s), selector, menu
+        owner_proj = my.Project.objects.get(pk=proj)
         if id:    # existing item
             button_lijst = []
             relaties = []
@@ -353,14 +354,13 @@ def detail(request,proj='',edit='',soort='',id='',srt='',verw=''):
             if y == 'Char':
                 ## q = ''
                 if x == 'nummer' and edit == 'new':
-                    o = my.Project.objects.get(pk=proj)
                     q = 'readonly="readonly"'
                     if soort == 'userwijz':
-                        info_dict[x] = get_new_id(o.rfcs)
+                        info_dict[x] = get_new_id(owner_proj.rfcs)
                     elif soort == 'userprob':
-                        info_dict[x] = get_new_id(o.probs)
+                        info_dict[x] = get_new_id(owner_proj.probs)
                     elif soort == 'bevinding':
-                        info_dict[x] = get_new_id(o.tbev)
+                        info_dict[x] = get_new_id(owner_proj.tbev)
     info_dict['notnw'] = 'new'
     info_dict["lengte"] = lengte
     naam_ev,naam_mv,sect = naam_dict(soort)
@@ -405,6 +405,8 @@ def detail(request,proj='',edit='',soort='',id='',srt='',verw=''):
                     all,solved)
             info_dict['stats'] = stats
     else:
+        info_dict['title'] = "Project {0} - {1}".format(
+            owner_proj.naam,info_dict["title"])
         if srt != '':
             info_dict['ref'] = (soort,naam_mv,verw)
         else:
