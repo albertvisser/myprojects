@@ -101,8 +101,9 @@ class Userprob(models.Model):
     oplossing = models.TextField()
     vervolg = models.TextField()
     def __unicode__(self):
-        oms = " [afgesloten]" if self.gereed else ""
-        return ": ".join((self.nummer,self.kort + oms))
+        oms = " [afgesloten" if self.gereed else ""
+        verv = " - vervolg]" if self.vervolg else "]" if self.gereed else ""
+        return "{0}: {1} {2}{3}".format(self.nummer,self.kort,oms,verv)
     class Meta:
         verbose_name = "incident/probleem"
         verbose_name_plural = "en/".join(verbose_name.split("/"))[:-2] + "men"
