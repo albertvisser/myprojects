@@ -13,9 +13,10 @@
 <div class="left_view">Omschrijving:&nbsp;</div>
 <div class="right"><br/><br/>{{ data.oms|linebreaksbr }}</div><div class="clear">&nbsp;</div>
 <div class="left_view">Opstarten met:&nbsp;</div>
-<div class="right">{{ data.start }}<br/></div><div class="clear">&nbsp;</div>
-<div class="left_view">Fysieke locatie:&nbsp;</div>
-<div class="right">{{ data.fysloc }}<br/></div><div class="clear">&nbsp;</div>
+<div class="right">{{ data.start|urlize }}<br/></div><div class="clear">&nbsp;</div>
+<div class="left_view">Source repository:&nbsp;</div>
+<div class="right"><a href="{{ data.fysloc }}" target="_new">{{ data.fysloc }}</a>
+{% if data.fysloc %}(link opent in nieuw venster){% endif %}<br/></div><div class="clear">&nbsp;</div>
 <div class="left_view">Opmerkingen:&nbsp;</div>
 <div class="right"><br/><br/>{{ data.status|linebreaksbr }}</div><div class="clear">&nbsp;</div>
 
