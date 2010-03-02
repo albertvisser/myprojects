@@ -6,7 +6,11 @@
 <div class="left_view">Korte kenschets:&nbsp;</div>
 <div class="right">{{ data.kort }}</div><div class="clear">&nbsp;</div>
 <div class="left_view">Statistieken:&nbsp;<br/><br/></div>
-<div class="right">{{stats|linebreaksbr}}</div><div class="clear">&nbsp;</div>
+<div class="right">
+{{test_stats.0}} <a href="/{{ data.id }}/bevinding/">testbevindingen</a> {{test_stats.1}}<br/>
+{{prob_stats.0}} <a href="/{{ data.id }}/userprob/">probleemmeldingen</a> {{prob_stats.1}}<br/>
+{{wijz_stats.0}} <a href="/{{ data.id }}/userwijz/">wijzigingsaanvragen</a> {{wijz_stats.1}}<br/>
+</div><div class="clear">&nbsp;</div>
 <div class="left_view">&nbsp;</div>
 <div class="right"><a href="/{{ data.id }}/edit/"><input type="button" value="wijzigen"/></a></div><div class="clear">&nbsp;</div>
 <hr/>

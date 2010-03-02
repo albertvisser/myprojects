@@ -383,27 +383,26 @@ def detail(request,proj='',edit='',soort='',id='',srt='',verw=''):
             solved = all.filter(gereed=True).count()
             all = all.count()
             if all == 0:
-                stats = "(nog) geen testbevindingen opgevoerd\n"
+                test_stats = ("(nog) geen","opgevoerd")
             else:
-                stats = "{0} testbevindingen waarvan {1} opgelost\n".format(
-                    all,solved)
+                test_stats = (all, "waarvan {0} opgelost".format(solved))
             all = my.Userprob.objects.filter(project=proj)
             solved = all.filter(gereed=True).count()
             all = all.count()
             if all == 0:
-                stats += "(nog) geen problemen gemeld\n"
+                prob_stats = ("(nog) geen","gemeld")
             else:
-                stats += "{0} probleemmeldingen waarvan {1} opgelost\n".format(
-                    all,solved)
+                prob_stats = (all,"waarvan {0} opgelost\n".format(solved))
             all = my.Userwijz.objects.filter(project=proj)
             solved = all.filter(gereed=True).count()
             all = all.count()
             if all == 0:
-                stats += "(nog) geen wijzigingsaanvragen ingediend"
+                wijz_stats = ("(nog) geen","ingediend")
             else:
-                stats += "{0} wijzigingsaanvragen waarvan {1} gerealiseerd".format(
-                    all,solved)
-            info_dict['stats'] = stats
+                wijz_stats = (all,"waarvan {0} gerealiseerd".format(solved))
+            info_dict['test_stats'] = test_stats
+            info_dict['prob_stats'] = prob_stats
+            info_dict['wijz_stats'] = wijz_stats
     else:
         info_dict['title'] = "Project {0} - {1}".format(
             owner_proj.naam,info_dict["title"])
