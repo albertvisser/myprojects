@@ -14,6 +14,14 @@
 <div class="right"><input type="text" name="start" id="start" value="{{ data.start }}" size="{{lengte.start}}" /></div><div class="clear">&nbsp;</div>
 <div class="left_edit">Source repository:&nbsp;</div>
 <div class="right"><input type="text" name="fysloc" id="fysloc" value="{{ data.fysloc }}" size="{{lengte.fysloc}}" /></div><div class="clear">&nbsp;</div>
+<div class="left_view">Actie registratie:&nbsp;<br/><br/></div>
+<div class="right">
+    <div style="float: left"><b>Naam :&nbsp;</b><br/><br/><b>Default  user:&nbsp;</b></div>
+    <div style="float: left">
+    <input type="text" name="actiereg" id="actiereg" value="{{ data.actiereg }}" size="{{lengte.actiereg}}" /><br/>
+    <input type="text" name="aruser" id="aruser" value="{{ data.aruser }}"/>
+    </div>
+</div><div class="clear">&nbsp;</div>
 <div class="left_edit">Opmerkingen:&nbsp;</div>
 <div class="right"><textarea name="status" id="status" rows="8" cols="80" />{{data.status}}</textarea></div><div class="clear">&nbsp;</div>
  </form>

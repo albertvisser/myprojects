@@ -6,6 +6,8 @@ class Project(models.Model):
     oms = models.TextField()
     start = models.CharField(max_length=80)
     fysloc = models.CharField(max_length=80)
+    actiereg = models.CharField(max_length=40)
+    aruser = models.CharField(max_length=40)
     status = models.TextField()
     def __unicode__(self):
         return ": ".join((self.naam,self.kort))
@@ -72,11 +74,13 @@ class Userwijz(models.Model):
     datum_gereed = models.DateTimeField(null=True)
     wens = models.CharField(max_length=80)
     toelichting = models.TextField()
-    oplossing = models.TextField()
-    ontwerp = models.TextField()
-    realisatie = models.TextField()
-    verslag = models.TextField()
+    ## oplossing = models.TextField()
+    ## ontwerp = models.TextField()
+    ## realisatie = models.TextField()
+    ## verslag = models.TextField()
     opmerkingen = models.TextField()
+    actie = models.IntegerField(null=True)
+    actienummer = models.CharField(max_length=10)
     def __unicode__(self):
         oms = " [afgesloten]" if self.gereed else ""
         return ": ".join((self.nummer,self.wens + oms))
@@ -97,13 +101,14 @@ class Userprob(models.Model):
     datum_gereed = models.DateTimeField(null=True)
     kort = models.CharField(max_length=80)
     melding = models.TextField()
-    analyse = models.TextField()
+    ## analyse = models.TextField()
     oplossing = models.TextField()
-    vervolg = models.TextField()
+    ## vervolg = models.TextField()
+    actie = models.IntegerField(null=True)
+    actienummer = models.CharField(max_length=10)
     def __unicode__(self):
-        oms = " [afgesloten" if self.gereed else ""
-        verv = " - vervolg]" if self.vervolg else "]" if self.gereed else ""
-        return "{0}: {1} {2}{3}".format(self.nummer,self.kort,oms,verv)
+        oms = " [afgesloten]" if self.gereed else ""
+        return ": ".join((self.nummer,self.kort + oms))
     class Meta:
         verbose_name = "incident/probleem"
         verbose_name_plural = "en/".join(verbose_name.split("/"))[:-2] + "men"
@@ -428,9 +433,11 @@ class Bevinding(models.Model):
     datum_gereed = models.DateTimeField(null=True)
     kort = models.CharField(max_length=80)
     melding = models.TextField()
-    analyse = models.TextField()
+    ## analyse = models.TextField()
     oplossing = models.TextField()
-    vervolg = models.TextField()
+    ## vervolg = models.TextField()
+    actie = models.IntegerField(null=True)
+    actienummer = models.CharField(max_length=10)
     tplan = models.ManyToManyField(Testplan,related_name="tbev",null=True)
     def __unicode__(self):
         oms = " [afgehandeld]" if self.gereed else ""

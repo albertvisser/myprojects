@@ -18,20 +18,22 @@ urlpatterns = patterns('',
     (r'^(?P<proj>\d+)/(?P<soort>\w+)/(?P<edit>new)/$',              'doctool.views.detail'), # nieuw document  bij project
     (r'^(?P<proj>\d+)/(?P<soort>\w+)/(?P<id>\d+)/$',                'doctool.views.detail'), # document  bij project
     (r'^(?P<proj>\d+)/(?P<soort>\w+)/(?P<id>\d+)/(?P<edit>edit)/$', 'doctool.views.detail'), # document  bij project  opengezet voor wijzigen
+    (r'^(?P<proj>\d+)/(?P<soort>\w+)/(?P<id>\d+)/meld/$',           'doctool.views.meld'), # document  bij project  opengezet voor wijzigen
+    (r'^(?P<proj>\d+)/(?P<soort>\w+)/(?P<id>\d+)/koppel/$',         'doctool.views.koppel'), # document  bij project  opengezet voor wijzigen
     (r'^(?P<proj>\d+)/(?P<soort>\w+)/mut/$',                        'doctool.views.edit_item'), # nieuw document  bij project (wijzigingen doorvoeren)
     (r'^(?P<proj>\d+)/(?P<soort>\w+)/(?P<id>\d+)/mut/$',            'doctool.views.edit_item'), # document  bij project (wijzigingen doorvoeren)
 
     # opvoeren/wijzigen attribuut/element bij entiteit/dataitem
-    (r'^(?P<proj>\d+)/(?P<srt1>\w+)/(?P<id1>\d+)/(?P<srt2>\w+)/add/',             'views.edit_sub'),
-    (r'^(?P<proj>\d+)/(?P<srt1>\w+)/(?P<id1>\d+)/(?P<srt2>\w+)/(?P<id2>\d+)/mut/', 'views.edit_sub'),
+    (r'^(?P<proj>\d+)/(?P<srt1>\w+)/(?P<id1>\d+)/(?P<srt2>\w+)/add/',             'doctool.views.edit_sub'),
+    (r'^(?P<proj>\d+)/(?P<srt1>\w+)/(?P<id1>\d+)/(?P<srt2>\w+)/(?P<id2>\d+)/mut/', 'doctool.views.edit_sub'),
 
     # opvoeren document via link vanuit ander document (bv. funcproc bij functaak)
-    (r'^(?P<proj>\d+)/(?P<soort>\w+)/(?P<edit>new)/(?P<srt>\w+)/(?P<verw>\d+)/$', 'views.detail'),
-    (r'^(?P<proj>\d+)/(?P<soort>\w+)/mut/(?P<srt>\w+)/(?P<verw>\d+)/$',           'views.edit_item'),
+    (r'^(?P<proj>\d+)/(?P<soort>\w+)/(?P<edit>new)/(?P<srt>\w+)/(?P<verw>\d+)/$', 'doctool.views.detail'),
+    (r'^(?P<proj>\d+)/(?P<soort>\w+)/mut/(?P<srt>\w+)/(?P<verw>\d+)/$',           'doctool.views.edit_item'),
 
     # relateren document aan ander document
-    (r'^(?P<proj>\d+)/(?P<srt>\w+)/(?P<id>\d+)/(?P<edit>rel)/(?P<soort>\w+)/$',     'views.lijst'),
-    (r'^(?P<proj>\d+)/(?P<srt>\w+)/(?P<id>\d+)/rel/(?P<soort>\w+)/(?P<verw>\d+)/$', 'views.maak_rel'),
+    (r'^(?P<proj>\d+)/(?P<srt>\w+)/(?P<id>\d+)/(?P<edit>rel)/(?P<soort>\w+)/$',     'doctool.views.lijst'),
+    (r'^(?P<proj>\d+)/(?P<srt>\w+)/(?P<id>\d+)/rel/(?P<soort>\w+)/(?P<verw>\d+)/$', 'doctool.views.maak_rel'),
 
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs'
     # to INSTALLED_APPS to enable admin documentation:

@@ -11,16 +11,26 @@
 {{prob_stats.0}} <a href="/{{ data.id }}/userprob/">probleemmeldingen</a> {{prob_stats.1}}<br/>
 {{wijz_stats.0}} <a href="/{{ data.id }}/userwijz/">wijzigingsaanvragen</a> {{wijz_stats.1}}<br/>
 </div><div class="clear">&nbsp;</div>
+
 <div class="left_view">&nbsp;</div>
 <div class="right"><a href="/{{ data.id }}/edit/"><input type="button" value="wijzigen"/></a></div><div class="clear">&nbsp;</div>
 <hr/>
 <div class="left_view">Omschrijving:&nbsp;</div>
 <div class="right"><br/><br/>{{ data.oms|linebreaksbr }}</div><div class="clear">&nbsp;</div>
+
 <div class="left_view">Opstarten met:&nbsp;</div>
 <div class="right">{{ data.start|urlize }}<br/></div><div class="clear">&nbsp;</div>
 <div class="left_view">Source repository:&nbsp;</div>
-<div class="right"><a href="{{ data.fysloc }}" target="_new">{{ data.fysloc }}</a>
+<div class="right"><a href="{{ data.fysloc }}" target="_blank">{{ data.fysloc }}</a>
 {% if data.fysloc %}(link opent in nieuw venster){% endif %}<br/></div><div class="clear">&nbsp;</div>
+
+<div class="left_view">Actieregistratie:&nbsp;<br/><br/></div>
+<div class="right">
+<b>Naam :&nbsp;</b><a href="{{sites.probreg}}/{{ data.actiereg }}/" target="_blank">{{ data.actiereg }}</a>
+{% if data.actiereg %}(link opent in nieuw venster){% endif %}<br/>
+<b>Default  user:&nbsp;</b>{{ data.aruser }}
+</div><div class="clear">&nbsp;</div>
+
 <div class="left_view">Opmerkingen:&nbsp;</div>
 <div class="right"><br/><br/>{{ data.status|linebreaksbr }}</div><div class="clear">&nbsp;</div>
 

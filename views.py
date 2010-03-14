@@ -4,12 +4,13 @@ import inspect
 ## from django.template import Context, loader
 ## from django.http import Http404
 from django.shortcuts import render_to_response, get_object_or_404
+## from django.core.exceptions import MultiValueDictKeyError, ObjectDoesNotExist #, DoesNotExist
 from django.core.exceptions import ObjectDoesNotExist #, DoesNotExist
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.cache import cache_control
 from django.db import models
 import doctool.models as my
-from settings import MEDIA_ROOT
+from doctool.settings import MEDIA_ROOT, SITES
 leftw_dict = {
     "project": 140,
     "userspec": 230,
@@ -418,6 +419,10 @@ def detail(request,proj='',edit='',soort='',id='',srt='',verw=''):
     info_dict["leftw"] = "{0}px".format(w)
     info_dict["rightw"] = "{0}px".format(910 - w)
     info_dict["rightm"] = "{0}px".format(w + 5)
+    info_dict["sites"] = SITES
+    info_dict["ar_proj"] = o.actiereg if soort == "project" else owner_proj.actiereg
+    info_dict["ar_user"] = o.aruser if soort == "project" else owner_proj.aruser
+    ## return HttpResponse("soort = %s, id = %s, proj = %s, edit = %s" % (soort, id,proj,edit))
     ## return HttpResponse('<br/>'.join((
     ## raise ValueError('Stopped')
     ## return HttpResponse('<br/>'.join((
@@ -430,6 +435,32 @@ def detail(request,proj='',edit='',soort='',id='',srt='',verw=''):
         return render_to_response('{0}_edit.html'.format(soort), info_dict) # {'title': 'nieuw', 'soort': soort, 'id': id, 'proj': proj})
     else:
         return render_to_response('{0}_view.html'.format(soort), info_dict) # {'title': 'nieuw', 'soort': soort, 'id': id, 'proj': proj})
+
+def koppel(request,proj='',soort='',id=''):
+    """terugkoppeling vanuit probreg:
+    neem de teruggegeven actiegegevens op in het huidige item"""
+    data = request.GET
+    ## return HttpResponse("".join(["{0}: {1}".format(x,y) for x,y in data.items()]))
+    ## raise ValueError("Exception Intended")
+    ## return HttpResponse("""\
+    ## vervolg: {0}<br/>
+    ## adres: {1}""".format(vervolg,vervolg.format(actie.id,actie.nummer)))
+    o = my.rectypes[soort].objects.get(pk=id)
+    o.actie = int(data.get("id","0"))
+    o.actienummer = data.get("actie","")
+    o.save()
+    doc = '/%s/%s/%s/' % (proj,soort,id)
+    return HttpResponseRedirect(doc)
+
+def meld(request,proj='',soort='',id=''):
+    """terugkoppeling vanuit probreg:
+    de actie is gearchiveerd of herleefd"""
+    data = request.GET
+    o = my.rectypes[soort].objects.get(pk=id)
+    o.gereed = {"arch": True, "herl": False}[data["status"]]
+    o.save()
+    doc = SITES["probreg"] + data["from"]
+    return HttpResponseRedirect(doc)
 
 def edit_item(request,proj='',soort='',id='',srt='',verw=''):
     ## raise ValueError('Testing...')
@@ -499,7 +530,10 @@ def edit_item(request,proj='',soort='',id='',srt='',verw=''):
                         destination.close()
                         o.__dict__[x] = uploaded.name
                 else:
-                    o.__dict__[x] = request.POST[x]
+                    try:
+                        o.__dict__[x] = request.POST[x]
+                    except KeyError:
+                        pass
             o.save()
         # bijwerken van de eventueel meegegeven relatie
         if srt in my.rectypes:

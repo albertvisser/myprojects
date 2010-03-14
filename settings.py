@@ -84,3 +84,7 @@ INSTALLED_APPS = (
     'doctool',
 
 )
+SITES = {
+        "doctool": "http://myprojects.pythoneer.nl",
+        "probreg": "http://actiereg.pythoneer.nl",
+        }
