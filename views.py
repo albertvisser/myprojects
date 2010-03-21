@@ -478,6 +478,13 @@ def edit_item(request,proj='',soort='',id='',srt='',verw=''):
             p = my.Project.objects.get(pk=proj)
         except:
             pass
+    if soort == '':
+        soort = 'project'
+        if proj == 'proj':
+            p = my.Project()
+        to_actiereg = True if p.actiereg == "" else False
+        for x,y,z in getfields('project'): # naam,type,lengte
+            p.__dict__[x] = request.POST[x]
         p.save()
         if to_actiereg and p.actiereg != "":
             doc = "{0}/addext/?from={1}/{2}/&name={3}&desc={4}".format(SITES["probreg"],
@@ -485,8 +492,8 @@ def edit_item(request,proj='',soort='',id='',srt='',verw=''):
         else:
             proj = p.id
             doc = '/%s/' % proj
-        elif soort in my.rectypes:
-            if id:
+    elif soort in my.rectypes:
+        if id:
             o = my.rectypes[soort].objects.get(pk=id)
         else:
             o = my.rectypes[soort]()
