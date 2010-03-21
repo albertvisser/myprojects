@@ -214,8 +214,12 @@ def detail(request,proj='',edit='',soort='',id='',srt='',verw=''):
     meld = ''
     try: # do we have form data?
         data = request.POST
-    except:
+    except: # AttributeError?
         data = {}
+    try: # do we have other form data?
+        meld = request.GET.get('msg',"")
+    except: # KeyError?
+        pass
     ## return HttpResponse("soort = %s, id = %s, proj = %s, edit = %s" % (soort, id,proj,edit))
     info_dict = {'title': '', 'start': '', 'prev': '', 'notnw': '', 'view': '',
         'next': '', 'proj': proj, 'sect': '', 'meld': meld,
@@ -420,8 +424,12 @@ def detail(request,proj='',edit='',soort='',id='',srt='',verw=''):
     info_dict["rightw"] = "{0}px".format(910 - w)
     info_dict["rightm"] = "{0}px".format(w + 5)
     info_dict["sites"] = SITES
-    info_dict["ar_proj"] = o.actiereg if soort == "project" else owner_proj.actiereg
-    info_dict["ar_user"] = o.aruser if soort == "project" else owner_proj.aruser
+    try:
+        info_dict["ar_proj"] = o.actiereg if soort == "project" else owner_proj.actiereg
+    except UnboundLocalError:
+        pass
+    else:
+        info_dict["ar_user"] = o.aruser if soort == "project" else owner_proj.aruser
     ## return HttpResponse("soort = %s, id = %s, proj = %s, edit = %s" % (soort, id,proj,edit))
     ## return HttpResponse('<br/>'.join((
     ## raise ValueError('Stopped')
@@ -470,17 +478,15 @@ def edit_item(request,proj='',soort='',id='',srt='',verw=''):
             p = my.Project.objects.get(pk=proj)
         except:
             pass
-    if soort == '':
-        soort = 'project'
-        if proj == 'proj':
-            p = my.Project()
-        for x,y,z in getfields('project'): # naam,type,lengte
-            p.__dict__[x] = request.POST[x]
         p.save()
-        proj = p.id
-        doc = '/%s/' % proj
-    elif soort in my.rectypes:
-        if id:
+        if to_actiereg and p.actiereg != "":
+            doc = "{0}/addext/?from={1}/{2}/&name={3}&desc={4}".format(SITES["probreg"],
+                SITES["doctool"], p.id, p.naam, p.kort)
+        else:
+            proj = p.id
+            doc = '/%s/' % proj
+        elif soort in my.rectypes:
+            if id:
             o = my.rectypes[soort].objects.get(pk=id)
         else:
             o = my.rectypes[soort]()
