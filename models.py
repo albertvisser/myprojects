@@ -14,8 +14,6 @@ class Project(models.Model):
     class Meta:
         verbose_name = "project"
         verbose_name_plural = verbose_name + "en"
-    ## class Admin:
-        ## pass
 
 class Userspec(models.Model):
     section = 'user'
@@ -38,8 +36,6 @@ class Userspec(models.Model):
         return ": ".join((self.naam,self.kort))
     class Meta:
         verbose_name = "gebruikersspecificatie"
-    ## class Admin:
-        ## pass
 
 class Userdoc(models.Model):
     section = 'user'
@@ -55,8 +51,6 @@ class Userdoc(models.Model):
     class Meta:
         verbose_name = "naslagdocument"
         verbose_name_plural = verbose_name + "en"
-    ## class Admin:
-        ## pass
 
 class Userwijz(models.Model):
     section = 'user'
@@ -74,10 +68,6 @@ class Userwijz(models.Model):
     datum_gereed = models.DateTimeField(null=True)
     wens = models.CharField(max_length=80)
     toelichting = models.TextField()
-    ## oplossing = models.TextField()
-    ## ontwerp = models.TextField()
-    ## realisatie = models.TextField()
-    ## verslag = models.TextField()
     opmerkingen = models.TextField()
     actie = models.IntegerField(null=True)
     actienummer = models.CharField(max_length=10)
@@ -87,8 +77,6 @@ class Userwijz(models.Model):
     class Meta:
         verbose_name = "aanvraag wijziging"
         verbose_name_plural = verbose_name + "en"
-    ## class Admin:
-        ## pass
 
 class Userprob(models.Model):
     section = 'user'
@@ -101,20 +89,15 @@ class Userprob(models.Model):
     datum_gereed = models.DateTimeField(null=True)
     kort = models.CharField(max_length=80)
     melding = models.TextField()
-    ## analyse = models.TextField()
     oplossing = models.TextField()
-    ## vervolg = models.TextField()
     actie = models.IntegerField(null=True)
     actienummer = models.CharField(max_length=10)
     def __unicode__(self):
-        oms = " [afgesloten" if self.gereed else ""
-        verv = " - vervolg]" if self.vervolg else "]" if self.gereed else ""
-        return "{0}: {1} {2}{3}".format(self.nummer,self.kort,oms,verv)
+        oms = " [afgesloten]" if self.gereed else ""
+        return "{0}: {1} {2}".format(self.nummer,self.kort,oms)
     class Meta:
         verbose_name = "incident/probleem"
         verbose_name_plural = "en/".join(verbose_name.split("/"))[:-2] + "men"
-    ## class Admin:
-        ## pass
 
 class Funcdoc(models.Model):
     section = 'func'
@@ -130,8 +113,6 @@ class Funcdoc(models.Model):
     class Meta:
         verbose_name = "functioneel document"
         verbose_name_plural = "le".join((verbose_name[:9],verbose_name[11:])) + "en"
-    ## class Admin:
-        ## pass
 
 class Gebrtaak(models.Model):
     section = 'func'
@@ -160,8 +141,6 @@ class Gebrtaak(models.Model):
     class Meta:
         verbose_name = "gebruikerstaak"
         verbose_name_plural = verbose_name[:-2] + "ken"
-    ## class Admin:
-        ## pass
 
 class Funcproc(models.Model):
     section = 'func'
@@ -192,8 +171,6 @@ class Funcproc(models.Model):
     class Meta:
         verbose_name = "functioneel proces"
         verbose_name_plural = "le".join((verbose_name[:9],verbose_name[11:])) + "sen"
-    ## class Admin:
-        ## pass
 
 class Entiteit(models.Model):
     section = 'func'
@@ -216,8 +193,6 @@ class Entiteit(models.Model):
         return ": ".join((self.naam,self.kort))
     class Meta:
         verbose_name_plural = "entiteiten"
-    ## class Admin:
-        ## pass
 
 class Attribuut(models.Model):
     TYPE_CHOICES = (
@@ -238,8 +213,6 @@ class Attribuut(models.Model):
         return self.naam
     class Meta:
         verbose_name_plural = "attributen"
-    ## class Admin:
-        ## pass
 
 class Techtask(models.Model):
     section = 'tech'
@@ -261,8 +234,6 @@ class Techtask(models.Model):
     class Meta:
         verbose_name = "systeemtaak"
         verbose_name_plural = verbose_name[:-2] + "ken"
-    ## class Admin:
-        ## pass
 
 class Techproc(models.Model):
     section = 'tech'
@@ -292,8 +263,6 @@ class Techproc(models.Model):
     class Meta:
         verbose_name = "technisch proces"
         verbose_name_plural = "e ".join(verbose_name.split()) + "sen"
-    ## class Admin:
-        ## pass
 
 class Dataitem(models.Model):
     section = 'tech'
@@ -312,8 +281,6 @@ class Dataitem(models.Model):
         return ": ".join((self.naam,self.functie))
     class Meta:
         verbose_name = "data-item"
-    ## class Admin:
-        ## pass
 
 class Dataelement(models.Model):
     hoort_bij = models.ForeignKey(Dataitem,related_name="elems",
@@ -329,8 +296,6 @@ class Dataelement(models.Model):
     class Meta:
         verbose_name = "data-element"
         verbose_name_plural = verbose_name + "en"
-    ## class Admin:
-        ## pass
 
 class Layout(models.Model):
     section = 'tech'
@@ -349,8 +314,6 @@ class Layout(models.Model):
     tp = models.ManyToManyField(Techproc,related_name="layout",null=True)
     def __unicode__(self):
         return ": ".join((self.naam,self.kort))
-    ## class Admin:
-        ## pass
 
 class Procproc(models.Model):
     section = 'tech'
@@ -373,8 +336,6 @@ class Procproc(models.Model):
     class Meta:
         verbose_name = "programmabeschrijving"
         verbose_name_plural = verbose_name + "en"
-    ## class Admin:
-        ## pass
 
 class Testplan(models.Model):
     section = 'test'
@@ -398,8 +359,6 @@ class Testplan(models.Model):
         return ": ".join((self.naam,self.oms))
     class Meta:
         verbose_name_plural = "testplannen"
-    ## class Admin:
-        ## pass
 
 class Testcase(models.Model):
     section = 'test'
@@ -417,8 +376,6 @@ class Testcase(models.Model):
     class Meta:
         verbose_name = "testgeval"
         verbose_name_plural = verbose_name + "len"
-    ## class Admin:
-        ## pass
 
 class Bevinding(models.Model):
     section = 'test'
@@ -434,9 +391,7 @@ class Bevinding(models.Model):
     datum_gereed = models.DateTimeField(null=True)
     kort = models.CharField(max_length=80)
     melding = models.TextField()
-    ## analyse = models.TextField()
     oplossing = models.TextField()
-    ## vervolg = models.TextField()
     actie = models.IntegerField(null=True)
     actienummer = models.CharField(max_length=10)
     tplan = models.ManyToManyField(Testplan,related_name="tbev",null=True)
@@ -445,8 +400,6 @@ class Bevinding(models.Model):
         return ": ".join((self.nummer,self.kort + oms))
     class Meta:
         verbose_name_plural = "bevindingen"
-    ## class Admin:
-        ## pass
 
 rectypes = {
     'project':   Project,

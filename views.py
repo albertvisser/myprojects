@@ -430,6 +430,7 @@ def detail(request,proj='',edit='',soort='',id='',srt='',verw=''):
         pass
     else:
         info_dict["ar_user"] = o.aruser if soort == "project" else owner_proj.aruser
+
     ## return HttpResponse("soort = %s, id = %s, proj = %s, edit = %s" % (soort, id,proj,edit))
     ## return HttpResponse('<br/>'.join((
     ## raise ValueError('Stopped')
@@ -488,7 +489,7 @@ def edit_item(request,proj='',soort='',id='',srt='',verw=''):
         p.save()
         if to_actiereg and p.actiereg != "":
             doc = "{0}/addext/?from={1}/{2}/&name={3}&desc={4}".format(SITES["probreg"],
-                SITES["doctool"], p.id, p.naam, p.kort)
+                SITES["doctool"], p.id, p.actiereg, p.kort)
         else:
             proj = p.id
             doc = '/%s/' % proj
