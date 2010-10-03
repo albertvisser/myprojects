@@ -19,8 +19,8 @@
  <form action= "{{sites.probreg}}/{{ar_proj}}/koppel/" method="post" style="display:inline">
  <input type="hidden" name="hFrom" value="{{sites.doctool}}/{{proj}}/userprob/{{data.id}}/koppel/?id={0}&actie={1}" />
  <input type="hidden" name="hUser" value="{{ ar_user }}" />
- <input type="hidden" name="hMeld" value="{{ data.melding }}" />
- <input type="hidden" name="hOpm" value="{{ data.oplossing }}" />
+ <input type="hidden" name="hMeld" value="{{ data.kort }}" />
+ <input type="hidden" name="hOpm" value="{{ data.melding }}" />
  <input type="submit" name="pbDoor" id="pbDoor" value="Doorkoppelen naar actiereg"
  {% if data.actie or data.gereed %}disabled="disabled"{% endif %}/>{% endif %}
  </form>
