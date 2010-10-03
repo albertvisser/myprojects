@@ -36,7 +36,7 @@ function submit_form(x) {
 <form id="selector" method="post">
 <div id = "bar1">
     <select id="selActie" name="actie" onchange="submit_form('selActie')">
-        <option value="0">-- kies een actie --</option>
+        <option value="0">-- kies iets om te doen --</option>
 {% if prev %}<option value="/{{proj}}/{{soort|default:""}}{%if soort%}/{%endif%}{{prev}}/">vorige</option> {% endif %}
 {% if notnw %}<option value="/{%if soort%}{{proj}}/{{soort|default:""}}/{%else%}proj/{%endif%}{{notnw}}/ ">nieuw</option>{% endif %}
 {% if view %}<option value="/{{proj}}/{{sect|default:""}}{%if sect%}/{%endif%}{{view}}/">wijzig</option>{% endif %}
