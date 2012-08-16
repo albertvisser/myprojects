@@ -21,11 +21,11 @@
         {{attr.sleutel}}
         {%if attr.sleutel%}
             ,
-            {%ifequal attr.sleutel 1%}eerste{%endifequal%}
-            {%ifequal attr.sleutel 2%}tweede{%endifequal%}
-            {%ifequal attr.sleutel 3%}derde{%endifequal%}
-            {%ifequal attr.sleutel 4%}vierde{%endifequal%}
-            {%ifequal attr.sleutel 5%}vijfde{%endifequal%}
+            {%if attr.sleutel == 1%}eerste{%endif%}
+            {%if attr.sleutel == 2%}tweede{%endif%}
+            {%if attr.sleutel == 3%}derde{%endif%}
+            {%if attr.sleutel == 4%}vierde{%endif%}
+            {%if attr.sleutel == 5%}vijfde{%endif%}
             in sleutel
         {%endif%}
         {%if attr.relatie%},  is sleutel van relatie met {{attr.relatie.verbose_name}}{%endif%}

@@ -1,6 +1,6 @@
 {% extends "base_app.html" %}
 {% block content-data %}
-<form action="{{form_addr}}" method="post" >
+<form action="{{form_addr}}" method="post" >{% csrf_token %}
 <div class="left_view">Naam entiteit:&nbsp;</div>
 <div class="right"><input type="text" name="naam" id="naam" value="{{ data.naam }}" size="{{lengte.naam}}" /></div><div class="clear">&nbsp;</div>
 <div class="left_edit">Functie:&nbsp;</div>
@@ -15,7 +15,7 @@
     <div class="left_edit">Attributen:&nbsp;</div>
     <div class="right">
     <table width="100%">
-    <form action="/{{proj}}/dataitem/{{data.id}}/element/add/" method="post">
+    <form action="/{{proj}}/dataitem/{{data.id}}/element/add/" method="post">{% csrf_token %}
         <tr><td colspan="5">
             Naam: <input  name="naam" type="text" value=""/>
             Type: <input name="type" type="text" value=""/>
@@ -36,23 +36,23 @@
         </td></tr>
     </form>
     {%for attr in attrs%}
-    <form action="/{{proj}}/dataitem/{{data.id}}/element/{{attr.id}}/mut/" method="post">
+    <form action="/{{proj}}/dataitem/{{data.id}}/element/{{attr.id}}/mut/" method="post">{% csrf_token %}
         <tr><td colspan="5">
             Naam: <input name="naam" type="text" value="{{attr.naam}}"/>
             Type: <input name="type" type="text" value="{{attr.soort}}"/>
             Sleutel:<select name="sleutel">
                 <option>--kies--</option>
-                <option {%ifequal attr.sleutel 1%}selected="selected"{%endifequal%}>1</option>
-                <option {%ifequal attr.sleutel 2%}selected="selected"{%endifequal%}>2</option>
-                <option {%ifequal attr.sleutel 3%}selected="selected"{%endifequal%}>3</option>
-                <option {%ifequal attr.sleutel 4%}selected="selected"{%endifequal%}>4</option>
-                <option {%ifequal attr.sleutel 5%}selected="selected"{%endifequal%}>5</option>
+                <option {%if attr.sleutel == 1%}selected="selected"{%endif%}>1</option>
+                <option {%if attr.sleutel == 2%}selected="selected"{%endif%}>2</option>
+                <option {%if attr.sleutel == 3%}selected="selected"{%endif%}>3</option>
+                <option {%if attr.sleutel == 4%}selected="selected"{%endif%}>4</option>
+                <option {%if attr.sleutel == 5%}selected="selected"{%endif%}>5</option>
             </select>
             Relatie met:<select name="rel">
             {%if andere%}
                 <option>--kies--</option>
                 {%for y in andere%}
-                    <option {%ifequal attr.relatie.naam y%}selected="selected"{%endifequal%}>{{y}}</option>
+                    <option {%if attr.relatie.naam == y%}selected="selected"{%endif%}>{{y}}</option>
                 {%endfor%}
             {%endif%}
             </select>

@@ -33,7 +33,7 @@ function submit_form(x) {
 {% block content_title %}{% if title %}<h3>{{ title|escape }}</h3>{% endif %}{% endblock %}
 {%block content %}
 {% if not start %}
-<form id="selector" method="post">
+<form id="selector" method="post">{% csrf_token %}
 <div id = "bar1">
     <select id="selActie" name="actie" onchange="submit_form('selActie')">
         <option value="0">-- kies iets om te doen --</option>
@@ -45,39 +45,39 @@ function submit_form(x) {
     </select>{%ifnotequal proj "proj"%}{%if sctn%} of ga naar{%else%} of{%endif%}
     <select id="selSectie" name="sectie" onchange="subsel();">
         <option value="0">-- kies een sectie --</option>
-        <option value="selUser" {%ifequal sctn 'user' %}selected="selected"{%endifequal%}>specificaties e.d.</option>
-        <option value="selFunc" {%ifequal sctn 'func' %}selected="selected"{%endifequal%}>functioneel ontwerp</option>
-        <option value="selTech" {%ifequal sctn 'tech' %}selected="selected"{%endifequal%}>realisatie</option>
-        <option value="selTest" {%ifequal sctn 'test' %}selected="selected"{%endifequal%}>testen</option>
+        <option value="selUser" {%if sctn == 'user' %}selected="selected"{%endif%}>specificaties e.d.</option>
+        <option value="selFunc" {%if sctn == 'func' %}selected="selected"{%endif%}>functioneel ontwerp</option>
+        <option value="selTech" {%if sctn == 'tech' %}selected="selected"{%endif%}>realisatie</option>
+        <option value="selTest" {%if sctn == 'test' %}selected="selected"{%endif%}>testen</option>
     </select>{% endifnotequal %}
     <span id="txtEn" style="display: none"> en </span>
-    <select id="selUser" name="usersect" {%ifnotequal sctn 'user'%}style="display: none"{%endifnotequal%} onchange="submit_form('selUser')">
+    <select id="selUser" name="usersect" {%if sctn != 'user'%}style="display: none"{%endif%} onchange="submit_form('selUser')">
         <option value="0">-- kies een onderdeel --</option>
-        <option value="/{{proj}}/userspec/" {%ifequal soort 'userspec'%}selected="selected"{%endifequal%}>eisen/wensen</option>
-        <option value="/{{proj}}/userdoc/"{%ifequal soort 'userdoc'%}selected="selected"{%endifequal%}>div. naslag</option>
-        <option value="/{{proj}}/userwijz/"{%ifequal soort 'userwijz'%}selected="selected"{%endifequal%}>aanvraag wijzigingen</option>
-        <option value="/{{proj}}/userprob/"{%ifequal soort 'userprob'%}selected="selected"{%endifequal%}>incidenten/problemen</option>
+        <option value="/{{proj}}/userspec/" {%if soort == 'userspec'%}selected="selected"{%endif%}>eisen/wensen</option>
+        <option value="/{{proj}}/userdoc/"{%if soort == 'userdoc'%}selected="selected"{%endif%}>div. naslag</option>
+        <option value="/{{proj}}/userwijz/"{%if soort == 'userwijz'%}selected="selected"{%endif%}>aanvraag wijzigingen</option>
+        <option value="/{{proj}}/userprob/"{%if soort == 'userprob'%}selected="selected"{%endif%}>incidenten/problemen</option>
     </select>
-    <select id="selFunc" name="funcsect" {%ifnotequal sctn 'func'%}style="display: none"{%endifnotequal%} onchange="submit_form('selFunc')">
+    <select id="selFunc" name="funcsect" {%if sctn != 'func'%}style="display: none"{%endif%} onchange="submit_form('selFunc')">
         <option value="0">-- kies een onderdeel --</option>
-        <option value="/{{proj}}/funcdoc/"{%ifequal soort 'funcdoc'%}selected="selected"{%endifequal%}>div. documenten</option>
-        <option value="/{{proj}}/gebrtaak/"{%ifequal soort 'gebrtaak'%}selected="selected"{%endifequal%}>gebruikerstaken</option>
-        <option value="/{{proj}}/funcproc/"{%ifequal soort 'funcproc'%}selected="selected"{%endifequal%}>processen</option>
-        <option value="/{{proj}}/entiteit/"{%ifequal soort 'entiteit'%}selected="selected"{%endifequal%}>gegevensmodel</option>
+        <option value="/{{proj}}/funcdoc/"{%if soort == 'funcdoc'%}selected="selected"{%endif%}>div. documenten</option>
+        <option value="/{{proj}}/gebrtaak/"{%if soort == 'gebrtaak'%}selected="selected"{%endif%}>gebruikerstaken</option>
+        <option value="/{{proj}}/funcproc/"{%if soort == 'funcproc'%}selected="selected"{%endif%}>processen</option>
+        <option value="/{{proj}}/entiteit/"{%if soort == 'entiteit'%}selected="selected"{%endif%}>gegevensmodel</option>
     </select>
-    <select id="selTech" name="techsect" {%ifnotequal sctn 'tech'%}style="display: none"{%endifnotequal%} onchange="submit_form('selTech')">
+    <select id="selTech" name="techsect" {%if sctn != 'tech'%}style="display: none"{%endif%} onchange="submit_form('selTech')">
         <option value="0">-- kies een onderdeel --</option>
-        <option value="/{{proj}}/techtaak/"{%ifequal soort 'techtaak'%}selected="selected"{%endifequal%}>taken/procedures/transacties</option>
-        <option value="/{{proj}}/techproc/"{%ifequal soort 'techproc'%}selected="selected"{%endifequal%}>processen</option>
-        <option value="/{{proj}}/dataitem/"{%ifequal soort 'dataitem'%}selected="selected"{%endifequal%}>data-items</option>
-        <option value="/{{proj}}/layout/"{%ifequal soort 'layout'%}selected="selected"{%endifequal%}>layouts</option>
-        <option value="/{{proj}}/programma/"{%ifequal soort 'programma'%}selected="selected"{%endifequal%}>programma's</option>
+        <option value="/{{proj}}/techtaak/"{%if soort == 'techtaak'%}selected="selected"{%endif%}>taken/procedures/transacties</option>
+        <option value="/{{proj}}/techproc/"{%if soort == 'techproc'%}selected="selected"{%endif%}>processen</option>
+        <option value="/{{proj}}/dataitem/"{%if soort == 'dataitem'%}selected="selected"{%endif%}>data-items</option>
+        <option value="/{{proj}}/layout/"{%if soort == 'layout'%}selected="selected"{%endif%}>layouts</option>
+        <option value="/{{proj}}/programma/"{%if soort == 'programma'%}selected="selected"{%endif%}>programma's</option>
     </select>
-    <select id="selTest" name="testsect" {%ifnotequal sctn 'test'%}style="display: none"{%endifnotequal%} onchange="submit_form('selTest')">
+    <select id="selTest" name="testsect" {%if sctn != 'test'%}style="display: none"{%endif%} onchange="submit_form('selTest')">
         <option value="0">-- kies een onderdeel --</option>
-        <option value="/{{proj}}/testplan/"{%ifequal soort 'testplan'%}selected="selected"{%endifequal%}>testplannen</option>
-        <option value="/{{proj}}/testcase/"{%ifequal soort 'testcase'%}selected="selected"{%endifequal%}>testgevallen</option>
-        <option value="/{{proj}}/bevinding/"{%ifequal soort 'bevinding'%}selected="selected"{%endifequal%}>testbevindingen</option>
+        <option value="/{{proj}}/testplan/"{%if soort == 'testplan'%}selected="selected"{%endif%}>testplannen</option>
+        <option value="/{{proj}}/testcase/"{%if soort == 'testcase'%}selected="selected"{%endif%}>testgevallen</option>
+        <option value="/{{proj}}/bevinding/"{%if soort == 'bevinding'%}selected="selected"{%endif%}>testbevindingen</option>
     </select>
 </div>
 <div id="bar2">

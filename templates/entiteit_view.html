@@ -21,18 +21,18 @@
         {%for attr in attrs%}
             <b>{{attr.naam}}</b>&nbsp;
             (
-            {%ifequal attr.type 'A'%}Tekst{%endifequal%}
-            {%ifequal attr.type 'N'%}Aantal{%endifequal%}
-            {%ifequal attr.type 'D'%}Datum{%endifequal%}
-            {%ifequal attr.type 'B'%}Bedrag{%endifequal%}
+            {%if attr.type == 'A'%}Tekst{%endif%}
+            {%if attr.type == 'N'%}Aantal{%endif%}
+            {%if attr.type == 'D'%}Datum{%endif%}
+            {%if attr.type == 'B'%}Bedrag{%endif%}
             )
             {%if attr.primarykey%}
                 ,
-                {%ifequal attr.primarykey 1%}eerste{%endifequal%}
-                {%ifequal attr.primarykey 2%}tweede{%endifequal%}
-                {%ifequal attr.primarykey 3%}derde{%endifequal%}
-                {%ifequal attr.primarykey 4%}vierde{%endifequal%}
-                {%ifequal attr.primarykey 5%}vijfde{%endifequal%}
+                {%if attr.primarykey == 1%}eerste{%endif%}
+                {%if attr.primarykey == 2%}tweede{%endif%}
+                {%if attr.primarykey == 3%}derde{%endif%}
+                {%if attr.primarykey == 4%}vierde{%endif%}
+                {%if attr.primarykey == 5%}vijfde{%endif%}
                 in sleutel
             {%endif%}
             {%if attr.relatie%},  is sleutel van relatie met {{attr.relatie.verbose_name}}{%endif%}

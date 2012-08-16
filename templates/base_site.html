@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block extrastyle %}<style>
+body (background-color: lightblue;)
 div.clear,
 span.clear {
 	background: none;
@@ -17,6 +18,7 @@ span.clear {
 }
 .left_view,
 .left_edit,
+.left_spacer,
 .kw3 {
 	display: inline;
 	float: left;
@@ -27,7 +29,12 @@ span.clear {
     width: {{leftw}};
     text-align: right;
     font-weight:bold;
+    font-size: smaller;
+    vertical-align: middle;
+    padding-top: 2px;
 	color:#c00;
+/*    background-color: #F0F000;
+    border: 1px solid; */
 }
 .left_view {
 	margin-top: 5px;
@@ -35,11 +42,18 @@ span.clear {
 .left_edit {
 	margin-top: 10px;
 }
+.left_spacer {
+    width: {{leftw}};
+}
 .right {
     width: {{rightw}};
 	margin-left: 5px;
 	margin-top: 5px;
-/*    padding-left: {{leftw}} */
+    padding-left: {{leftw}};
+/*    border: 1px solid; */
+}
+.right_spacer {
+    width: {{rightw}};
 }
 /* .right:first-line{
 	padding-left: 0;
@@ -104,7 +118,7 @@ function selectproj()
 -->
 </script>
 {% endblock %}
-{% block title %}{{ title|escape }} | {% trans 'Doctool' %}{% endblock %}
+{% block title %}{% trans 'Doctool' %} | {{ title|escape }}{% endblock %}
 
 {% block branding %}
   <div style="width: 100%">

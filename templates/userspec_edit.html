@@ -1,6 +1,6 @@
 {% extends "base_app.html" %}
 {% block content-data %}
- <form action="{{form_addr}}" method="post" >
+ <form action="{{form_addr}}" method="post" >{% csrf_token %}
  <div class="left_view">Naam:&nbsp;</div>
  <div class="right"><input type="text" name="naam" id="naam" value="{{ data.naam }}" size="{{lengte.naam}}" /></div><div class="clear">&nbsp;</div>
  <div class="left_edit">Korte omschrijving:&nbsp;</div>

@@ -17,17 +17,18 @@
  {% if not data.actie %}</a>{% endif %}
  {% if data.wens and ar_proj%}
  <form action= "{{sites.probreg}}/{{ar_proj}}/koppel/" method="post" style="display:inline">
- <input type="hidden" name="hFrom" value="{{sites.doctool}}/{{proj}}/userwijz/{{data.id}}/koppel/?id={0}&actie={1}" />
+ {% csrf_token %}
+ <input type="hidden" name="hFrom" value="{{sites.doctool}}/{{proj}}/userwijz/{{data.id}}/koppel/{0}/{1}/" />
  <input type="hidden" name="hUser" value="{{ ar_user }}" />
  <input type="hidden" name="hMeld" value="{{ data.wens }}" />
- <input type="hidden" name="hOpm" value="{{ data.toelichting }}" />
+ <input type="hidden" name="hOpm" value="{{ data.toelichting|escape }}" />
  <input type="submit" name="pbDoor" id="pbDoor" value="Doorkoppelen naar actiereg"
  {% if data.actie or data.gereed %}disabled="disabled"{% endif %}/>{% endif %}
   </form>
  </div><div class="clear">&nbsp;</div>
   <hr/>
  <div class="left_view">Toelichting:&nbsp;</div>
- <div class="right"><br/><br/>{{ data.toelichting|linebreaksbr }}</div><div class="clear">&nbsp;</div>
+ <div class="right"><br/><br/>{{ data.toelichting|linebreaksbr|escape }}</div><div class="clear">&nbsp;</div>
  <div class="left_view">Opmerkingen:&nbsp;</div>
  <div class="right"><br/><br/>{{ data.opmerkingen|linebreaksbr }}</div><div class="clear">&nbsp;</div>
  {% if data.actie %}

@@ -1,4 +1,5 @@
 from django.db import models
+import datetime
 
 class Project(models.Model):
     naam = models.CharField(max_length=40)
@@ -63,7 +64,7 @@ class Userwijz(models.Model):
     }
     project = models.ForeignKey(Project,related_name="rfcs")
     nummer = models.CharField(max_length=10)
-    datum_in = models.DateTimeField(auto_now_add=True)
+    datum_in = models.DateTimeField(default = datetime.datetime.now, editable = False) # auto_now_add=True)
     gereed = models.BooleanField()
     datum_gereed = models.DateTimeField(null=True)
     wens = models.CharField(max_length=80)

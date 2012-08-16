@@ -1,6 +1,6 @@
 {% extends "base_app.html" %}
 {% block content-data %}
- <form action="{{form_addr}}" method="post" enctype="multipart/form-data">
+ <form action="{{form_addr}}" method="post" enctype="multipart/form-data">{% csrf_token %}
  <div class="left_view">Nummer:&nbsp;</div>
  <div class="right"><input type="text" name="nummer" id="nummer" value="{%if data%}{{ data.nummer }}{%else%}{{nummer}}{%endif%}" size="10" readonly="readonly" />
  <input type="hidden" name="datum_in" id="datum_in" value="{{ data.datum_in }}"/> </div><div class="clear">&nbsp;</div>

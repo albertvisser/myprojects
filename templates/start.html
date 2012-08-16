@@ -3,9 +3,18 @@
 <br/>
 <a href="/proj/new/" title="nieuw project">Start een nieuw project </a>,
 of ga naar de startpagina van een bestaand project:<hr/>
-<ul>
+<table>
+<tr><th>naam</th><th>repository</th><th>actieregistratie</th></tr>
 {% for x in projecten %}
-<li><a href="/{{x.id}}/" title="ga naar project">{{x}}</a></li>
+<tr>
+<td><a href="/{{x.id}}/" title="ga naar project">{{x}}</a></td>
+<td>{% if x.fysloc %}
+  <a href="{{x.fysloc}}" title="hg repository" target="_blank">{{ x.fysloc }}</a>
+  {% else %}&nbsp;{%endif%}</td>
+<td>{% if x.actiereg %}
+  <a href="{{sites.probreg}}/{{ x.actiereg }}/" target="_blank">{{ x.actiereg }}</a>
+  {% else %}&nbsp;{%endif%}</td>
+</tr>
 {% endfor %}
-</ul>
+</table>
 {%endblock%}

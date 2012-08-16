@@ -8,6 +8,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist #, DoesNotExist
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.cache import cache_control
+from django.template import RequestContext
 from django.db import models
 import doctool.models as my
 from doctool.settings import MEDIA_ROOT, SITES
@@ -152,9 +153,9 @@ def index(request):
         'start': True,
         'projecten': my.Project.objects.all().order_by('naam'),
         'footer': ''
-        })
+        }, context_instance=RequestContext(request))
 
-def lijst(request,proj='',soort='',id='', edit='',srt=''):
+def lijst(request, proj='', soort='', id='',  edit='', srt=''):
     # proj = projectnummer, soort = onderdeelnaam
     ## raise ValueError('Testing...')
     entries = []
@@ -205,21 +206,22 @@ def lijst(request,proj='',soort='',id='', edit='',srt=''):
     info_dict["sctn"] = sect
     info_dict['notnw'] = 'new'
     doc = 'relateren.html' if edit == 'rel' else 'lijst.html'
-    return render_to_response(doc,info_dict)
+    return render_to_response(doc, info_dict, context_instance=RequestContext(request))
 
-def detail(request,proj='',edit='',soort='',id='',srt='',verw=''):
+def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld=''):
     # proj = projectnummer, soort = onderdeelnaam, edit = 'edit' of 'new', id = item nummer of niks bij nieuw
     "toon/wijzig document"
     ## raise ValueError('Testing...')
-    meld = ''
+    ## meld = ''
     try: # do we have form data?
         data = request.POST
     except: # AttributeError?
         data = {}
-    try: # do we have other form data?
-        meld = request.GET.get('msg',"")
-    except: # KeyError?
-        pass
+    ## try: # do we have other form data?
+        ## meld = request.GET.get('msg',"")
+    ## except: # KeyError?
+        ## pass
+    ## return HttpResponse('melding: ' + meld)
     ## return HttpResponse("soort = %s, id = %s, proj = %s, edit = %s" % (soort, id,proj,edit))
     info_dict = {'title': '', 'start': '', 'prev': '', 'notnw': '', 'view': '',
         'next': '', 'proj': proj, 'sect': '', 'meld': meld,
@@ -441,34 +443,37 @@ def detail(request,proj='',edit='',soort='',id='',srt='',verw=''):
         ## str(info_dict['m2ms_from'])
         ## )))
     if edit:
-        return render_to_response('{0}_edit.html'.format(soort), info_dict) # {'title': 'nieuw', 'soort': soort, 'id': id, 'proj': proj})
+        return render_to_response('{0}_edit.html'.format(soort), info_dict,
+            context_instance=RequestContext(request)) # {'title': 'nieuw', 'soort': soort, 'id': id, 'proj': proj})
     else:
-        return render_to_response('{0}_view.html'.format(soort), info_dict) # {'title': 'nieuw', 'soort': soort, 'id': id, 'proj': proj})
+        return render_to_response('{0}_view.html'.format(soort), info_dict,
+            context_instance=RequestContext(request)) # {'title': 'nieuw', 'soort': soort, 'id': id, 'proj': proj})
 
-def koppel(request,proj='',soort='',id=''):
+def koppel(request, proj='',soort='',id='', arid='0', arnum=''):
     """terugkoppeling vanuit probreg:
     neem de teruggegeven actiegegevens op in het huidige item"""
-    data = request.GET
+    ## data = request.GET
     ## return HttpResponse("".join(["{0}: {1}".format(x,y) for x,y in data.items()]))
     ## raise ValueError("Exception Intended")
     ## return HttpResponse("""\
     ## vervolg: {0}<br/>
     ## adres: {1}""".format(vervolg,vervolg.format(actie.id,actie.nummer)))
     o = my.rectypes[soort].objects.get(pk=id)
-    o.actie = int(data.get("id","0"))
-    o.actienummer = data.get("actie","")
+    o.actie = int(arid) # int(data.get("id","0"))
+    o.actienummer = arnum # data.get("actie","")
     o.save()
     doc = '/%s/%s/%s/' % (proj,soort,id)
     return HttpResponseRedirect(doc)
 
-def meld(request,proj='',soort='',id=''):
+def meld(request,proj='',soort='',id='', arstat='', arfrom = '', arid=''):
     """terugkoppeling vanuit probreg:
     de actie is gearchiveerd of herleefd"""
     data = request.GET
     o = my.rectypes[soort].objects.get(pk=id)
-    o.gereed = {"arch": True, "herl": False}[data["status"]]
+    o.gereed = {"arch": True, "herl": False}[arstat]
     o.save()
-    doc = SITES["probreg"] + data["from"]
+    meld = 'Actie gearchiveerd' if arstat == 'arch' else 'Actie herleefd'
+    doc = '/'.join((SITES["probreg"], arfrom, arid, 'mld', meld))
     return HttpResponseRedirect(doc)
 
 def edit_item(request,proj='',soort='',id='',srt='',verw=''):
@@ -488,8 +493,8 @@ def edit_item(request,proj='',soort='',id='',srt='',verw=''):
             p.__dict__[x] = request.POST[x]
         p.save()
         if to_actiereg and p.actiereg != "":
-            doc = "{0}/addext/?from={1}/{2}/&name={3}&desc={4}".format(SITES["probreg"],
-                SITES["doctool"], p.id, p.actiereg, p.kort)
+            doc = "{}/addext/{}/{}/{}/".format(SITES["probreg"],
+                p.id, p.actiereg, p.kort)
         else:
             proj = p.id
             doc = '/%s/' % proj
@@ -544,10 +549,11 @@ def edit_item(request,proj='',soort='',id='',srt='',verw=''):
                         destination.close()
                         o.__dict__[x] = uploaded.name
                 else:
-                    try:
-                        o.__dict__[x] = request.POST[x]
-                    except KeyError:
-                        pass
+                    if x != 'datum_in':
+                        try:
+                            o.__dict__[x] = request.POST[x]
+                        except KeyError:
+                            pass
             o.save()
         # bijwerken van de eventueel meegegeven relatie
         if srt in my.rectypes:
