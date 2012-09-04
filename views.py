@@ -24,71 +24,77 @@ leftw_dict = {
     "testplan": 140,
     "bevinding": 140,
     }
-RELTXT = '<a href="/{0}/{1}/{2}/">{3}</a>'
+RELTXT = '<br/><a href="/{0}/{1}/{2}/">{3}</a>'
 BTNTXT = '<a href="/{0}/{1}/{2}/{3}/{4}/"><input type="button" value="{5}" /></a>'
 
-def get_relation(obj, srt_van, srt_naar):
+def get_relation(obj, srt_van, srt_naar, richting=''):
     """geeft met behulp van de dictionary relations de query voor een relatie terug
-    relations[(srt_van,srt_naar)] geeft een tuple van veldnaam en meer-dan-een-mogelijk
-    de indicatie meer-dan-1-mogelijk wordt mee teruggegeven"""
+
+    relations[(srt_van,srt_naar)] geeft een tuple terug van veldnaam en een
+    meer-dan-een-mogelijk indicatie
+    de indicatie meer-dan-1-mogelijk wordt mee teruggegeven
+
+    richting is van belang bij een bom-structuur"""
     ## print obj
     relations = {
-        ('userspec','gebrtaak'):   ("gtaken",True),
-        ('userspec','funcproc'):   ("fprocs",True),
-        ('userwijz', 'gebrtaak'):  ("gtaken",True),
-        ('userwijz', 'funcproc'):  ("fprocs",True),
-        ('userwijz', 'entiteit'):  ("fdata",True),
-        # ('userprob', 'gebrtaak'):  ("gtaken",True),
-        # ('userprob', 'funcproc'):  ("fprocs",True),
-        # ('userprob', 'entiteit'):  ("fdata",True),
-        ('gebrtaak','userspec'):   ("spec",False),
-        ('gebrtaak','userwijz'):   ("rfc",True),
-        ('gebrtaak','funcproc'):   ("fprocs",True),
-        ('gebrtaak','techtaak'):   ("ttask",True),
-        ('gebrtaak','layout'):     ("layout",True),
-        ('gebrtaak','testplan'):   ("tplan",True),
-        ('funcproc','userspec'):   ("spec",False),
-        ('funcproc','userwijz'):   ("rfc",True),
-        ('funcproc','gebrtaak'):   ("gt",True),
-        ('funcproc','funcproc_2'): ("used_by",True),
-        ('funcproc','entiteit'):   ("fdata",True),
-        ('funcproc','funcproc'):   ("bom",True),
-        ('funcproc','techproc'):   ("tproc",True),
-        ('funcproc','testplan'):   ("tplan",True),
-        ('entiteit','userwijz'):   ("rfc",True),
-        ('entiteit','funcproc'):   ("fp",True),
-        ('entiteit','dataitem'):   ("tdata",True),
-        ('entiteit','testplan'):   ("tplan",True),
-        ('techtaak','gebrtaak'):   ("gt",False),
-        ('techtaak','techproc'):   ("tproc",True),
-        ('techproc','funcproc'):   ("fp",True),
-        ('techproc','techtaak'):   ("tt",True),
-        ('techproc','techproc_2'): ("used_by",True),
-        ('techproc','dataitem'):   ("tdata",True),
-        ('techproc','techproc'):   ("bom",True),
-        ('techproc','layout'):     ("layout",True),
-        ('techproc','programma'):  ("pproc",True),
-        ('dataitem','entiteit'):   ("ent",True),
-        ('dataitem','techproc'):   ("tp",True),
-        ('layout','gebrtaak'):     ("gt",True),
-        ('layout','techproc'):     ("tp",True),
-        ('programma','techproc'):  ("tp",True),
-        ('testplan','gebrtaak'):   ("gt",True),
-        ('testplan','funcproc'):   ("fp",True),
-        ('testplan','entiteit'):   ("ent",True),
-        ('testplan','testcase'):   ("tcase",True),
-        ('testplan','bevinding'):  ("tbev",True),
-        ('testcase', 'testplan'):  ("tplan",True),
-        ('bevinding','testplan'):  ("tplan",True),
+        ('userspec', 'gebrtaak'): ("gtaken", True),
+        ('userspec', 'funcproc'): ("fprocs", True),
+        ('userwijz', 'gebrtaak'): ("gtaken", True),
+        ('userwijz', 'funcproc'): ("fprocs", True),
+        ('userwijz', 'entiteit'): ("fdata", True),
+        # ('userprob',  'gebrtaak'):  ("gtaken", True),
+        # ('userprob',  'funcproc'):  ("fprocs", True),
+        # ('userprob',  'entiteit'):  ("fdata", True),
+        ('gebrtaak', 'userspec'): ("spec", False),
+        ('gebrtaak', 'userwijz'): ("rfc", True),
+        ('gebrtaak', 'funcproc'): ("fprocs", True),
+        ('gebrtaak', 'techtaak'): ("ttask", True),
+        ('gebrtaak', 'layout'): ("layout", True),
+        ('gebrtaak', 'testplan'): ("tplan", True),
+        ('funcproc', 'userspec'): ("spec", False),
+        ('funcproc', 'userwijz'): ("rfc", True),
+        ('funcproc', 'gebrtaak'): ("gt", True),
+        ('funcproc', 'funcproc_2'): ("used_by", True),
+        ('funcproc', 'entiteit'): ("fdata", True),
+        ('funcproc', 'funcproc'): ("bom", True),
+        ('funcproc', 'techproc'): ("tproc", True),
+        ('funcproc', 'testplan'): ("tplan", True),
+        ('entiteit', 'userwijz'): ("rfc", True),
+        ('entiteit', 'funcproc'): ("fp", True),
+        ('entiteit', 'dataitem'): ("tdata", True),
+        ('entiteit', 'testplan'): ("tplan", True),
+        ('techtaak', 'gebrtaak'): ("gt", False),
+        ('techtaak', 'techproc'): ("tproc", True),
+        ('techproc', 'funcproc'): ("fp", True),
+        ('techproc', 'techtaak'): ("tt", True),
+        ('techproc', 'techproc_2'): ("used_by", True),
+        ('techproc', 'dataitem'): ("tdata", True),
+        ('techproc', 'techproc'): ("bom", True),
+        ('techproc', 'layout'): ("layout", True),
+        ('techproc', 'programma'): ("pproc", True),
+        ('dataitem', 'entiteit'): ("ent", True),
+        ('dataitem', 'techproc'): ("tp", True),
+        ('layout', 'gebrtaak'): ("gt", True),
+        ('layout', 'techproc'): ("tp", True),
+        ('programma', 'techproc'): ("tp", True),
+        ('testplan', 'gebrtaak'): ("gt", True),
+        ('testplan', 'funcproc'): ("fp", True),
+        ('testplan', 'entiteit'): ("ent", True),
+        ('testplan', 'testcase'): ("tcase", True),
+        ('testplan', 'bevinding'): ("tbev", True),
+        ('testcase', 'testplan'): ("tplan", True),
+        ('bevinding', 'testplan'): ("tplan", True),
     }
     rel, morethan1 = relations[(srt_van, srt_naar)]
     ## print rel
     ## print morethan1
+    if srt_van == srt_naar and richting == 'from':
+        rel = 'used_by'
     if morethan1:
         q = obj.__getattribute__(rel) # .all()
     else:
         q = obj.__getattribute__(rel)
-    return (q,morethan1)
+    return (q, morethan1)
 
 def corr_naam(name):
     if name == "techtaak":
@@ -251,8 +257,10 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
             except ObjectDoesNotExist:
                 meld = proj.join(('project ',' bestaat niet'))
                 proj = ''
-        info_dict['title'] = 'Doctool! | Nieuw project ' if edit == 'new' else 'Doctool! | Project ' + o.naam
-        if edit != 'new':
+        if edit == 'new':
+            info_dict['title'] = 'Doctool! | Nieuw project '
+        else:
+            info_dict['title'] = 'Doctool! | Project ' + o.naam
             info_dict['data'] = o
         info_dict["start"] = ''
         soort = 'project'
@@ -280,35 +288,36 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                         prev = x.id
                 opts = my.rectypes[soort]._meta
                 fkeys_to = []
-                ## return HttpResponse('<br/>'.join((
-                    ## soort,
-                    ## str(my.rectypes[soort]),
-                    ## str(opts),
-                    ## str(opts.fields),
-                    ## str(opts.many_to_many),
-                    ## str(opts.get_all_related_objects()),
-                    ## str(opts.get_all_related_many_to_many_objects())
-                    ## )))
                 for fld in opts.fields:
-                    if fld.get_internal_type() == 'ForeignKey' and fld.name != "project":
+                    if fld.get_internal_type() == 'ForeignKey' \
+                            and fld.name != "project":
                         srt = corr_naam(fld.rel.to._meta.module_name)
-                        rel = {'text': ' '.join((my.rectypes[soort].to_titles[srt],my.rectypes[srt]._meta.verbose_name)),
-                        'btn': BTNTXT.format(proj,soort,id,"rel",srt,"leg relatie"),
-                        'links': []}
-                        result,morethan1 = get_relation(o,soort,srt)
+                        rel = {
+                            'text': ' '.join((my.rectypes[soort].to_titles[srt],
+                                my.rectypes[srt]._meta.verbose_name)),
+                            'btn': BTNTXT.format(proj, soort, id, "rel", srt,
+                                "leg relatie"),
+                            'links': []
+                            }
+                        result, morethan1 = get_relation(o, soort,  srt)
                         if result:
-                            rel['links'].append(RELTXT.format(proj,srt,result.id,result))
+                            rel['links'].append(RELTXT.format(proj, srt, result.id,
+                                result))
                             fkeys_to.append(rel)
                 info_dict['fkeys_to'] = fkeys_to
                 m2ms_to = []
                 for x in opts.many_to_many:
                     srt = corr_naam(x.rel.to._meta.module_name)
-                    y = {'text': ' '.join((my.rectypes[soort].to_titles[srt],my.rectypes[srt]._meta.verbose_name)),
-                    'btn': BTNTXT.format(proj,soort,id,"rel",srt,"leg relatie"),
-                    'links': []}
-                    result,morethan1 = get_relation(o,soort,srt)
+                    y = {
+                        'text': ' '.join((my.rectypes[soort].to_titles[srt],
+                            my.rectypes[srt]._meta.verbose_name)),
+                        'btn': BTNTXT.format(proj, soort, id, "rel", srt,
+                            "leg relatie"),
+                        'links': []
+                        }
+                    result, morethan1 = get_relation(o, soort, srt, 'to')
                     for item in result.all():
-                        y['links'].append(RELTXT.format(proj,srt,item.id,item))
+                        y['links'].append(RELTXT.format(proj, srt, item.id, item))
                     m2ms_to.append(y)
                 info_dict['m2ms_to'] = m2ms_to
                 button_lijst = [] # of button_lijst = my.rectypes[soort].from_titles.keys()
@@ -316,40 +325,51 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                 for x in opts.get_all_related_objects():
                     srt = corr_naam(x.model._meta.module_name)
                     if (soort,srt) == ('entiteit','attribuut'):
-                        info_dict["andere"] = [x.naam for x in my.Entiteit.objects.filter(project=o.project) if x != o]
+                        info_dict["andere"] = [x.naam for x in
+                            my.Entiteit.objects.filter(project=o.project) if x != o]
                         info_dict["attrs"] = o.attrs.all()
                     elif (soort,srt) == ('dataitem','dataelement'):
-                        info_dict["andere"] = [x.naam for x in my.Dataitem.objects.filter(project=o.project) if x != o]
+                        info_dict["andere"] = [x.naam for x in
+                            my.Dataitem.objects.filter(project=o.project) if x != o]
                         info_dict["attrs"] = o.elems.all()
                     else:
                         button_lijst.append(srt)
-                        y = {'text': ' '.join((my.rectypes[soort].from_titles[srt],my.rectypes[srt]._meta.verbose_name)),
-                        'btn': '',
-                        'links': []}
-                        result,morethan1 = get_relation(o,soort,srt)
+                        y = {
+                            'text': ' '.join((my.rectypes[soort].from_titles[srt],
+                                my.rectypes[srt]._meta.verbose_name)),
+                            'btn': '',
+                            'links': []
+                            }
+                        result, morethan1 = get_relation(o, soort, srt)
                         for item in result.all():
-                            y['links'].append(RELTXT.format(proj,srt,item.id,item))
+                            y['links'].append(RELTXT.format(proj, srt, item.id, item))
                         fkeys_from.append(y)
                 info_dict['fkeys_from'] = fkeys_from
                 m2ms_from = []
                 for x in opts.get_all_related_many_to_many_objects():
                     srt = corr_naam(x.model._meta.module_name)
                     button_lijst.append(srt)
-                    y = {'text': ' '.join((my.rectypes[soort].from_titles[srt],my.rectypes[srt]._meta.verbose_name)),
-                    'btn': '',
-                    'links': []}
-                    result,morethan1 = get_relation(o,soort,srt)
+                    y = {
+                        'text': ' '.join((my.rectypes[soort].from_titles[srt],
+                            my.rectypes[srt]._meta.verbose_name)),
+                        'btn': '',
+                        'links': []
+                        }
+                    result, morethan1 = get_relation(o, soort, srt, 'from')
                     for item in result.all():
-                        y['links'].append(RELTXT.format(proj,srt,item.id,item))
+                        y['links'].append(RELTXT.format(proj, srt, item.id, item))
                     m2ms_from.append(y)
                 info_dict['m2ms_from'] = m2ms_from
             if not edit:
                 if relaties:  # add relations to page
-                    relaties.insert(0,'<div><span class="bold underline">Relaties</span></div>')
-                    info_dict["e_table"] = '\n'.join((info_dict["e_table"],'\n'.join(relaties)))
+                    relaties.insert(0, '<div><span class="bold underline">Relaties'
+                        '</span></div>')
+                    info_dict["e_table"] = '\n'.join((info_dict["e_table"],
+                        '\n'.join(relaties)))
                 buttons = []
                 for s in button_lijst:    #  build buttons to create related documents
-                    buttons.append(BTNTXT.format(proj,s,"new",soort,id,"Opvoeren " + naam_dict(s)[0]))
+                    buttons.append(BTNTXT.format(proj, s, "new", soort, id,
+                        "Opvoeren " + naam_dict(s)[0]))
                 info_dict["buttons"] = buttons
     info_dict["prev"] = prev
     info_dict["next"] = next
@@ -388,25 +408,31 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
         if not edit:
             all = my.Bevinding.objects.filter(project=proj)
             solved = all.filter(gereed=True).count()
+            working = all.filter(gereed=False).filter(actie__isnull=False).count()
             all = all.count()
             if all == 0:
                 test_stats = ("(nog) geen","opgevoerd")
             else:
-                test_stats = (all, "waarvan {0} opgelost".format(solved))
+                test_stats = (all, "waarvan {} opgelost en {} doorgekoppeld naar "
+                    "Actiereg".format(solved, working))
             all = my.Userprob.objects.filter(project=proj)
             solved = all.filter(gereed=True).count()
+            working = all.filter(gereed=False).filter(actie__isnull=False).count()
             all = all.count()
             if all == 0:
                 prob_stats = ("(nog) geen","gemeld")
             else:
-                prob_stats = (all,"waarvan {0} opgelost\n".format(solved))
+                prob_stats = (all, "waarvan {} opgelost en {} doorgekoppeld naar "
+                    "Actiereg".format(solved, working))
             all = my.Userwijz.objects.filter(project=proj)
             solved = all.filter(gereed=True).count()
+            working = all.filter(gereed=False).filter(actie__isnull=False).count()
             all = all.count()
             if all == 0:
                 wijz_stats = ("(nog) geen","ingediend")
             else:
-                wijz_stats = (all,"waarvan {0} gerealiseerd".format(solved))
+                wijz_stats = (all,"waarvan {} gerealiseerd en {} in behandeling via "
+                    "Actiereg".format(solved, working))
             info_dict['test_stats'] = test_stats
             info_dict['prob_stats'] = prob_stats
             info_dict['wijz_stats'] = wijz_stats

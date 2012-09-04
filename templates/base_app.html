@@ -39,17 +39,17 @@ function submit_form(x) {
         <option value="0">-- kies iets om te doen --</option>
 {% if prev %}<option value="/{{proj}}/{{soort|default:""}}{%if soort%}/{%endif%}{{prev}}/">vorige</option> {% endif %}
 {% if notnw %}<option value="/{%if soort%}{{proj}}/{{soort|default:""}}/{%else%}proj/{%endif%}{{notnw}}/ ">nieuw</option>{% endif %}
-{% if view %}<option value="/{{proj}}/{{sect|default:""}}{%if sect%}/{%endif%}{{view}}/">wijzig</option>{% endif %}
+{% if view %}{%if not data.actie %}<option value="/{{proj}}/{{sect|default:""}}{%if sect%}/{%endif%}{{view}}/">wijzig</option>{% endif %}{% endif %}
 {% if edit %}<option value="/{{proj}}/{{sect|default:""}}{%if sect%}/{%endif%}">bekijk</option>{% endif %}
 {% if next %}<option value="/{{proj}}/{{soort|default:""}}{%if soort%}/{%endif%}{{next}}/">volgende</option>{% endif %}
-    </select>{%ifnotequal proj "proj"%}{%if sctn%} of ga naar{%else%} of{%endif%}
+    </select>{%if proj != "proj"%}{%if sctn%} of ga naar{%else%} of{%endif%}
     <select id="selSectie" name="sectie" onchange="subsel();">
         <option value="0">-- kies een sectie --</option>
         <option value="selUser" {%if sctn == 'user' %}selected="selected"{%endif%}>specificaties e.d.</option>
         <option value="selFunc" {%if sctn == 'func' %}selected="selected"{%endif%}>functioneel ontwerp</option>
         <option value="selTech" {%if sctn == 'tech' %}selected="selected"{%endif%}>realisatie</option>
         <option value="selTest" {%if sctn == 'test' %}selected="selected"{%endif%}>testen</option>
-    </select>{% endifnotequal %}
+    </select>{% endif %}
     <span id="txtEn" style="display: none"> en </span>
     <select id="selUser" name="usersect" {%if sctn != 'user'%}style="display: none"{%endif%} onchange="submit_form('selUser')">
         <option value="0">-- kies een onderdeel --</option>
