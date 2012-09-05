@@ -191,11 +191,12 @@ def lijst(request, proj='', soort='', id='',  edit='', srt=''):
         srtnm_ev,srtnm_mv, sect = naam_dict(srt)
     if proj:
         pr = my.Project.objects.get(pk=proj)
-        title = ' bij project '.join((soortnm_mv.capitalize(),pr.naam))
+        title = ' bij project '.join((soortnm_mv.capitalize(), pr.naam))
     else:
         title = 'Lijst ' + soortnm_mv
     if edit == 'rel':
-        title = ' relateren aan '.join((srtnm_ev, soortnm_ev))
+        title = '{} relateren aan {} "{}"'.format(soortnm_ev, srtnm_ev,
+            my.rectypes[srt].objects.get(pk=id).naam)
         info_dict['start'] = 'x' # forceert afwezigheid menu
         info_dict['ref'] = (srt,srtnm_mv,id)
         info_dict["soort"] = soort # '/'.join((srt,id,soort))
@@ -295,8 +296,9 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                         rel = {
                             'text': ' '.join((my.rectypes[soort].to_titles[srt],
                                 my.rectypes[srt]._meta.verbose_name)),
-                            'btn': BTNTXT.format(proj, soort, id, "rel", srt,
-                                "leg relatie"),
+                            'btn': '',
+                            ## 'btn': BTNTXT.format(proj, srt, id, "rel", soort,
+                                ## "leg relatie"),
                             'links': []
                             }
                         result, morethan1 = get_relation(o, soort,  srt)
@@ -311,8 +313,9 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                     y = {
                         'text': ' '.join((my.rectypes[soort].to_titles[srt],
                             my.rectypes[srt]._meta.verbose_name)),
-                        'btn': BTNTXT.format(proj, soort, id, "rel", srt,
-                            "leg relatie"),
+                        'btn': '',
+                        ## 'btn': BTNTXT.format(proj, srt, id, "rel", soort,
+                            ## "leg relatie"),
                         'links': []
                         }
                     result, morethan1 = get_relation(o, soort, srt, 'to')
@@ -337,7 +340,9 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                         y = {
                             'text': ' '.join((my.rectypes[soort].from_titles[srt],
                                 my.rectypes[srt]._meta.verbose_name)),
-                            'btn': '',
+                            ## 'btn': '',
+                            'btn': BTNTXT.format(proj, soort, id, "rel", srt,
+                                "leg relatie"),
                             'links': []
                             }
                         result, morethan1 = get_relation(o, soort, srt)
@@ -352,7 +357,9 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                     y = {
                         'text': ' '.join((my.rectypes[soort].from_titles[srt],
                             my.rectypes[srt]._meta.verbose_name)),
-                        'btn': '',
+                        ## 'btn': '',
+                        'btn': BTNTXT.format(proj, soort, id, "rel", srt,
+                            "leg relatie"),
                         'links': []
                         }
                     result, morethan1 = get_relation(o, soort, srt, 'from')
