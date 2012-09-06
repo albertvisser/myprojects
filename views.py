@@ -642,7 +642,7 @@ def edit_sub(request,proj='',srt1='',id1='',srt2='',id2=''):
         o2.omschrijving = data["oms"]
         o2.sleutel = data["sleutel"] if data["sleutel"] in ('1','2','3','4','5') else '0'
     if "rel" in data:
-        if data[rel] in [x.naam for x in my.Entiteit.objects.filter(project=o1.project)]:
+        if data["rel"] in [x.naam for x in my.Entiteit.objects.filter(project=o1.project)]:
         ## try:
             o2.relatie = my.rectypes[srt1].objects.get(naam=data["rel"])
         ## except ObjectDoesNotExist:
