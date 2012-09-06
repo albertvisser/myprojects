@@ -24,6 +24,7 @@
  <input type="hidden" name="hOpm" value="{{ data.toelichting|escape }}" />
  <input type="submit" name="pbDoor" id="pbDoor" value="Doorkoppelen naar actiereg"
  {% if data.actie or data.gereed %}disabled="disabled"{% endif %}/>{% endif %}
+ {% if not data.actie and not data.gereed %} nr.: <input type="text" name="tActie" />{% endif %}
   </form>
  </div><div class="clear">&nbsp;</div>
   <hr/>

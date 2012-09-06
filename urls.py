@@ -29,6 +29,8 @@ urlpatterns = patterns('',
         'doctool.views.detail'), # nieuw document  bij project
     (r'^(?P<proj>\d+)/(?P<soort>\w+)/(?P<id>\d+)/$',
         'doctool.views.detail'), # document  bij project
+    (r'^(?P<proj>\d+)/(?P<soort>\w+)/(?P<id>\d+)/msg/(?P<meld>.+)$',
+        'doctool.views.detail'), # document  bij project
     (r'^(?P<proj>\d+)/(?P<soort>\w+)/(?P<id>\d+)/(?P<edit>edit)/$',
         'doctool.views.detail'), # document  bij project  opengezet voor wijzigen
     (r'^(?P<proj>\d+)/(?P<soort>\w+)/(?P<id>\d+)/meld/$',
@@ -39,7 +41,7 @@ urlpatterns = patterns('',
     (r'^(?P<proj>\d+)/(?P<soort>\w+)/(?P<id>\d+)/koppel/$',
         'doctool.views.koppel'), # document  bij project  opengezet voor wijzigen
     (r'^(?P<proj>\d+)/(?P<soort>\w+)/(?P<id>\d+)/koppel/'
-        '(?P<arid>\d+)/(?P<arnum>\S+)/$',
+        '(?P<arid>\d+)/(?P<arnum>.+)/$',
         'doctool.views.koppel'), # document  bij project  opengezet voor wijzigen
     (r'^(?P<proj>\d+)/(?P<soort>\w+)/mut/$',
         'doctool.views.edit_item'), # nieuw document  bij project (wijzigingen doorvoeren)

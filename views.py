@@ -491,11 +491,13 @@ def koppel(request, proj='',soort='',id='', arid='0', arnum=''):
     ## return HttpResponse("""\
     ## vervolg: {0}<br/>
     ## adres: {1}""".format(vervolg,vervolg.format(actie.id,actie.nummer)))
+    doc = '/%s/%s/%s/' % (proj,soort,id)
+    if arid == '0':
+        return HttpResponseRedirect(doc + 'msg/{}'.format(arnum))
     o = my.rectypes[soort].objects.get(pk=id)
     o.actie = int(arid) # int(data.get("id","0"))
     o.actienummer = arnum # data.get("actie","")
     o.save()
-    doc = '/%s/%s/%s/' % (proj,soort,id)
     return HttpResponseRedirect(doc)
 
 def meld(request,proj='',soort='',id='', arstat='', arfrom = '', arid=''):
