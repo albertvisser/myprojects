@@ -10,8 +10,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.cache import cache_control
 from django.template import RequestContext
 from django.db import models
-import doctool.models as my
-from doctool.settings import MEDIA_ROOT, SITES
+import myprojects.models as my
+from myprojects.settings import MEDIA_ROOT, SITES
 leftw_dict = {
     "project": 140,
     "userspec": 230,
@@ -347,7 +347,11 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                             }
                         result, morethan1 = get_relation(o, soort, srt)
                         for item in result.all():
-                            y['links'].append(RELTXT.format(proj, srt, item.id, item))
+                            y['links'].append(
+                                RELTXT.format(proj, srt, item.id, item) + " " +
+                                BTNTXT.format(proj, soort, id, "unrel/" + srt,
+                                    item.id, "verwijder relatie")
+                                )
                         fkeys_from.append(y)
                 info_dict['fkeys_from'] = fkeys_from
                 m2ms_from = []
@@ -364,7 +368,11 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                         }
                     result, morethan1 = get_relation(o, soort, srt, 'from')
                     for item in result.all():
-                        y['links'].append(RELTXT.format(proj, srt, item.id, item))
+                        y['links'].append(
+                            RELTXT.format(proj, srt, item.id, item) + " " +
+                            BTNTXT.format(proj, soort, id, "unrel/" + srt,
+                                item.id, "verwijder relatie")
+                            )
                     m2ms_from.append(y)
                 info_dict['m2ms_from'] = m2ms_from
             if not edit:
@@ -500,7 +508,7 @@ def koppel(request, proj='',soort='',id='', arid='0', arnum=''):
     o.save()
     return HttpResponseRedirect(doc)
 
-def meld(request,proj='',soort='',id='', arstat='', arfrom = '', arid=''):
+def meld(request, proj='',soort='',id='', arstat='', arfrom = '', arid=''):
     """terugkoppeling vanuit probreg:
     de actie is gearchiveerd of herleefd"""
     data = request.GET
@@ -511,7 +519,7 @@ def meld(request,proj='',soort='',id='', arstat='', arfrom = '', arid=''):
     doc = '/'.join((SITES["probreg"], arfrom, arid, 'mld', meld))
     return HttpResponseRedirect(doc)
 
-def edit_item(request,proj='',soort='',id='',srt='',verw=''):
+def edit_item(request, proj='',soort='',id='',srt='',verw=''):
     ## raise ValueError('Testing...')
     # proj = projectnummer, soort = onderdeelnaam, id = item nummer of niks voor nieuw
     if proj:
@@ -544,7 +552,7 @@ def edit_item(request,proj='',soort='',id='',srt='',verw=''):
         # voor de zekerheid
         if soort == "dummy": # in ('funcdoc','userdoc','layout'):
             # aparte afhandeling voor documenten die een link kunnen bevatten
-            model = models.get_model('doctool',soort.capitalize())
+            model = models.get_model('myprojects',soort.capitalize())
             ## manipulator = my.rectypes[soort].AddManipulator()
             ## new_data = request.POST.copy()
             ## new_data.update({'project': proj})
@@ -604,7 +612,7 @@ def edit_item(request,proj='',soort='',id='',srt='',verw=''):
         doc = '/%s/%s/%s/' % (proj,soort,id) if proj else '/%s/%s/' % (soort,id)
     return HttpResponseRedirect(doc)
 
-def maak_rel(request,proj='',srt='',id='',soort='',verw=''):
+def maak_rel(request, proj='',srt='',id='',soort='',verw=''):
     if srt in my.rectypes:
         o = my.rectypes[srt].objects.get(pk=id)
     if soort in my.rectypes:
@@ -618,9 +626,22 @@ def maak_rel(request,proj='',srt='',id='',soort='',verw=''):
     doc = '/{0}/{1}/{2}/'.format(proj,srt,id) if proj else '/{0}/{1}/'.format(srt,id)
     return HttpResponseRedirect(doc)
 
+def unrelate(request, proj='',srt='',id='',soort='',verw=''):
+    if srt in my.rectypes:
+        o = my.rectypes[srt].objects.get(pk=id)
+    if soort in my.rectypes:
+        r = my.rectypes[soort].objects.get(pk=verw)
+    rel, multiple = get_relation(o,srt,soort)
+    if multiple:
+        rel.remove(r)
+    else:
+        rel.clear()
+    o.save()
+    doc = '/{0}/{1}/{2}/'.format(proj,srt,id) if proj else '/{0}/{1}/'.format(srt,id)
+    return HttpResponseRedirect(doc)
 
 # let op: theoretisch kan dit bij edit_item() in:
-def edit_sub(request,proj='',srt1='',id1='',srt2='',id2=''):
+def edit_sub(request, proj='',srt1='',id1='',srt2='',id2=''):
     try: # do we have form data?
         data = request.POST
     except:

@@ -1,4 +1,4 @@
-import doctool.models as my
+import myprojects.models as my
 from django.contrib import admin
 
 ## class ProjectAdmin(admin.ModelAdmin):
