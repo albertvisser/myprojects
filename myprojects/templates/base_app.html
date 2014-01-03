@@ -20,7 +20,7 @@ function submit_form(x) {
 // getElementById(x).style.visiblity= visible|hidden
 // getElementById(x).style.display= none|inline
 </script>{%endblock%}
-{%block branding%}{%endblock%}
+{%block branding%}<h1><b>&nbsp;{{branding|escape}}{% trans title %}</b></h1>{%endblock%}
 {%block breadcrumbs%}<a name="top"></a>&nbsp;&nbsp;&nbsp;
 <a href="/" title="startpagina doctool">DocTool start</a>
 {%if proj%} &rsaquo; <a href="/{{proj}}/" title="project homepage">project</a> {%endif%}
@@ -30,7 +30,7 @@ function submit_form(x) {
 {%if sect%} &rsaquo; <a href="/{{proj}}/{{sect}}/" title="project onderdeel">item</a>{%endif%}
 <br/>
 {%endblock%}
-{% block content_title %}{% if title %}<h3>{{ title|escape }}</h3>{% endif %}{% endblock %}
+{% block content_title %}<!-- {% if title %}<h3>{{ title|escape }}</h3>{% endif %} -->{% endblock %}
 {%block content %}
 {% if not start %}
 <form id="selector" method="post">{% csrf_token %}

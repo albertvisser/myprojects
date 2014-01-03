@@ -1,0 +1,9 @@
+syntax: glob
+
+*.db
+*.json
+*.pyc
+*.bak
+*~
+myprojects/files/*
+myprojects/oud/*
