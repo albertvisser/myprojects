@@ -154,7 +154,7 @@ def index(request):
     ## return HttpResponse(os.path.splitext(my.__file__)[0] + '.py')
     ## raise ValueError('Testing...')
     return render_to_response('start.html',{
-        'title': 'Welcome to DocTool!',
+        'title': 'Welcome to MyProjects (formerly known as DocTool)!',
         'meld': meld,
         'start': True,
         'projecten': my.Project.objects.all().order_by('naam'),
@@ -200,7 +200,7 @@ def lijst(request, proj='', soort='', id='',  edit='', srt=''):
         info_dict['start'] = 'x' # forceert afwezigheid menu
         info_dict['ref'] = (srt,srtnm_mv,id)
         info_dict["soort"] = soort # '/'.join((srt,id,soort))
-    info_dict['title'] = 'Doctool! ' + title
+    info_dict['title'] = title # 'Doctool! ' + title
     if lijst.count() == 0:
         meld = soortnm_mv.join(("Geen "," aanwezig"))
         if proj:
@@ -415,9 +415,9 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
         else:
             info_dict['view'] = 'edit'
         try:
-            info_dict['title'] = ": ".join((naam_ev, o.naam))
+            info_dict['title'] = " ".join((naam_ev.capitalize(), o.naam))
         except AttributeError:
-            info_dict['title'] = ": ".join((naam_ev, o.nummer))
+            info_dict['title'] = " ".join((naam_ev, o.nummer))
         info_dict['data'] = o
     if soort == 'project':
         if not edit:
