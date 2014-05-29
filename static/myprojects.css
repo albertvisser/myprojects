@@ -1,0 +1,85 @@
+body (background-color: lightblue;)
+div.clear,
+span.clear {
+	background: none;
+	border: 0;
+	clear: both;
+	display: block;
+	float: none;
+	font-size: 0;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	visibility: hidden;
+	width: 0;
+	height: 0;
+}
+.left_view,
+.left_edit,
+.left_spacer,
+.kw3 {
+	display: inline;
+	float: left;
+	margin-bottom: 5px;
+}
+.left_view,
+.left_edit {
+    width: {{leftw}};
+    text-align: right;
+    font-weight: bold;
+    font-size: smaller;
+    vertical-align: middle;
+    padding-top: 2px;
+	color:#c00;
+/*    background-color: #F0F000;
+    border: 1px solid; */
+}
+.left_view {
+	margin-top: 5px;
+}
+.left_edit {
+	margin-top: 10px;
+}
+.left_spacer {
+    width: {{leftw}};
+}
+.right {
+    width: {{rightw}};
+	margin-left: 5px;
+	margin-top: 5px;
+    padding-left: {{leftw}};
+/*    border: 1px solid; */
+}
+.right_spacer {
+    width: {{rightw}};
+}
+/* .right:first-line{
+	padding-left: 0;
+} */
+/* .multi5 {
+    height: 300px; overflow: auto;
+}
+.multi {
+    height: 60px; overflow: auto;
+} */
+.full {display: block}
+.half {width: 50%; float:left; }
+.kw1 {width: 25%; float:left; }
+.kw3 {width: 75%; float:left; }
+.aleft {text-align: left}
+.acent {text-align: center}
+.aright {text-align: right}
+.head {
+	font-size: large ;
+    font-weight: bold;
+	font-variant: small-caps;
+    text-decoration: underline;
+	/* color:#c00; */
+/*	background-color:#ddd; */
+}
+.headr, .bold {
+	font-weight:bold;
+	color:#c00;}
+.underline {
+    text-decoration: underline;
+}
