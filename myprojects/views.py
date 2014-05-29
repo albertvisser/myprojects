@@ -290,40 +290,50 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                 opts = my.rectypes[soort]._meta
                 fkeys_to = []
                 for fld in opts.fields:
-                    if fld.get_internal_type() == 'ForeignKey' \
-                            and fld.name != "project":
+                    if fld.name == "project":
+                        continue
+                    if fld.get_internal_type() == 'ForeignKey':
                         srt = corr_naam(fld.rel.to._meta.module_name)
+                        ## button_lijst.append(srt)
                         rel = {
                             'text': ' '.join((my.rectypes[soort].to_titles[srt],
                                 my.rectypes[srt]._meta.verbose_name)),
-                            'btn': '',
-                            ## 'btn': BTNTXT.format(proj, srt, id, "rel", soort,
-                                ## "leg relatie"),
+                            ## 'btn': '',
+                            'btn': BTNTXT.format(proj, srt, id, "rel", soort,
+                                "leg relatie"),
                             'links': []
                             }
-                        result, morethan1 = get_relation(o, soort,  srt)
+                        result, morethan1 = get_relation(o, soort, srt)
                         if result:
-                            rel['links'].append(RELTXT.format(proj, srt, result.id,
-                                result))
-                            fkeys_to.append(rel)
+                            rel['links'].append(
+                                RELTXT.format(proj, srt, result.id, result) + " " +
+                                BTNTXT.format(proj, soort, id, "unrel/" + srt,
+                                    item.id, "verwijder relatie")
+                                )
+                        fkeys_to.append(rel)
                 info_dict['fkeys_to'] = fkeys_to
                 m2ms_to = []
                 for x in opts.many_to_many:
                     srt = corr_naam(x.rel.to._meta.module_name)
+                    ## button_lijst.append(srt)
                     y = {
                         'text': ' '.join((my.rectypes[soort].to_titles[srt],
                             my.rectypes[srt]._meta.verbose_name)),
-                        'btn': '',
-                        ## 'btn': BTNTXT.format(proj, srt, id, "rel", soort,
-                            ## "leg relatie"),
+                        ## 'btn': '',
+                        'btn': BTNTXT.format(proj, srt, id, "rel", soort,
+                            "leg relatie"),
                         'links': []
                         }
                     result, morethan1 = get_relation(o, soort, srt, 'to')
                     for item in result.all():
-                        y['links'].append(RELTXT.format(proj, srt, item.id, item))
+                        y['links'].append(
+                            RELTXT.format(proj, srt, item.id, item) + " " +
+                            BTNTXT.format(proj, soort, id, "unrel/" + srt,
+                                item.id, "verwijder relatie")
+                            )
                     m2ms_to.append(y)
                 info_dict['m2ms_to'] = m2ms_to
-                button_lijst = [] # of button_lijst = my.rectypes[soort].from_titles.keys()
+                ## button_lijst = [] # of button_lijst = my.rectypes[soort].from_titles.keys()
                 fkeys_from = []
                 for x in opts.get_all_related_objects():
                     srt = corr_naam(x.model._meta.module_name)
