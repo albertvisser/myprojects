@@ -41,24 +41,24 @@
     </select>
     <select id="selFunc" name="funcsect" {%if sctn != 'func'%}style="display: none"{%endif%} onchange="submit_form('selFunc')">
         <option value="0">-- kies een onderdeel --</option>
-        <option value="/{{proj}}/funcdoc/"{%if soort == 'funcdoc'%}selected="selected"{%endif%}>div. documenten</option>
-        <option value="/{{proj}}/gebrtaak/"{%if soort == 'gebrtaak'%}selected="selected"{%endif%}>gebruikerstaken</option>
-        <option value="/{{proj}}/funcproc/"{%if soort == 'funcproc'%}selected="selected"{%endif%}>processen</option>
-        <option value="/{{proj}}/entiteit/"{%if soort == 'entiteit'%}selected="selected"{%endif%}>gegevensmodel</option>
+        <option value="/{{proj}}/funcdoc/" {%if soort == 'funcdoc'%}selected="selected"{%endif%}>div. documenten</option>
+        <option value="/{{proj}}/gebrtaak/" {%if soort == 'gebrtaak'%}selected="selected"{%endif%}>gebruikerstaken</option>
+        <option value="/{{proj}}/funcproc/" {%if soort == 'funcproc'%}selected="selected"{%endif%}>processen</option>
+        <option value="/{{proj}}/entiteit/" {%if soort == 'entiteit'%}selected="selected"{%endif%}>gegevensmodel</option>
     </select>
     <select id="selTech" name="techsect" {%if sctn != 'tech'%}style="display: none"{%endif%} onchange="submit_form('selTech')">
         <option value="0">-- kies een onderdeel --</option>
-        <option value="/{{proj}}/techtaak/"{%if soort == 'techtaak'%}selected="selected"{%endif%}>taken/procedures/transacties</option>
-        <option value="/{{proj}}/techproc/"{%if soort == 'techproc'%}selected="selected"{%endif%}>processen</option>
-        <option value="/{{proj}}/dataitem/"{%if soort == 'dataitem'%}selected="selected"{%endif%}>data-items</option>
-        <option value="/{{proj}}/layout/"{%if soort == 'layout'%}selected="selected"{%endif%}>layouts</option>
-        <option value="/{{proj}}/programma/"{%if soort == 'programma'%}selected="selected"{%endif%}>programma's</option>
+        <option value="/{{proj}}/techtaak/" {%if soort == 'techtaak'%}selected="selected"{%endif%}>taken/procedures/transacties</option>
+        <option value="/{{proj}}/techproc/" {%if soort == 'techproc'%}selected="selected"{%endif%}>processen</option>
+        <option value="/{{proj}}/dataitem/" {%if soort == 'dataitem'%}selected="selected"{%endif%}>data-items</option>
+        <option value="/{{proj}}/layout/" {%if soort == 'layout'%}selected="selected"{%endif%}>layouts</option>
+        <option value="/{{proj}}/programma/" {%if soort == 'programma'%}selected="selected"{%endif%}>programma's</option>
     </select>
     <select id="selTest" name="testsect" {%if sctn != 'test'%}style="display: none"{%endif%} onchange="submit_form('selTest')">
         <option value="0">-- kies een onderdeel --</option>
-        <option value="/{{proj}}/testplan/"{%if soort == 'testplan'%}selected="selected"{%endif%}>testplannen</option>
-        <option value="/{{proj}}/testcase/"{%if soort == 'testcase'%}selected="selected"{%endif%}>testgevallen</option>
-        <option value="/{{proj}}/bevinding/"{%if soort == 'bevinding'%}selected="selected"{%endif%}>testbevindingen</option>
+        <option value="/{{proj}}/testplan/" {%if soort == 'testplan'%}selected="selected"{%endif%}>testplannen</option>
+        <option value="/{{proj}}/testcase/" {%if soort == 'testcase'%}selected="selected"{%endif%}>testgevallen</option>
+        <option value="/{{proj}}/bevinding/" {%if soort == 'bevinding'%}selected="selected"{%endif%}>testbevindingen</option>
     </select>
 </div>
 <div id="bar2">
