@@ -64,7 +64,8 @@ class Userwijz(models.Model):
     }
     project = models.ForeignKey(Project,related_name="rfcs")
     nummer = models.CharField(max_length=10)
-    datum_in = models.DateTimeField(default = datetime.datetime.now, editable = False) # auto_now_add=True)
+    datum_in = models.DateTimeField(default = datetime.datetime.now,
+        editable = False) # auto_now_add=True)
     gereed = models.BooleanField()
     datum_gereed = models.DateTimeField(null=True)
     wens = models.CharField(max_length=80)
@@ -166,12 +167,14 @@ class Funcproc(models.Model):
     spec = models.ForeignKey(Userspec,related_name="fprocs",null=True)
     rfc = models.ManyToManyField(Userwijz,related_name="fprocs",null=True)
     gt = models.ManyToManyField(Gebrtaak,related_name="fprocs",null=True)
-    bom = models.ManyToManyField('self',symmetrical=False,related_name="used_by",null=True)
+    bom = models.ManyToManyField('self',symmetrical=False,related_name="used_by",
+        null=True)
     def __unicode__(self):
         return ": ".join((self.naam,self.doel))
     class Meta:
         verbose_name = "functioneel proces"
-        verbose_name_plural = "le".join((verbose_name[:9],verbose_name[11:])) + "sen"
+        verbose_name_plural = "le".join((verbose_name[:9],
+            verbose_name[11:])) + "sen"
 
 class Entiteit(models.Model):
     section = 'func'
@@ -258,7 +261,8 @@ class Techproc(models.Model):
     omgeving = models.TextField()
     fp = models.ManyToManyField(Funcproc,related_name="tproc",null=True)
     tt = models.ManyToManyField(Techtask,related_name="tproc",null=True)
-    bom = models.ManyToManyField('self',symmetrical=False,related_name="used_by",null=True)
+    bom = models.ManyToManyField('self',symmetrical=False,related_name="used_by",
+        null=True)
     def __unicode__(self):
         return ": ".join((self.naam,self.doel))
     class Meta:
