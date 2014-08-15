@@ -10,7 +10,7 @@ class Project(models.Model):
     actiereg = models.CharField(max_length=40)
     aruser = models.CharField(max_length=40)
     status = models.TextField()
-    def __unicode__(self):
+    def __str__(self):
         return ": ".join((self.naam,self.kort))
     class Meta:
         verbose_name = "project"
@@ -33,7 +33,7 @@ class Userspec(models.Model):
     baten = models.CharField(max_length=80)
     kosten = models.CharField(max_length=80)
     opmerkingen = models.TextField()
-    def __unicode__(self):
+    def __str__(self):
         return ": ".join((self.naam,self.kort))
     class Meta:
         verbose_name = "gebruikersspecificatie"
@@ -47,7 +47,7 @@ class Userdoc(models.Model):
     oms = models.CharField(max_length=80)
     link = models.FileField(upload_to='myprojects/userdoc')
     tekst = models.TextField()
-    def __unicode__(self):
+    def __str__(self):
         return ": ".join((self.naam,self.oms))
     class Meta:
         verbose_name = "naslagdocument"
@@ -73,7 +73,7 @@ class Userwijz(models.Model):
     opmerkingen = models.TextField()
     actie = models.IntegerField(null=True)
     actienummer = models.CharField(max_length=10)
-    def __unicode__(self):
+    def __str__(self):
         oms = " [afgesloten]" if self.gereed else ""
         return ": ".join((self.nummer,self.wens + oms))
     class Meta:
@@ -94,7 +94,7 @@ class Userprob(models.Model):
     oplossing = models.TextField()
     actie = models.IntegerField(null=True)
     actienummer = models.CharField(max_length=10)
-    def __unicode__(self):
+    def __str__(self):
         oms = " [afgesloten]" if self.gereed else ""
         return "{0}: {1} {2}".format(self.nummer,self.kort,oms)
     class Meta:
@@ -110,7 +110,7 @@ class Funcdoc(models.Model):
     oms = models.CharField(max_length=80)
     link = models.FileField(upload_to='myprojects/funcdoc')
     tekst = models.TextField()
-    def __unicode__(self):
+    def __str__(self):
         return ": ".join((self.naam,self.oms))
     class Meta:
         verbose_name = "functioneel document"
@@ -138,7 +138,7 @@ class Gebrtaak(models.Model):
     beschrijving = models.TextField()
     spec = models.ForeignKey(Userspec,related_name="gtaken",null=True)
     rfc = models.ManyToManyField(Userwijz,related_name="gtaken",null=True)
-    def __unicode__(self):
+    def __str__(self):
         return ": ".join((self.naam,self.doel))
     class Meta:
         verbose_name = "gebruikerstaak"
@@ -169,7 +169,7 @@ class Funcproc(models.Model):
     gt = models.ManyToManyField(Gebrtaak,related_name="fprocs",null=True)
     bom = models.ManyToManyField('self',symmetrical=False,related_name="used_by",
         null=True)
-    def __unicode__(self):
+    def __str__(self):
         return ": ".join((self.naam,self.doel))
     class Meta:
         verbose_name = "functioneel proces"
@@ -193,7 +193,7 @@ class Entiteit(models.Model):
     levensloop = models.TextField()
     rfc = models.ManyToManyField(Userwijz,related_name="fdata",null=True)
     fp = models.ManyToManyField(Funcproc,related_name="fdata",null=True)
-    def __unicode__(self):
+    def __str__(self):
         return ": ".join((self.naam,self.kort))
     class Meta:
         verbose_name_plural = "entiteiten"
@@ -213,7 +213,7 @@ class Attribuut(models.Model):
     bereik = models.TextField()
     primarykey = models.PositiveSmallIntegerField()
     relatie = models.ForeignKey(Entiteit,related_name="relatie",null=True)
-    def __unicode__(self):
+    def __str__(self):
         return self.naam
     class Meta:
         verbose_name_plural = "attributen"
@@ -233,7 +233,7 @@ class Techtask(models.Model):
     periode = models.TextField()
     verloop = models.TextField()
     gt = models.ForeignKey(Gebrtaak,related_name="ttask",null=True)
-    def __unicode__(self):
+    def __str__(self):
         return ": ".join((self.naam,self.kort))
     class Meta:
         verbose_name = "systeemtaak"
@@ -263,7 +263,7 @@ class Techproc(models.Model):
     tt = models.ManyToManyField(Techtask,related_name="tproc",null=True)
     bom = models.ManyToManyField('self',symmetrical=False,related_name="used_by",
         null=True)
-    def __unicode__(self):
+    def __str__(self):
         return ": ".join((self.naam,self.doel))
     class Meta:
         verbose_name = "technisch proces"
@@ -282,7 +282,7 @@ class Dataitem(models.Model):
     levensloop = models.TextField()
     ent = models.ManyToManyField(Entiteit,related_name="tdata",null=True)
     tp = models.ManyToManyField(Techproc,related_name="tdata",null=True)
-    def __unicode__(self):
+    def __str__(self):
         return ": ".join((self.naam,self.functie))
     class Meta:
         verbose_name = "data-item"
@@ -296,7 +296,7 @@ class Dataelement(models.Model):
     soort = models.CharField(max_length=40)
     sleutel = models.PositiveSmallIntegerField(verbose_name="volgorde in sleutel")
     relatie = models.ForeignKey(Dataitem,related_name="relatie",null=True)
-    def __unicode__(self):
+    def __str__(self):
         return ": ".join((self.naam,self.omschrijving))
     class Meta:
         verbose_name = "data-element"
@@ -317,7 +317,7 @@ class Layout(models.Model):
     link = models.FileField(upload_to='myprojects/layout')
     gt = models.ManyToManyField(Gebrtaak,related_name="layout",null=True)
     tp = models.ManyToManyField(Techproc,related_name="layout",null=True)
-    def __unicode__(self):
+    def __str__(self):
         return ": ".join((self.naam,self.kort))
 
 class Procproc(models.Model):
@@ -336,7 +336,7 @@ class Procproc(models.Model):
     hoetetesten = models.TextField()
     testgevallen = models.TextField()
     tp = models.ManyToManyField(Techproc,related_name="pproc",null=True)
-    def __unicode__(self):
+    def __str__(self):
         return ": ".join((self.naam,self.doel))
     class Meta:
         verbose_name = "programmabeschrijving"
@@ -360,7 +360,7 @@ class Testplan(models.Model):
     gt = models.ManyToManyField(Gebrtaak,related_name="tplan",null=True)
     fp = models.ManyToManyField(Funcproc,related_name="tplan",null=True)
     ent = models.ManyToManyField(Entiteit,related_name="tplan",null=True)
-    def __unicode__(self):
+    def __str__(self):
         return ": ".join((self.naam,self.oms))
     class Meta:
         verbose_name_plural = "testplannen"
@@ -376,7 +376,7 @@ class Testcase(models.Model):
     oms = models.CharField(max_length=80)
     tekst = models.TextField()
     tplan = models.ManyToManyField(Testplan,related_name="tcase",null=True)
-    def __unicode__(self):
+    def __str__(self):
         return ": ".join((self.naam,self.oms))
     class Meta:
         verbose_name = "testgeval"
@@ -400,7 +400,7 @@ class Bevinding(models.Model):
     actie = models.IntegerField(null=True)
     actienummer = models.CharField(max_length=10)
     tplan = models.ManyToManyField(Testplan,related_name="tbev",null=True)
-    def __unicode__(self):
+    def __str__(self):
         oms = " [afgehandeld]" if self.gereed else ""
         return ": ".join((self.nummer,self.kort + oms))
     class Meta:

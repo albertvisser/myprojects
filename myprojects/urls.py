@@ -1,4 +1,4 @@
-from django.conf.urls.defaults import *
+from django.conf.urls import *
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -9,8 +9,6 @@ urlpatterns = patterns('',
     # (r'^magiokis/', include('magiokis.foo.urls')),
     (r'^$',
         'myprojects.views.index'), # start
-    (r'^proj/$',
-        'myprojects.views.detail'), # start
     (r'^(?P<proj>proj)/(?P<edit>new)/$',
         'myprojects.views.detail'), # nieuw project
     (r'^(?P<proj>\d+)/$',

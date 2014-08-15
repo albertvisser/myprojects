@@ -178,7 +178,7 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
     ## except: # KeyError?
         ## pass
     info_dict = {'title': '', 'start': '', 'prev': '', 'notnw': '', 'view': '',
-        'next': '', 'proj': proj, 'sect': '', 'meld': meld,
+        'next': '', 'proj': proj if proj != 'proj' else '', 'sect': '', 'meld': meld,
         'projecten': my.Project.objects.all().order_by('naam'),
         }
     if edit:      # form/table styles/elements for editing  (incl. update button url)
@@ -205,13 +205,14 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
             except ObjectDoesNotExist:
                 meld = proj.join(('project ',' bestaat niet'))
                 proj = ''
-        if edit == 'new':
-            info_dict['title'] = 'Doctool! | Nieuw project '
-        else:
-            info_dict['title'] = 'Doctool! | Project ' + o.naam
-            info_dict['data'] = o
-        info_dict["start"] = ''
-        soort = 'project'
+        if not meld:
+            if edit == 'new':
+                info_dict['title'] = 'Doctool! | Nieuw project '
+            else:
+                info_dict['title'] = 'Doctool! | Project ' + o.naam
+                info_dict['data'] = o
+            info_dict["start"] = ''
+            soort = 'project'
     else:         # other: read object(s), selector, menu
         owner_proj = my.Project.objects.get(pk=proj)
         if id:    # existing item
