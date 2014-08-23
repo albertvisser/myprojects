@@ -45,7 +45,7 @@ class Userdoc(models.Model):
     project = models.ForeignKey(Project,related_name="docs")
     naam = models.CharField(max_length=40)
     oms = models.CharField(max_length=80)
-    link = models.FileField(upload_to='myprojects/userdoc')
+    link = models.FileField(upload_to='userdoc')
     tekst = models.TextField()
     def __str__(self):
         return ": ".join((self.naam,self.oms))
@@ -108,7 +108,7 @@ class Funcdoc(models.Model):
     project = models.ForeignKey(Project,related_name="fdocs")
     naam = models.CharField(max_length=40)
     oms = models.CharField(max_length=80)
-    link = models.FileField(upload_to='myprojects/funcdoc')
+    link = models.FileField(upload_to='funcdoc')
     tekst = models.TextField()
     def __str__(self):
         return ": ".join((self.naam,self.oms))
@@ -314,7 +314,7 @@ class Layout(models.Model):
     naam = models.CharField(max_length=40)
     kort = models.CharField(max_length=80)
     data = models.TextField()
-    link = models.FileField(upload_to='myprojects/layout')
+    link = models.FileField(upload_to='layout')
     gt = models.ManyToManyField(Gebrtaak,related_name="layout",null=True)
     tp = models.ManyToManyField(Techproc,related_name="layout",null=True)
     def __str__(self):

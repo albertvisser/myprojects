@@ -536,15 +536,13 @@ def edit_item(request, proj='',soort='',id='',srt='',verw=''):
                 elif x == 'link':
                     if 'link_file' in request.FILES:
                         uploaded = request.FILES['link_file']
-                        ## pad = [y.upload_to
-                            ## for y in my.rectypes[soort]._meta.fields if y.name == 'link'][0]
-                        ## save_file = "/".join((MEDIA_ROOT,pad,uploaded.name))
-                        save_file = "/".join((MEDIA_ROOT,uploaded.name))
-                        destination = open(save_file, 'wb+')
-                        for chunk in uploaded.chunks():
-                            destination.write(chunk)
-                        destination.close()
-                        o.__dict__[x] = uploaded.name
+                        pad = [y.upload_to for y in my.rectypes[soort]._meta.fields
+                            if y.name == 'link'][0]
+                        save_name = "/".join((pad,uploaded.name))
+                        with open(MEDIA_ROOT + save_name, 'wb+') as destination:
+                            for chunk in uploaded.chunks():
+                                destination.write(chunk)
+                        o.__dict__[x] = save_name
                 else:
                     if x != 'datum_in':
                         try:
