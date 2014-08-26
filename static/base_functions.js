@@ -13,8 +13,10 @@ function subsel() {
 }
 function submit_form(x) {
     var s = document.getElementById(x).value;
-    document.getElementById(x).form.action = s;
-    document.getElementById(x).form.submit();
+    if (s != 0) {
+        document.getElementById(x).form.action = s;
+        document.getElementById(x).form.submit();
+    }
 }
 // getElementById(x).style.visiblity= visible|hidden
 // getElementById(x).style.display= none|inline
