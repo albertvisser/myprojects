@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-26 10:45+0200\n"
+"POT-Creation-Date: 2014-08-26 17:34+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,6 +15,235 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: models.py:17
+msgid "project"
+msgstr "project"
+
+#: models.py:18
+msgid "projecten"
+msgstr "projects"
+
+#: models.py:25 models.py:26 models.py:158 models.py:253 models.py:357
+#: models.py:358
+msgid "Betrokken"
+msgstr "Defined"
+
+#: models.py:40
+msgid "gebruikersspecificatie"
+msgstr "user specification"
+
+#: models.py:41
+msgid "gebruikersspecificaties"
+msgstr "user specifications"
+
+#: models.py:55
+msgid "naslagdocument"
+msgstr "reference document"
+
+#: models.py:56
+msgid "naslagdocumenten"
+msgstr "reference documents"
+
+#: models.py:63 models.py:64 models.py:65
+msgid "Raakt"
+msgstr "Concerns"
+
+#: models.py:79 models.py:100
+msgid " [afgesloten]"
+msgstr " [resolved]"
+
+#: models.py:82
+msgid "aanvraag wijziging"
+msgstr "change request"
+
+#: models.py:83 templates/base_app.html:39
+msgid "aanvraag wijzigingen"
+msgstr "change requests"
+
+#: models.py:103
+msgid "incident/probleem"
+msgstr "incident/problem"
+
+#: models.py:104 templates/base_app.html:40
+msgid "incidenten/problemen"
+msgstr "incidents/problems"
+
+#: models.py:118
+msgid "functioneel document"
+msgstr "functional document"
+
+#: models.py:119
+msgid "functionele documenten"
+msgstr "functional documents"
+
+#: models.py:124 models.py:152 models.py:376 models.py:393
+msgid "Hoort bij"
+msgstr "Supports"
+
+#: models.py:125 models.py:153 models.py:183
+msgid "Is geraakt door"
+msgstr "Is touched by"
+
+#: models.py:128 models.py:230
+msgid "Wordt bediend door"
+msgstr "Is serviced by"
+
+#: models.py:129
+msgid "Gerelateerde"
+msgstr "Related"
+
+#: models.py:130
+msgid "Bijbehorende"
+msgstr "Servicing"
+
+#: models.py:131 models.py:161 models.py:188 templates/funcdoc.html:33
+#: templates/layout.html:32 templates/userdoc.html:33
+msgid "Zie"
+msgstr "See"
+
+#: models.py:146
+msgid "gebruikerstaak"
+msgstr "user tasks"
+
+#: models.py:147 templates/base_app.html:45
+msgid "gebruikerstaken"
+msgstr "user tasks"
+
+#: models.py:154 models.py:227 models.py:249
+msgid "Bedient"
+msgstr "Services"
+
+#: models.py:155 models.py:184 models.py:248 models.py:250 models.py:279
+#: models.py:330
+msgid "Wordt gebruikt door"
+msgstr "Is used by"
+
+#: models.py:159 models.py:160 models.py:254 models.py:255 models.py:256
+msgid "Gebruikt"
+msgstr "Uses"
+
+#: models.py:177
+msgid "functioneel proces"
+msgstr "functional process"
+
+#: models.py:178
+msgid "functionele processen"
+msgstr "functional processes"
+
+#: models.py:187
+msgid "Wordt gerealiseerd door"
+msgstr "Is realized by"
+
+#: models.py:200
+msgid "entiteit"
+msgstr "entity"
+
+#: models.py:201
+msgid "entiteiten"
+msgstr "entities"
+
+#: models.py:205 templates/funcdoc.html:48 templates/layout.html:50
+#: templates/testcase.html:32 templates/testplan.html:32
+#: templates/userdoc.html:48
+msgid "Tekst"
+msgstr "Text"
+
+#: models.py:206
+msgid "Numeriek (geheel getal)"
+msgstr "Numeric (integer)"
+
+#: models.py:207
+msgid "Bedrag (numeriek, cijfers achter de komma)"
+msgstr "Amount (numeric with decimals)"
+
+#: models.py:208
+msgid "Datum"
+msgstr "Date"
+
+#: models.py:221
+msgid "attribuut"
+msgstr "attribute"
+
+#: models.py:222
+msgid "attributen"
+msgstr "attributes"
+
+#: models.py:242
+msgid "systeemtaak"
+msgstr "system task"
+
+#: models.py:243
+msgid "systeemtaken"
+msgstr "system tasks"
+
+#: models.py:272
+msgid "technisch proces"
+msgstr "technical process"
+
+#: models.py:273
+msgid "technische processen"
+msgstr "technical processes"
+
+#: models.py:278
+msgid "Is technische vertaling van"
+msgstr "Is technical translation of"
+
+#: models.py:291
+msgid "data-item"
+msgstr "data item"
+
+#: models.py:292 templates/base_app.html:53
+msgid "data-items"
+msgstr "data items"
+
+#: models.py:306
+msgid "data-element"
+msgstr "data element"
+
+#: models.py:307
+msgid "data-elementen"
+msgstr "data elements"
+
+#: models.py:346
+msgid "programmabeschrijving"
+msgstr "program description"
+
+#: models.py:347
+msgid "programmabeschrijvingen"
+msgstr "program descriptions"
+
+#: models.py:352 models.py:353 models.py:354
+msgid "t.b.v."
+msgstr "supporting"
+
+#: models.py:370
+msgid "testplan"
+msgstr "testing plan"
+
+#: models.py:371 templates/base_app.html:59
+msgid "testplannen"
+msgstr "testing plans"
+
+#: models.py:387
+msgid "testgeval"
+msgstr "testcase"
+
+#: models.py:388 templates/base_app.html:60
+msgid "testgevallen"
+msgstr "testcases"
+
+#: models.py:409
+msgid " [afgehandeld]"
+msgstr " [closed]"
+
+#: models.py:412
+msgid "bevinding"
+msgstr "test finding"
+
+#: models.py:413
+msgid "bevindingen"
+msgstr "test findings"
 
 #: views.py:109
 msgid "(nog) geen"
@@ -70,15 +299,15 @@ msgstr "relate {} to {} \" {} \""
 
 #: views.py:176
 msgid "Geen "
-msgstr "No"
+msgstr "No "
 
 #: views.py:176
 msgid " aanwezig"
-msgstr "present"
+msgstr " present"
 
 #: views.py:178
 msgid " bij dit project"
-msgstr "with this project"
+msgstr " for this project"
 
 #: views.py:226
 msgid " bestaat niet"
@@ -102,7 +331,7 @@ msgstr "Relations to other documents"
 
 #: views.py:362
 msgid "Opvoeren "
-msgstr ""
+msgstr "Create related "
 
 #: views.py:387
 msgid "Nieuw(e) "
@@ -142,7 +371,7 @@ msgstr "project"
 
 #: templates/base_app.html:8 templates/base_app.html.py:10
 msgid "lijst_cr"
-msgstr "list"
+msgstr "list of"
 
 #: templates/base_app.html:20
 msgid "kies iets om te doen"
@@ -209,21 +438,9 @@ msgstr "wishes/demands"
 msgid "div. naslag"
 msgstr "reference documents"
 
-#: templates/base_app.html:39
-msgid "aanvraag wijzigingen"
-msgstr "change requests"
-
-#: templates/base_app.html:40
-msgid "incidenten/problemen"
-msgstr "incidents/problems"
-
 #: templates/base_app.html:44
 msgid "div. documenten"
 msgstr "misc. documents"
-
-#: templates/base_app.html:45
-msgid "gebruikerstaken"
-msgstr "user tasks"
 
 #: templates/base_app.html:46 templates/base_app.html.py:52
 msgid "processen"
@@ -237,10 +454,6 @@ msgstr "data model"
 msgid "taken/procedures/transacties"
 msgstr "system tasks/procedures/transactions"
 
-#: templates/base_app.html:53
-msgid "data-items"
-msgstr "data items"
-
 #: templates/base_app.html:54
 msgid "layouts"
 msgstr "layouts"
@@ -249,17 +462,9 @@ msgstr "layouts"
 msgid "programma's"
 msgstr "programs"
 
-#: templates/base_app.html:59
-msgid "testplannen"
-msgstr "plans"
-
-#: templates/base_app.html:60
-msgid "testgevallen"
-msgstr "cases"
-
 #: templates/base_app.html:61 templates/project.html:32
 msgid "testbevindingen"
-msgstr "findings"
+msgstr "test findings"
 
 #: templates/base_app.html:66
 msgid "Kies eventueel een ander project"
@@ -272,7 +477,6 @@ msgstr "Save all modifications"
 
 #: templates/base_app.html:84 templates/bevinding.html:50
 #: templates/userprob.html:50 templates/userwijz.html:50
-#, fuzzy
 msgid "wijzigen"
 msgstr "edit item"
 
@@ -280,7 +484,7 @@ msgstr "edit item"
 msgid "Relaties"
 msgstr "Relations"
 
-#: templates/base_app.html:99
+#: templates/base_app.html:100
 msgid "Naar het begin van de pagina"
 msgstr "Go to the top of the page"
 
@@ -308,9 +512,8 @@ msgstr "Resolved"
 
 #: templates/bevinding.html:58 templates/userprob.html:58
 #: templates/userwijz.html:58
-#, fuzzy
 msgid "Doorkoppelen naar actiereg"
-msgstr "transferred to"
+msgstr "Transfer to actiereg"
 
 #: templates/bevinding.html:67 templates/userprob.html:67
 msgid "Melding"
@@ -347,9 +550,8 @@ msgid "--kies--"
 msgstr "--select--"
 
 #: templates/dataitem.html:64
-#, fuzzy
 msgid "Relatie met"
-msgstr "Relations"
+msgstr "Relatied to"
 
 #: templates/dataitem.html:68
 msgid "Voer op"
@@ -357,7 +559,6 @@ msgstr "Add"
 
 #: templates/dataitem.html:69 templates/funcproc.html:54
 #: templates/gebrtaak.html:74 templates/techproc.html:53
-#, fuzzy
 msgid "Beschrijving"
 msgstr "Short description"
 
@@ -369,17 +570,6 @@ msgstr "Short description"
 #: templates/userspec.html:7
 msgid "Naam"
 msgstr "Name"
-
-#: templates/funcdoc.html:33 templates/layout.html:32
-#: templates/userdoc.html:33
-msgid "Zie"
-msgstr "See"
-
-#: templates/funcdoc.html:48 templates/layout.html:50
-#: templates/testcase.html:32 templates/testplan.html:32
-#: templates/userdoc.html:48
-msgid "Tekst"
-msgstr "Text"
 
 #: templates/funcproc.html:19 templates/gebrtaak.html:19
 #: templates/programma.html:18 templates/techproc.html:18
@@ -428,14 +618,12 @@ msgid "op"
 msgstr " "
 
 #: templates/lijst.html:4
-#, fuzzy
 msgid "of kies een bestaande"
-msgstr "select a section"
+msgstr "or select an existing one"
 
 #: templates/lijst.html:7
-#, fuzzy
 msgid "ga naar"
-msgstr "or go to"
+msgstr "go to"
 
 #: templates/programma.html:33
 msgid "Invoersituatie (o.a. aanroep-argumenten)"
@@ -462,9 +650,8 @@ msgid "Waarmee te testen (testgevallen)"
 msgstr "Can be tested with (testcases)"
 
 #: templates/project.html:7
-#, fuzzy
 msgid "Naam Project:"
-msgstr "with project"
+msgstr "Name of project"
 
 #: templates/project.html:18
 msgid "Korte kenschets"
@@ -483,7 +670,6 @@ msgid "wijzigingsaanvragen"
 msgstr "change requests"
 
 #: templates/project.html:42
-#, fuzzy
 msgid "Omschrijving"
 msgstr "Short description"
 
@@ -500,7 +686,6 @@ msgid "link opent in nieuw venster"
 msgstr "link opens in new window"
 
 #: templates/project.html:75
-#, fuzzy
 msgid "Actieregistratie"
 msgstr "Issue registration"
 
@@ -517,14 +702,16 @@ msgid "Selecteer een"
 msgstr "Select a"
 
 #: templates/relateren.html:7
-#, fuzzy
 msgid "relateer"
 msgstr "relate"
 
 #: templates/start.html:3
-#, fuzzy
-msgid "Start een nieuw project"
+msgid "nieuw project"
 msgstr "New project "
+
+#: templates/start.html:3
+msgid "Start een nieuw project"
+msgstr "Start a new project"
 
 #: templates/start.html:4
 msgid "of ga naar de startpagina van een bestaand project"
@@ -539,12 +726,10 @@ msgid "repository"
 msgstr ""
 
 #: templates/start.html:6
-#, fuzzy
 msgid "actieregistratie"
 msgstr "issue tracker"
 
 #: templates/start.html:9
-#, fuzzy
 msgid "ga naar project"
 msgstr "go to project"
 
@@ -595,3 +780,7 @@ msgstr "Request"
 #: templates/userwijz.html:70
 msgid "Toelichting"
 msgstr "Additional information"
+
+#, fuzzy
+#~ msgid "en"
+#~ msgstr "Request"

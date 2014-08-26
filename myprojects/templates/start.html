@@ -1,6 +1,6 @@
 {%extends "base_app.html" %}{% load i18n %}
 {% block content-data %}
-<a href="/proj/new/" title="nieuw project">{% trans 'Start een nieuw project' %} </a>,
+<a href="/proj/new/" title="{% trans 'nieuw project' %}">{% trans 'Start een nieuw project' %} </a>,
 {% trans 'of ga naar de startpagina van een bestaand project' %}:<br/><br/><hr/>
 <table>
 <tr><th>{% trans 'naam' %}</th><th>{% trans 'repository' %}</th><th>{% trans 'actieregistratie' %}</th></tr>

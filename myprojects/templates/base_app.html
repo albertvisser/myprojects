@@ -96,6 +96,7 @@
 {%for x in m2ms_from %}<p><span class="headr">{{x.text}}:</span> {{x.btn}}{%for y in x.links%} {{y}} {%endfor%}</p>{%endfor%}
 {%if buttons%}<p>{%for x in buttons%}&nbsp;{{x}}&nbsp;{%endfor%}</p>{%endif%}
 {%endif%}
-<a href="#top">{% trans 'Naar het begin van de pagina' %}</a>
+<hr/>
+<p><a href="#top">{% trans 'Naar het begin van de pagina' %}</a></p>
 {% endautoescape %}
 {%endblock%}

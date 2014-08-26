@@ -65,7 +65,7 @@ def naam_dict(name):
         sect = my.rectypes[name].section
     except AttributeError:
         sect = ''
-    return opts.verbose_name,opts.verbose_name_plural,sect
+    return str(opts.verbose_name), str(opts.verbose_name_plural), sect
 
 def getfields(name,alles=False):
     """leidt veldnaam, type en lengte af uit de definities in models.py
@@ -116,7 +116,7 @@ def get_stats_texts(all, action_type):
             hlp = _("gerealiseerd"), _('in behandeling via')
         else:
             hlp = _('opgelost'), _('doorgekoppeld naar')
-        next = _("waarvan {} {} en {} {} Actiereg".format(
+        next = str(_("waarvan {} {} en {} {} Actiereg").format(
             solved, hlp[0], working, hlp[1]))
     return first, next
 
@@ -157,19 +157,19 @@ def lijst(request, proj='', soort='', id='',  edit='', srt=''):
         else:
             lijst = lijst.order_by('naam')
         info_dict['lijst'] = lijst
-    soortnm_ev,soortnm_mv, sect = naam_dict(soort)
+    soortnm_ev, soortnm_mv, sect = naam_dict(soort)
     if srt:
-        srtnm_ev,srtnm_mv, sect = naam_dict(srt)
+        srtnm_ev, srtnm_mv, sect = naam_dict(srt)
     if proj:
         pr = my.Project.objects.get(pk=proj)
         title = _(' bij project ').join((soortnm_mv.capitalize(), pr.naam))
     else:
         title = _('Lijst ') + soortnm_mv
     if edit == 'rel':
-        title = _('{} relateren aan {} "{}"').format(soortnm_ev, srtnm_ev,
+        title = str(_('{} relateren aan {} "{}"')).format(soortnm_ev, srtnm_ev,
             my.rectypes[srt].objects.get(pk=id).naam)
         info_dict['start'] = 'x' # forceert afwezigheid menu
-        info_dict['ref'] = (srt,srtnm_mv,id)
+        info_dict['ref'] = (srt, srtnm_mv, id)
         info_dict["soort"] = soort # '/'.join((srt,id,soort))
     info_dict['title'] = title # 'Doctool! ' + title
     if lijst.count() == 0:
@@ -264,8 +264,8 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                     if fld.get_internal_type() == 'ForeignKey':
                         srt = corr_naam(fld.rel.to._meta.module_name)
                         rel = {
-                            'text': ' '.join((my.rectypes[soort].to_titles[srt],
-                                my.rectypes[srt]._meta.verbose_name)),
+                            'text': ' '.join((str(my.rectypes[soort].to_titles[srt]),
+                                str(my.rectypes[srt]._meta.verbose_name))),
                             'btn': BTNTXT.format(proj, srt, id, "rel", soort,
                                 add_text),
                             'links': []
@@ -283,8 +283,8 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                 for x in opts.many_to_many:
                     srt = corr_naam(x.rel.to._meta.module_name)
                     y = {
-                        'text': ' '.join((my.rectypes[soort].to_titles[srt],
-                            my.rectypes[srt]._meta.verbose_name)),
+                        'text': ' '.join((str(my.rectypes[soort].to_titles[srt]),
+                            str(my.rectypes[srt]._meta.verbose_name))),
                         'btn': BTNTXT.format(proj, srt, id, "rel", soort,
                             add_text),
                         'links': []
@@ -313,8 +313,8 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                     else:
                         button_lijst.append(srt)
                         y = {
-                            'text': ' '.join((my.rectypes[soort].from_titles[srt],
-                                my.rectypes[srt]._meta.verbose_name)),
+                            'text': ' '.join((str(my.rectypes[soort].from_titles[srt]),
+                                str(my.rectypes[srt]._meta.verbose_name))),
                             'btn': BTNTXT.format(proj, soort, id, "rel", srt,
                                 add_text),
                             'links': []
@@ -334,8 +334,8 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                     srt = corr_naam(x.model._meta.module_name)
                     button_lijst.append(srt)
                     y = {
-                        'text': ' '.join((my.rectypes[soort].from_titles[srt],
-                            my.rectypes[srt]._meta.verbose_name)),
+                        'text': ' '.join((str(my.rectypes[soort].from_titles[srt]),
+                            str(my.rectypes[srt]._meta.verbose_name))),
                         'btn': BTNTXT.format(proj, soort, id, "rel", srt,
                             add_text),
                         'links': []
@@ -381,7 +381,7 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                         info_dict[x] = get_new_id(owner_proj.tbev)
     info_dict['notnw'] = 'new'
     info_dict["lengte"] = lengte
-    naam_ev,naam_mv,sect = naam_dict(soort)
+    naam_ev, naam_mv, sect = naam_dict(soort)
     if edit == 'new':
         info_dict['new'] = 'nieuw'
         info_dict['title'] = _('Nieuw(e) ')  + naam_ev
