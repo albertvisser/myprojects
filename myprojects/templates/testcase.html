@@ -1,0 +1,45 @@
+{% extends "base_app.html" %}{% load i18n %}
+{% block content-top %}
+{% if edit == 'edit' %}
+<form action="{{form_addr}}" method="post" >{% csrf_token %}
+{% endif %}
+
+ <div class="left_view">{% trans 'Naam' %}:&nbsp;</div>
+ <div class="right">
+{% if edit == 'edit' %}
+ <input type="text" name="naam" id="naam" value="
+{% endif %}
+ {{ data.naam }}
+{% if edit == 'edit' %}
+ " size="{{lengte.naam}}" />
+{% endif %}
+</div><div class="clear">&nbsp;</div>
+
+ <div class="left_{{ edit }}">{% trans 'Korte omschrijving' %}:&nbsp;</div>
+ <div class="right">
+{% if edit == 'edit' %}
+ <input type="text" name="oms" id="oms" value="
+{% endif %}
+ {{ data.oms }}
+{% if edit == 'edit' %}
+ " size="{{lengte.oms}}" />
+{% endif %}
+</div><div class="clear">&nbsp;</div>
+
+{% endblock %}
+{% block content-bottom %}
+
+ <div class="left_{{ edit }}">{% trans 'Tekst' %}:&nbsp;</div>
+ <div class="right"><br/><br/>
+{% if edit == 'edit' %}
+ <textarea name="tekst" id="tekst" rows="8" cols="80" />{{ data.tekst }}</textarea>
+{% else %}
+ <div class="longtext">{{ data.tekst|linebreaksbr }}</div>
+{% endif %}
+ </div><div class="clear">&nbsp;</div>
+ <hr/>
+{% if edit == 'edit' %}
+ </form>
+{% endif %}
+
+{% endblock %}

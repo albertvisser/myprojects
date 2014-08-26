@@ -62,6 +62,9 @@ span.clear {
 .multi {
     height: 60px; overflow: auto;
 } */
+.longtext {
+	width: 680px;
+}
 .full {display: block}
 .half {width: 50%; float:left; }
 .kw1 {width: 25%; float:left; }

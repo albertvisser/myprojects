@@ -1,0 +1,107 @@
+{%extends "base_app.html" %}{% load i18n %}
+{% block content-top %}
+{% if edit == 'edit' %}
+<form action="{{form_addr}}" method="post" >{% csrf_token %}
+{% endif %}
+
+<div class="left_view">{% trans 'Naam Project:' %}&nbsp;</div>
+<div class="right">
+{% if edit == 'edit' %}
+<input type="text" name="naam" id="naam" value="
+{% endif %}
+{{ data.naam }}
+{% if edit == 'edit' %}
+" size="{{lengte.naam}}" />
+{% endif %}
+</div><div class="clear">&nbsp;</div>
+
+<div class="left_{{ edit}}">{% trans 'Korte kenschets' %}:&nbsp;</div>
+<div class="right">
+{% if edit == 'edit' %}
+<input type="text" name="kort" id="kort" value="
+{% endif %}
+{{ data.kort }}
+{% if edit == 'edit' %}
+" size="{{lengte.kort}}" />
+{% endif %}
+</div><div class="clear">&nbsp;</div>
+
+{% if edit != 'edit' %}
+<div class="left_view">{% trans 'Statistieken:' %}&nbsp;<br/><br/></div>
+<div class="right">
+{{test_stats.0}} <a href="/{{ data.id }}/bevinding/">{% trans 'testbevindingen' %}</a> {{test_stats.1}}<br/>
+{{prob_stats.0}} <a href="/{{ data.id }}/userprob/">{% trans 'probleemmeldingen' %}</a> {{prob_stats.1}}<br/>
+{{wijz_stats.0}} <a href="/{{ data.id }}/userwijz/">{% trans 'wijzigingsaanvragen' %}</a> {{wijz_stats.1}}<br/>
+</div><div class="clear">&nbsp;</div>
+{% endif %}
+{% endblock %}
+
+{% block content-bottom %}
+<hr/>
+
+<div class="left_view">{% trans 'Omschrijving' %}:&nbsp;</div>
+<div class="right"><br/><br/>
+{% if edit == 'edit' %}
+<textarea name="oms" id="oms" rows="8" cols="80" />{{data.oms}}</textarea>
+{% else %}
+<div class="longtext">{{ data.oms|linebreaksbr }}</div>
+{% endif %}
+</div><div class="clear">&nbsp;</div>
+
+<div class="left_{{ edit }}">{% trans 'Opstarten met' %}:&nbsp;</div>
+<div class="right">
+{% if edit == 'edit' %}
+<input type="text" name="start" id="start" value="{{ data.start }}" size="{{lengte.start}}" />
+{% else %}
+{{ data.start|urlize }}<br/>
+{% endif %}
+</div><div class="clear">&nbsp;</div>
+
+<div class="left_{{ edit }}">{% trans 'Source repository' %}:&nbsp;</div>
+<div class="right">
+{% if edit == 'edit' %}
+<input type="text" name="fysloc" id="fysloc" value="
+{% else %}
+<a href="{{ data.fysloc }}" target="_blank">
+{% endif %}
+{{ data.fysloc }}
+{% if edit == 'edit' %}
+" size="{{lengte.fysloc}}" />
+{% else %}
+</a>{% if data.fysloc %}({% trans 'link opent in nieuw venster' %}){% endif %}<br/>
+{% endif %}
+</div><div class="clear">&nbsp;</div>
+
+<div class="left_{{ edit }}">{% trans 'Actieregistratie' %}:&nbsp;<br/><br/></div>
+<div class="right">
+{% if edit == 'edit' %}
+    <div style="float: left"><b>{% trans 'Naam' %}:&nbsp;</b><br/><br/>
+    <b>{% trans 'Default  user' %}:&nbsp;</b></div>
+    <div style="float: left">
+    <input type="text" name="actiereg" id="actiereg" value="{{ data.actiereg }}" size="{{lengte.actiereg}}" /><br/>
+    <input type="text" name="aruser" id="aruser" value="{{ data.aruser }}"/>
+    </div>
+{% else %}
+    <b>{% trans 'Naam' %}:&nbsp;</b>
+    <a href="{{sites.probreg}}/{{ data.actiereg }}/" target="_blank">{{ data.actiereg }}</a>
+    {% if data.actiereg %}({% trans 'link opent in nieuw venster' %}){% endif %}<br/>
+    <b>{% trans 'Default  user' %}:&nbsp;</b>{{ data.aruser }}
+{% endif %}
+</div><div class="clear">&nbsp;</div>
+
+<div class="left_view">{% trans 'Opmerkingen' %}:&nbsp;</div>
+<div class="right"><br/><br/>
+{% if edit == 'edit' %}
+<textarea name="status" id="status" rows="8" cols="80" />{{data.status}}</textarea>
+{% else %}
+<div class="longtext">{{ data.status|linebreaksbr }}</div>
+{% endif %}
+</div><div class="clear">&nbsp;</div>
+
+ <br/>
+{%endblock%}
+
+
+
+
+

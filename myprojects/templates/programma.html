@@ -1,0 +1,95 @@
+{% extends "base_app.html" %}{% load i18n %}
+{% block content-top %}
+{% if edit == 'edit' %}
+ <form action="{{form_addr}}" method="post" >{% csrf_token %}
+{%endif %}
+
+ <div class="left_view">{% trans 'Naam' %}:&nbsp;</div>
+ <div class="right">
+{% if edit == 'edit' %}
+ <input type="text" name="naam" id="naam" value="
+ {%endif %}
+{{ data.naam }}
+{% if edit == 'edit' %}
+ " size="{{lengte.naam}}" />
+{%endif %}
+</div><div class="clear">&nbsp;</div>
+
+ <div class="left_{{ edit }}">{% trans 'Doel' %}:&nbsp;</div>
+ <div class="right">
+{% if edit == 'edit' %}
+ <input type="text" name="doel" id="doel" value="
+{%endif %}
+{{ data.doel }}
+{% if edit == 'edit' %}
+" size="{{lengte.doel}}" />
+{%endif %}
+</div><div class="clear">&nbsp;</div>
+
+{% endblock %}
+{% block content-bottom %}
+ <hr/>
+
+ <div class="left_{{ edit }}">{% trans 'Invoersituatie (o.a. aanroep-argumenten)' %}:&nbsp;</div>
+ <div class="right"><br/><br/>
+{% if edit == 'edit' %}
+ <textarea name="invoer" id="invoer" rows="8" cols="80" />{{ data.invoer }}</textarea>
+{% else %}
+ <div class="longtext">{{ data.invoer|linebreaksbr }}</div>
+{% endif %}
+</div><div class="clear">&nbsp;</div>
+ <hr/>
+
+ <div class="left_{{ edit }}">{% trans 'Uitvoersituatie (incl. foutmeldingen)' %}:&nbsp;</div>
+ <div class="right"><br/><br/>
+{% if edit == 'edit' %}
+ <textarea name="uitvoer" id="uitvoer" rows="8" cols="80" />{{ data.uitvoer }}</textarea>
+{% else %}
+ <div class="longtext">{{ data.uitvoer|linebreaksbr }}</div>
+{% endif %}
+</div><div class="clear">&nbsp;</div>
+ <hr/>
+
+ <div class="left_{{ edit }}">{% trans 'Werkwijze' %}:&nbsp;</div>
+ <div class="right"><br/><br/>
+{% if edit == 'edit' %}
+ <textarea name="werkwijze" id="werkwijze" rows="8" cols="80" />{{ data.werkwijze }}</textarea>
+{% else %}
+ <div class="longtext">{{ data.werkwijze|linebreaksbr }}</div>
+{% endif %}
+</div><div class="clear">&nbsp;</div>
+ <hr/>
+
+ <div class="left_{{ edit }}">{% trans 'Bijzonderheden' %}:&nbsp;</div>
+ <div class="right"><br/><br/>
+{% if edit == 'edit' %}
+ <textarea name="bijzonder" id="bijzonder" rows="8" cols="80" />{{ data.bijzonder }}</textarea>
+{% else %}
+ <div class="longtext">{{ data.bijzonder|linebreaksbr }}</div>
+{% endif %}
+</div><div class="clear">&nbsp;</div>
+ <hr/>
+
+ <div class="left_{{ edit }}">{% trans 'Hoe te testen (wanneer)' %}:&nbsp;</div>
+ <div class="right"><br/><br/>
+{% if edit == 'edit' %}
+ <textarea name="hoetetesten" id="hoetetesten" rows="8" cols="80" />{{ data.hoetetesten }}</textarea>
+{% else %}
+ <div class="longtext">{{ data.hoetetesten|linebreaksbr }}</div>
+{% endif %}
+</div><div class="clear">&nbsp;</div>
+ <hr/>
+
+ <div class="left_{{ edit }}">{% trans 'Waarmee te testen (testgevallen)' %}:&nbsp;</div>
+ <div class="right"><br/><br/>
+{% if edit == 'edit' %}
+ <textarea name="testgevallen" id="testgevallen" rows="8" cols="80" />{{ data.testgevallen }}</textarea>
+{% else %}
+ <div class="longtext">{{ data.testgevallen|linebreaksbr }}</div>
+{% endif %}
+</div><div class="clear">&nbsp;</div>
+ <hr/>
+{% if edit == 'edit' %}
+ </form>
+{%endif %}
+{% endblock %}

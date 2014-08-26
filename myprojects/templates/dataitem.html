@@ -1,0 +1,127 @@
+{% extends "base_app.html" %}{% load i18n %}
+{% block content-top %}
+{% if edit == 'edit' %}
+<form action="{{form_addr}}" method="post" >{% csrf_token %}
+{% endif %}
+
+<div class="left_view">{% trans 'Naam entiteit' %}:&nbsp;</div>
+<div class="right">
+{% if edit == 'edit' %}
+<input type="text" name="naam" id="naam" value="
+{% endif %}
+{{ data.naam }}
+{% if edit == 'edit' %}
+" size="{{lengte.naam}}" />
+{% endif %}
+</div><div class="clear">&nbsp;</div>
+
+<div class="left_{{ edit }}">{% trans 'Functie' %}:&nbsp;</div>
+<div class="right">
+{% if edit == 'edit' %}
+<input type="text" name="functie" id="functie" value="
+{% endif %}
+{{ data.functie }}
+{% if edit == 'edit' %}
+" size="{{lengte.functie}}" />
+{% endif %}
+</div><div class="clear">&nbsp;</div>
+
+{% endblock %}
+{% block content-bottom %}
+<hr/>
+
+<div class="left_{{ edit }}">{% trans 'Levensloop' %}:&nbsp;</div>
+<div class="right">
+{% if edit == 'edit' %}<br/><br/>
+<textarea name="levensloop" id="levensloop" rows="8" cols="80" />
+{{ data.levensloop }}</textarea>
+{% else %}
+<div class="longtext">{{ data.levensloop|linebreaksbr }}</div>
+{% endif %}
+</div><div class="clear">&nbsp;</div>
+
+{% if edit == 'edit' %}
+</form>
+{% endif %}
+
+{%if not new%}
+{% if edit == 'edit' %}
+    <div class="left_edit ">{% trans 'Attributen' %}:&nbsp;</div>
+    <div class="right">
+    <table width="100%">
+    <form action="/{{proj}}/dataitem/{{data.id}}/element/add/" method="post">{% csrf_token %}
+        <tr><td colspan="5">
+            Naam: <input  name="naam" type="text" value=""/>
+            Type: <input name="type" type="text" value=""/>
+            Sleutel:<select name="sleutel">
+                <option>{% trans '--kies--' %}</option>
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+            </select>
+            {% trans 'Relatie met' %}:<select name="rel">
+                {%if andere%}<option>{% trans '--kies--' %}</option>{%endif%}
+                {%for y in andere%}<option>{{y}}</option>{%endfor%}
+            </select>
+            <input type="submit" value="{% trans 'Voer op' %}"/><br/>
+            {% trans 'Beschrijving' %}:<br/><textarea rows="3" cols="80" name="oms"></textarea>
+        </td></tr>
+    </form>
+    {%for attr in attrs%}
+    <form action="/{{proj}}/dataitem/{{data.id}}/element/{{attr.id}}/mut/" method="post">{% csrf_token %}
+        <tr><td colspan="5">
+            Naam: <input name="naam" type="text" value="{{attr.naam}}"/>
+            Type: <input name="type" type="text" value="{{attr.soort}}"/>
+            Sleutel:<select name="sleutel">
+                <option>--kies--</option>
+                <option {%if attr.sleutel == 1%}selected="selected"{%endif%}>1</option>
+                <option {%if attr.sleutel == 2%}selected="selected"{%endif%}>2</option>
+                <option {%if attr.sleutel == 3%}selected="selected"{%endif%}>3</option>
+                <option {%if attr.sleutel == 4%}selected="selected"{%endif%}>4</option>
+                <option {%if attr.sleutel == 5%}selected="selected"{%endif%}>5</option>
+            </select>
+            Relatie met:<select name="rel">
+            {%if andere%}
+                <option>--kies--</option>
+                {%for y in andere%}
+                    <option {%if attr.relatie.naam == y%}selected="selected"{%endif%}>{{y}}</option>
+                {%endfor%}
+            {%endif%}
+            </select>
+            <input type="submit" value="Wijzig"/><br/>
+            Beschrijving:<br/><textarea name="oms" rows="3" cols="80">{{attr.omschrijving}}</textarea>
+        </div><div class="clear">&nbsp;</div>
+    </form>
+    {%endfor%}
+    </table>
+    </div><div class="clear">&nbsp;</div>
+{% else %}
+{%if not new%}
+    {%if attrs%}
+    <div class="left_view">{% trans 'Attributen' %}:&nbsp;</div>
+    <div class="right">
+
+    {%for attr in attrs%}
+        <b>{{attr.naam}}</b>&nbsp;({{attr.soort}})
+        {{attr.sleutel}}
+        {%if attr.sleutel%}
+            ,
+            {%if attr.sleutel == 1%}eerste{%endif%}
+            {%if attr.sleutel == 2%}tweede{%endif%}
+            {%if attr.sleutel == 3%}derde{%endif%}
+            {%if attr.sleutel == 4%}vierde{%endif%}
+            {%if attr.sleutel == 5%}vijfde{%endif%}
+            in sleutel
+        {%endif%}
+        {%if attr.relatie%},  is sleutel van relatie met {{attr.relatie.verbose_name}}{%endif%}
+        {%if attr.omschrijving%}: {{attr.omschrijving}}{%endif%}<br/>
+    {%endfor%}
+    </div><div class="clear">&nbsp;</div>
+    {%endif%}
+{%endif%}
+{% endif %}
+{%endif%}
+<hr/>
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends "base_app.html" %}{%load i18n %}
+{% block content-top %}
+{% if edit == 'edit' %}
+<form action="{{form_addr}}" method="post" >{% csrf_token %}
+{% endif %}
+
+ <div class="left_view">{% trans 'Naam' %}:&nbsp;</div>
+ <div class="right">
+{% if edit == 'edit' %}
+ <input type="text" name="naam" id="naam" value="
+{% endif %}
+ {{ data.naam }}
+{% if edit == 'edit' %}
+ " size="{{lengte.naam}}" />
+{% endif %}
+ </div><div class="clear">&nbsp;</div>
+
+ <div class="left_{{ edit }}">{% trans 'Korte omschrijving' %}:&nbsp;</div>
+ <div class="right">
+{% if edit == 'edit' %}
+ <input type="text" name="kort" id="kort" value="
+{% endif %}
+ {{ data.kort }}
+{% if edit == 'edit' %}
+ " size="{{lengte.kort}}" />
+{% endif %}
+ </div><div class="clear">&nbsp;</div>
+
+{% endblock %}
+{% block content-bottom %}
+ <hr/>
+
+ <div class="left_{{ edit }}">{% trans 'Gewenste functionaliteit' %}:&nbsp;</div>
+ <div class="right"><br/><br/>
+{% if edit == 'edit' %}
+ <textarea name="functie" id="functie" rows="8" cols="80" />{{ data.functie }}</textarea>
+{% else %}
+ <div class="longtext">{{ data.functie|linebreaksbr }}</div>
+{% endif %}
+ </div><div class="clear">&nbsp;</div>
+ <hr/>
+
+ <div class="left_{{ edit }}">{% trans 'Gewenste vormgeving' %}:&nbsp;</div>
+ <div class="right"><br/><br/>
+{% if edit == 'edit' %}
+ <textarea name="beeld" id="beeld" rows="8" cols="80" />{{ data.beeld }}</textarea>
+{% else %}
+ <div class="longtext">{{ data.beeld|linebreaksbr }}</div>
+{% endif %}
+ </div><div class="clear">&nbsp;</div>
+ <hr/>
+
+ <div class="left_{{ edit }}">{% trans 'Gewenst uitvoerproduct(en)' %}:&nbsp;</div>
+ <div class="right"><br/><br/>
+{% if edit == 'edit' %}
+ <textarea name="product" id="product" rows="8" cols="80" />{{ data.product }}</textarea>
+{% else %}
+ <div class="longtext">{{ data.product|linebreaksbr }}</div>
+{% endif %}
+ </div><div class="clear">&nbsp;</div>
+ <hr/>
+
+ <div class="right"><div class="bold underline">Randvoorwaarden:</div>
+ </div><div class="clear">&nbsp;</div>
+ <br/>
+
+ <div class="left_{{ edit }}">{% trans 'Wat moet het opleveren' %}:&nbsp;</div>
+ <div class="right">
+{% if edit == 'edit' %}
+ <input type="text" name="baten" id="baten" value="
+{% endif %}
+ {{ data.baten }}
+{% if edit == 'edit' %}
+ " size="{{lengte.baten}}" />
+{% endif %}
+ </div><div class="clear">&nbsp;</div>
+
+ <div class="left_{{ edit }}">{% trans 'Wat mag het kosten' %}:&nbsp;</div>
+ <div class="right">
+{% if edit == 'edit' %}
+ <input type="text" name="kosten" id="kosten" value="
+{% endif %}
+ {{ data.kosten }}
+{% if edit == 'edit' %}
+ " size="{{lengte.kosten}}" />
+{% endif %}
+ </div><div class="clear">&nbsp;</div>
+
+ <div class="left_{{ edit }}">{% trans 'Overige zaken' %}:&nbsp;</div>
+ <div class="right"><br/><br/>
+{% if edit == 'edit' %}
+ <textarea name="opmerkingen" id="opmerkingen" rows="8" cols="80" />{{ data.opmerkingen }}</textarea>
+{% else %}
+ <div class="longtext">{{ data.opmerkingen|linebreaksbr }}</div>
+{% endif %}
+ </div><div class="clear">&nbsp;</div>
+ <hr/>
+
+{% if edit == 'edit' %}
+ </form>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "base_app.html" %}{% load i18n %}
+{% block content-top %}
+{% if edit == 'edit' %}
+ <form action="{{form_addr}}" method="post"  enctype="multipart/form-data">{% csrf_token %}
+{% endif %}
+
+ <div class="left_view">{% trans 'Naam' %}:&nbsp;</div>
+ <div class="right">
+{% if edit == 'edit' %}
+ <input type="text" name="naam" id="naam" value="
+{% endif %}
+{{ data.naam }}
+{% if edit == 'edit' %}
+ " size="{{lengte.naam}}" />
+{% endif %}
+ </div><div class="clear">&nbsp;</div>
+
+ <div class="left_{{ edit }}">{% trans 'Korte omschrijving' %}:&nbsp;</div>
+ <div class="right">
+{% if edit == 'edit' %}
+ <input type="text" name="kort" id="kort" value="
+{% endif %}
+{{ data.kort }}
+{% if edit == 'edit' %}
+ " size="{{lengte.kort}}" />
+{% endif %}
+ </div><div class="clear">&nbsp;</div>
+
+{% endblock %}
+{% block content-bottom %}
+
+ <div class="left_{{ edit }}">{% trans 'Zie' %}:&nbsp;</div>
+ <div class="right">
+{%if data.link%}
+    {% if edit == 'edit' %}
+    {% trans 'huidige locatie' %}:
+    {% else %}
+    <a href="{{ data.link.url }}" title="download">
+    {% endif %}
+    {{data.link.url}}
+    {% if edit == 'edit' %}<br/>
+    {% else %}</a>
+    {% endif %}
+{%endif%}
+{% if edit == 'edit' %}
+    <input type="file" id="link_file" name="link_file" />
+{% endif %}
+ </div><div class="clear">&nbsp;</div>
+
+ <div class="left_{{ edit }}">{% trans 'Tekst' %}:&nbsp;</div>
+ <div class="right"><br/><br/>
+{% if edit == 'edit' %}
+ <textarea name="data" id="data" rows="8" cols="80" />{{ data.data }}</textarea>
+{% else %}
+ {{ data.data|linebreaksbr }}
+{% endif %}
+</div><div class="clear">&nbsp;</div>
+<hr/>
+
+{% endblock %}

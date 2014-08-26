@@ -1,0 +1,65 @@
+{% extends "base_app.html" %}{% load i18n %}
+{% block content-top %}
+{% if edit == 'edit' %}
+ <form action="{{form_addr}}" method="post" >{% csrf_token %}
+{% endif %}
+
+ <div class="left_view">{% trans 'Naam' %}:&nbsp;</div>
+ <div class="right">
+ {% if edit == 'edit' %}
+  <input type="text" name="naam" id="naam" value="
+ {% endif %}
+{{ data.naam }}
+{% if edit == 'edit' %}
+" size="{{lengte.naam}}" />
+{% endif %}
+</div><div class="clear">&nbsp;</div>
+
+ <div class="left_{{ edit }}">{% trans 'Korte omschrijving' %}:&nbsp;</div>
+ <div class="right">
+ {% if edit == 'edit' %}
+  <input type="text" name="kort" id="kort" value="
+  {% endif %}
+  {{ data.kort }}
+  {% if edit == 'edit' %}
+  " size="{{lengte.kort}}" />
+  {% endif %}
+  </div><div class="clear">&nbsp;</div>
+
+{% endblock %}
+{% block content-bottom %}
+
+ <hr/>
+ <div class="left_{{ edit }}">{% trans 'Doel' %}:&nbsp;</div>
+ <div class="right"><br/><br/>
+ {% if edit == 'edit' %}
+  <textarea name="doel" id="doel" rows="8" cols="80" />{{ data.doel }}</textarea>
+{% else %}
+ <div class="longtext">{{ data.doel|linebreaksbr }}</div>
+{% endif %}
+</div><div class="clear">&nbsp;</div>
+ <hr/>
+
+ <div class="left_{{ edit }}">{% trans 'Periodiciteit' %}:&nbsp;</div>
+ <div class="right"><br/><br/>
+ {% if edit == 'edit' %}
+  <textarea name="periode" id="periode" rows="8" cols="80" />{{ data.periode }}</textarea></div><div class="clear">&nbsp;</div>
+{% else %}
+ <div class="longtext">{{ data.periode|linebreaksbr }}</div>
+{% endif %}
+ <hr/>
+
+ <div class="left_{{ edit }}">{% trans 'Beschrijving van het verloop (sturing)' %}:&nbsp;</div>
+ <div class="right"><br/><br/>
+ {% if edit == 'edit' %}
+  <textarea name="verloop" id="verloop" rows="8" cols="80" />{{ data.verloop }}</textarea></div><div class="clear">&nbsp;</div>
+{% else %}
+ <div class="longtext">{{ data.verloop|linebreaksbr }}</div>
+{% endif %}
+ <hr/>
+
+ {% if edit == 'edit' %}
+ </form>
+ {% endif %}
+
+{% endblock %}

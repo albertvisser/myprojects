@@ -9,6 +9,7 @@ from django.core.exceptions import ObjectDoesNotExist #, DoesNotExist
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.cache import cache_control
 from django.template import RequestContext
+from django.utils.translation import ugettext as _
 from django.db import models
 import myprojects.models as my
 from myprojects.settings import MEDIA_ROOT, SITES
@@ -99,13 +100,32 @@ def get_new_id(sel):
         h = '-'.join((ny,'0001'))
     return h
 
+def get_stats_texts(all, action_type):
+    first, next = '', ''
+    solved = all.filter(gereed=True).count()
+    working = all.filter(gereed=False).filter(actie__isnull=False).count()
+    all = all.count()
+    if all == 0:
+        first = _("(nog) geen")
+        next = (_("opgevoerd") if action_type == 'bevinding' else
+                          _("gemeld") if action_type == 'probleem' else
+                          _('ingediend'))
+    else:
+        first = all
+        if action_type == 'userwijz':
+            hlp = _("gerealiseerd"), _('in behandeling via')
+        else:
+            hlp = _('opgelost'), _('doorgekoppeld naar')
+        next = _("waarvan {} {} en {} {} Actiereg".format(
+            solved, hlp[0], working, hlp[1]))
+    return first, next
 
 def index(request):
     meld = ''
     ## return HttpResponse(os.path.splitext(my.__file__)[0] + '.py')
     ## raise ValueError('Testing...')
     return render_to_response('start.html',{
-        'title': 'Welcome to MyProjects (formerly known as DocTool)!',
+        'title': _('Welcome to MyProjects (formerly known as DocTool)!'),
         'meld': meld,
         'start': True,
         'projecten': my.Project.objects.all().order_by('naam'),
@@ -142,20 +162,20 @@ def lijst(request, proj='', soort='', id='',  edit='', srt=''):
         srtnm_ev,srtnm_mv, sect = naam_dict(srt)
     if proj:
         pr = my.Project.objects.get(pk=proj)
-        title = ' bij project '.join((soortnm_mv.capitalize(), pr.naam))
+        title = _(' bij project ').join((soortnm_mv.capitalize(), pr.naam))
     else:
-        title = 'Lijst ' + soortnm_mv
+        title = _('Lijst ') + soortnm_mv
     if edit == 'rel':
-        title = '{} relateren aan {} "{}"'.format(soortnm_ev, srtnm_ev,
+        title = _('{} relateren aan {} "{}"').format(soortnm_ev, srtnm_ev,
             my.rectypes[srt].objects.get(pk=id).naam)
         info_dict['start'] = 'x' # forceert afwezigheid menu
         info_dict['ref'] = (srt,srtnm_mv,id)
         info_dict["soort"] = soort # '/'.join((srt,id,soort))
     info_dict['title'] = title # 'Doctool! ' + title
     if lijst.count() == 0:
-        meld = soortnm_mv.join(("Geen "," aanwezig"))
+        meld = soortnm_mv.join((_("Geen "), _(" aanwezig")))
         if proj:
-            meld += " bij dit project"
+            meld += _(" bij dit project")
     info_dict['meld'] = meld
     ## if soort:
         ## info_dict['notnw'] = '%s/new' % soort
@@ -203,11 +223,11 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
             try:  # get project
                 o = my.Project.objects.get(pk=proj)
             except ObjectDoesNotExist:
-                meld = proj.join(('project ',' bestaat niet'))
+                meld = proj.join(('project ',_(' bestaat niet')))
                 proj = ''
         if not meld:
             if edit == 'new':
-                info_dict['title'] = 'Doctool! | Nieuw project '
+                info_dict['title'] = 'Doctool! | ' + _('Nieuw project ')
             else:
                 info_dict['title'] = 'Doctool! | Project ' + o.naam
                 info_dict['data'] = o
@@ -215,6 +235,7 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
             soort = 'project'
     else:         # other: read object(s), selector, menu
         owner_proj = my.Project.objects.get(pk=proj)
+        add_text, remove_text = _("leg relatie"), _("verwijder relatie")
         if id:    # existing item
             button_lijst = []
             relaties = []
@@ -246,7 +267,7 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                             'text': ' '.join((my.rectypes[soort].to_titles[srt],
                                 my.rectypes[srt]._meta.verbose_name)),
                             'btn': BTNTXT.format(proj, srt, id, "rel", soort,
-                                "leg relatie"),
+                                add_text),
                             'links': []
                             }
                         result = o.__getattribute__(fld.name)
@@ -254,7 +275,7 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                             rel['links'].append(
                                 RELTXT.format(proj, srt, result.id, result) + " " +
                                 BTNTXT.format(proj, soort, id, "unrel/" + srt,
-                                    item.id, "verwijder relatie")
+                                    item.id, remove_text)
                                 )
                         fkeys_to.append(rel)
                 info_dict['fkeys_to'] = fkeys_to
@@ -265,7 +286,7 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                         'text': ' '.join((my.rectypes[soort].to_titles[srt],
                             my.rectypes[srt]._meta.verbose_name)),
                         'btn': BTNTXT.format(proj, srt, id, "rel", soort,
-                            "leg relatie"),
+                            add_text),
                         'links': []
                         }
                     result = o.__getattribute__(x.name)
@@ -273,7 +294,7 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                         y['links'].append(
                             RELTXT.format(proj, srt, item.id, item) + " " +
                             BTNTXT.format(proj, soort, id, "unrel/" + srt,
-                                item.id, "verwijder relatie")
+                                item.id, remove_text)
                             )
                     m2ms_to.append(y)
                 info_dict['m2ms_to'] = m2ms_to
@@ -295,7 +316,7 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                             'text': ' '.join((my.rectypes[soort].from_titles[srt],
                                 my.rectypes[srt]._meta.verbose_name)),
                             'btn': BTNTXT.format(proj, soort, id, "rel", srt,
-                                "leg relatie"),
+                                add_text),
                             'links': []
                             }
                         result = get_related(o, relobj)
@@ -304,7 +325,7 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                                 y['links'].append(
                                     RELTXT.format(proj, srt, item.id, item) + " " +
                                     BTNTXT.format(proj, soort, id, "unrel/" + srt,
-                                        item.id, "verwijder relatie")
+                                        item.id, _remove_text)
                                     )
                         fkeys_from.append(y)
                 info_dict['fkeys_from'] = fkeys_from
@@ -316,7 +337,7 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                         'text': ' '.join((my.rectypes[soort].from_titles[srt],
                             my.rectypes[srt]._meta.verbose_name)),
                         'btn': BTNTXT.format(proj, soort, id, "rel", srt,
-                            "leg relatie"),
+                            add_text),
                         'links': []
                         }
                     result = get_related(o, x, m2m=True)
@@ -325,26 +346,27 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                             y['links'].append(
                                 RELTXT.format(proj, srt, item.id, item) + " " +
                                 BTNTXT.format(proj, soort, id, "unrel/" + srt,
-                                    item.id, "verwijder relatie")
+                                    item.id, remove_text)
                                 )
                     m2ms_from.append(y)
                 info_dict['m2ms_from'] = m2ms_from
             if not edit:
                 if relaties:  # add relations to page
-                    relaties.insert(0, '<div><span class="bold underline">Relaties'
-                        '</span></div>')
+                    relaties.insert(0, '<div><span class="bold underline">' +
+                        _('Relaties met andere documenten') + '</span></div>')
                     info_dict["e_table"] = '\n'.join((info_dict["e_table"],
                         '\n'.join(relaties)))
                 buttons = []
                 for s in button_lijst:    #  build buttons to create related documents
                     buttons.append(BTNTXT.format(proj, s, "new", soort, id,
-                        "Opvoeren " + naam_dict(s)[0]))
+                        _("Opvoeren ") + naam_dict(s)[0]))
                 info_dict["buttons"] = buttons
     info_dict["prev"] = prev
     info_dict["next"] = next
     for x,y,z in getfields(soort): # inhoud per veld (naam,type,lengte) op scherm zetten
         lengte[x] = z
-        """bij Entiteit en Dataitem moet nog het vullen van {{attrdata}} met de onderliggende gegevens"""
+        """bij Entiteit en Dataitem moet nog het vullen van {{attrdata}}
+        met de onderliggende gegevens"""
         if edit:
             ## h = '' if edit == 'new' else o.__dict__[x]
             if y == 'Char':
@@ -362,7 +384,7 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
     naam_ev,naam_mv,sect = naam_dict(soort)
     if edit == 'new':
         info_dict['new'] = 'nieuw'
-        info_dict['title'] = 'Nieuw(e) '  + naam_ev
+        info_dict['title'] = _('Nieuw(e) ')  + naam_ev
     else:
         if edit == 'edit':
             info_dict['edit'] = 'view'
@@ -376,35 +398,11 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
     if soort == 'project':
         if not edit:
             all = my.Bevinding.objects.filter(project=proj)
-            solved = all.filter(gereed=True).count()
-            working = all.filter(gereed=False).filter(actie__isnull=False).count()
-            all = all.count()
-            if all == 0:
-                test_stats = ("(nog) geen","opgevoerd")
-            else:
-                test_stats = (all, "waarvan {} opgelost en {} doorgekoppeld naar "
-                    "Actiereg".format(solved, working))
+            info_dict['test_stats'] = get_stats_texts(all, 'bevinding')
             all = my.Userprob.objects.filter(project=proj)
-            solved = all.filter(gereed=True).count()
-            working = all.filter(gereed=False).filter(actie__isnull=False).count()
-            all = all.count()
-            if all == 0:
-                prob_stats = ("(nog) geen","gemeld")
-            else:
-                prob_stats = (all, "waarvan {} opgelost en {} doorgekoppeld naar "
-                    "Actiereg".format(solved, working))
+            info_dict['prob_stats'] = get_stats_texts(all, 'userprob')
             all = my.Userwijz.objects.filter(project=proj)
-            solved = all.filter(gereed=True).count()
-            working = all.filter(gereed=False).filter(actie__isnull=False).count()
-            all = all.count()
-            if all == 0:
-                wijz_stats = ("(nog) geen","ingediend")
-            else:
-                wijz_stats = (all,"waarvan {} gerealiseerd en {} in behandeling via "
-                    "Actiereg".format(solved, working))
-            info_dict['test_stats'] = test_stats
-            info_dict['prob_stats'] = prob_stats
-            info_dict['wijz_stats'] = wijz_stats
+            info_dict['wijz_stats'] = get_stats_texts(all, 'userwijz')
     else:
         info_dict['title'] = "Project {0} - {1}".format(
             owner_proj.naam,info_dict["title"])
@@ -424,7 +422,7 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
     try:
         info_dict["ar_proj"] = o.actiereg if soort == "project" else owner_proj.actiereg
     except UnboundLocalError:
-        pass
+        pass    # allow for what again?
     else:
         info_dict["ar_user"] = o.aruser if soort == "project" else owner_proj.aruser
 
@@ -438,11 +436,15 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
         ## str(info_dict['m2ms_from'])
         ## )))
     if edit:
-        return render_to_response('{0}_edit.html'.format(soort), info_dict,
-            context_instance=RequestContext(request)) # {'title': 'nieuw', 'soort': soort, 'id': id, 'proj': proj})
+        info_dict['edit'] = 'edit'
+        ## return render_to_response('{0}_edit.html'.format(soort), info_dict,
+            ## context_instance=RequestContext(request)) # {'title': 'nieuw', 'soort': soort, 'id': id, 'proj': proj})
     else:
-        return render_to_response('{0}_view.html'.format(soort), info_dict,
-            context_instance=RequestContext(request)) # {'title': 'nieuw', 'soort': soort, 'id': id, 'proj': proj})
+        info_dict['edit'] = 'view'
+        ## return render_to_response('{0}_view.html'.format(soort), info_dict,
+            ## context_instance=RequestContext(request)) # {'title': 'nieuw', 'soort': soort, 'id': id, 'proj': proj})
+    return render_to_response('{0}.html'.format(soort), info_dict,
+        context_instance=RequestContext(request)) # {'title': 'nieuw', 'soort': soort, 'id': id, 'proj': proj})
 
 def koppel(request, proj='',soort='',id='', arid='0', arnum=''):
     """terugkoppeling vanuit probreg:
@@ -469,7 +471,7 @@ def meld(request, proj='',soort='',id='', arstat='', arfrom = '', arid=''):
     o = my.rectypes[soort].objects.get(pk=id)
     o.gereed = {"arch": True, "herl": False}[arstat]
     o.save()
-    meld = 'Actie gearchiveerd' if arstat == 'arch' else 'Actie herleefd'
+    meld = _('Actie gearchiveerd') if arstat == 'arch' else _('Actie herleefd')
     doc = '/'.join((SITES["probreg"], arfrom, arid, 'mld', meld))
     return HttpResponseRedirect(doc)
 
@@ -527,7 +529,7 @@ def edit_item(request, proj='',soort='',id='',srt='',verw=''):
         else:
             if soort in ('userwijz', 'userprob','bevinding'):
                 gereed = o.gereed
-            for x,y,z in getfields(soort): # naam,type,lengte
+            for x, y, z in getfields(soort): # naam,type,lengte
                 if x == 'datum_gereed':
                     if request.POST['gereed'] == '1' and not gereed:
                         o.datum_gereed = datetime.datetime.today()

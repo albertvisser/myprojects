@@ -1,0 +1,597 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-08-26 10:45+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: views.py:109
+msgid "(nog) geen"
+msgstr "no"
+
+#: views.py:110
+msgid "opgevoerd"
+msgstr "reported yet"
+
+#: views.py:111
+msgid "gemeld"
+msgstr "reported yet"
+
+#: views.py:112
+msgid "ingediend"
+msgstr "submitted yet"
+
+#: views.py:116
+msgid "gerealiseerd"
+msgstr "realized"
+
+#: views.py:116
+msgid "in behandeling via"
+msgstr "transferred to"
+
+#: views.py:118
+msgid "opgelost"
+msgstr "solved"
+
+#: views.py:118
+msgid "doorgekoppeld naar"
+msgstr "transferred to"
+
+#: views.py:119
+msgid "waarvan {} {} en {} {} Actiereg"
+msgstr "{} of which {} and {} {} Actiereg"
+
+#: views.py:128
+msgid "Welcome to MyProjects (formerly known as DocTool)!"
+msgstr "Welcome to MyProjects (formerly known as DocTool)!"
+
+#: views.py:165
+msgid " bij project "
+msgstr " with project "
+
+#: views.py:167
+msgid "Lijst "
+msgstr "List of "
+
+#: views.py:169
+msgid "{} relateren aan {} \"{}\""
+msgstr "relate {} to {} \" {} \""
+
+#: views.py:176
+msgid "Geen "
+msgstr "No"
+
+#: views.py:176
+msgid " aanwezig"
+msgstr "present"
+
+#: views.py:178
+msgid " bij dit project"
+msgstr "with this project"
+
+#: views.py:226
+msgid " bestaat niet"
+msgstr " doesn't exist"
+
+#: views.py:230
+msgid "Nieuw project "
+msgstr "New project "
+
+#: views.py:238
+msgid "leg relatie"
+msgstr "relate"
+
+#: views.py:238
+msgid "verwijder relatie"
+msgstr "unrelate"
+
+#: views.py:356
+msgid "Relaties met andere documenten"
+msgstr "Relations to other documents"
+
+#: views.py:362
+msgid "Opvoeren "
+msgstr ""
+
+#: views.py:387
+msgid "Nieuw(e) "
+msgstr "New "
+
+#: views.py:474
+msgid "Actie gearchiveerd"
+msgstr "Issue archived"
+
+#: views.py:474
+msgid "Actie herleefd"
+msgstr "Issue revived"
+
+#: templates/base.html:29
+msgid "Welcome,"
+msgstr "Welcome,"
+
+#: templates/base.html:29
+msgid "Documentation"
+msgstr "Documentation"
+
+#: templates/base.html:29
+msgid "Change password"
+msgstr "Change password"
+
+#: templates/base.html:29
+msgid "Log out"
+msgstr "Log out"
+
+#: templates/base.html:34
+msgid "Home"
+msgstr "Home"
+
+#: templates/base_app.html:7
+msgid "project_cr"
+msgstr "project"
+
+#: templates/base_app.html:8 templates/base_app.html.py:10
+msgid "lijst_cr"
+msgstr "list"
+
+#: templates/base_app.html:20
+msgid "kies iets om te doen"
+msgstr "select an action"
+
+#: templates/base_app.html:21
+msgid "vorige"
+msgstr "show previous item"
+
+#: templates/base_app.html:22
+msgid "nieuw"
+msgstr "create new item"
+
+#: templates/base_app.html:23
+msgid "wijzig"
+msgstr "edit item"
+
+#: templates/base_app.html:24
+msgid "bekijk"
+msgstr "view item"
+
+#: templates/base_app.html:25
+msgid "volgende"
+msgstr "show next item"
+
+#: templates/base_app.html:26
+msgid "of ga naar"
+msgstr "or go to"
+
+#: templates/base_app.html:26
+msgid "of"
+msgstr "or"
+
+#: templates/base_app.html:28
+msgid "kies een sectie"
+msgstr "select a section"
+
+#: templates/base_app.html:29
+msgid "specificaties e.d."
+msgstr "specifications etc."
+
+#: templates/base_app.html:30
+msgid "functioneel ontwerp"
+msgstr "functional design"
+
+#: templates/base_app.html:31
+msgid "realisatie"
+msgstr "realisation"
+
+#: templates/base_app.html:32
+msgid "testen"
+msgstr "testing"
+
+#: templates/base_app.html:36 templates/base_app.html.py:43
+#: templates/base_app.html:50 templates/base_app.html.py:58
+msgid "kies een onderdeel"
+msgstr "select a subsection"
+
+#: templates/base_app.html:37
+msgid "eisen/wensen"
+msgstr "wishes/demands"
+
+#: templates/base_app.html:38
+msgid "div. naslag"
+msgstr "reference documents"
+
+#: templates/base_app.html:39
+msgid "aanvraag wijzigingen"
+msgstr "change requests"
+
+#: templates/base_app.html:40
+msgid "incidenten/problemen"
+msgstr "incidents/problems"
+
+#: templates/base_app.html:44
+msgid "div. documenten"
+msgstr "misc. documents"
+
+#: templates/base_app.html:45
+msgid "gebruikerstaken"
+msgstr "user tasks"
+
+#: templates/base_app.html:46 templates/base_app.html.py:52
+msgid "processen"
+msgstr "processes"
+
+#: templates/base_app.html:47
+msgid "gegevensmodel"
+msgstr "data model"
+
+#: templates/base_app.html:51
+msgid "taken/procedures/transacties"
+msgstr "system tasks/procedures/transactions"
+
+#: templates/base_app.html:53
+msgid "data-items"
+msgstr "data items"
+
+#: templates/base_app.html:54
+msgid "layouts"
+msgstr "layouts"
+
+#: templates/base_app.html:55
+msgid "programma's"
+msgstr "programs"
+
+#: templates/base_app.html:59
+msgid "testplannen"
+msgstr "plans"
+
+#: templates/base_app.html:60
+msgid "testgevallen"
+msgstr "cases"
+
+#: templates/base_app.html:61 templates/project.html:32
+msgid "testbevindingen"
+msgstr "findings"
+
+#: templates/base_app.html:66
+msgid "Kies eventueel een ander project"
+msgstr "Select a project"
+
+#: templates/base_app.html:81 templates/bevinding.html:47
+#: templates/userprob.html:47 templates/userwijz.html:47
+msgid "Alle wijzigingen opslaan"
+msgstr "Save all modifications"
+
+#: templates/base_app.html:84 templates/bevinding.html:50
+#: templates/userprob.html:50 templates/userwijz.html:50
+#, fuzzy
+msgid "wijzigen"
+msgstr "edit item"
+
+#: templates/base_app.html:92
+msgid "Relaties"
+msgstr "Relations"
+
+#: templates/base_app.html:99
+msgid "Naar het begin van de pagina"
+msgstr "Go to the top of the page"
+
+#: templates/base_site.html:7
+msgid "Doctool"
+msgstr "DocTool"
+
+#: templates/bevinding.html:8 templates/userprob.html:8
+#: templates/userwijz.html:8
+msgid "Nummer"
+msgstr "Nr."
+
+#: templates/bevinding.html:20 templates/entiteit.html:18
+#: templates/funcdoc.html:19 templates/layout.html:18
+#: templates/techtaak.html:18 templates/testcase.html:18
+#: templates/testplan.html:18 templates/userdoc.html:19
+#: templates/userprob.html:20 templates/userspec.html:18
+msgid "Korte omschrijving"
+msgstr "Short description"
+
+#: templates/bevinding.html:31 templates/userprob.html:31
+#: templates/userwijz.html:31
+msgid "Gereed"
+msgstr "Resolved"
+
+#: templates/bevinding.html:58 templates/userprob.html:58
+#: templates/userwijz.html:58
+#, fuzzy
+msgid "Doorkoppelen naar actiereg"
+msgstr "transferred to"
+
+#: templates/bevinding.html:67 templates/userprob.html:67
+msgid "Melding"
+msgstr "Issue"
+
+#: templates/bevinding.html:76 templates/userprob.html:76
+#: templates/userwijz.html:79
+msgid "Opmerking"
+msgstr "Remark(s)"
+
+#: templates/bevinding.html:90 templates/userprob.html:90
+#: templates/userwijz.html:93
+msgid "Actie"
+msgstr "Issue"
+
+#: templates/dataitem.html:7 templates/entiteit.html:7
+msgid "Naam entiteit"
+msgstr "Entity name"
+
+#: templates/dataitem.html:18 templates/entiteit.html:33
+msgid "Functie"
+msgstr "Function"
+
+#: templates/dataitem.html:33 templates/entiteit.html:42
+msgid "Levensloop"
+msgstr "Lifespan"
+
+#: templates/dataitem.html:49 templates/dataitem.html.py:103
+msgid "Attributen"
+msgstr "Attribute"
+
+#: templates/dataitem.html:57 templates/dataitem.html.py:65
+msgid "--kies--"
+msgstr "--select--"
+
+#: templates/dataitem.html:64
+#, fuzzy
+msgid "Relatie met"
+msgstr "Relations"
+
+#: templates/dataitem.html:68
+msgid "Voer op"
+msgstr "Add"
+
+#: templates/dataitem.html:69 templates/funcproc.html:54
+#: templates/gebrtaak.html:74 templates/techproc.html:53
+#, fuzzy
+msgid "Beschrijving"
+msgstr "Short description"
+
+#: templates/funcdoc.html:8 templates/gebrtaak.html:8 templates/layout.html:7
+#: templates/programma.html:7 templates/project.html:78
+#: templates/project.html.py:85 templates/techproc.html:7
+#: templates/techtaak.html:7 templates/testcase.html:7
+#: templates/testplan.html:7 templates/userdoc.html:8
+#: templates/userspec.html:7
+msgid "Naam"
+msgstr "Name"
+
+#: templates/funcdoc.html:33 templates/layout.html:32
+#: templates/userdoc.html:33
+msgid "Zie"
+msgstr "See"
+
+#: templates/funcdoc.html:48 templates/layout.html:50
+#: templates/testcase.html:32 templates/testplan.html:32
+#: templates/userdoc.html:48
+msgid "Tekst"
+msgstr "Text"
+
+#: templates/funcproc.html:19 templates/gebrtaak.html:19
+#: templates/programma.html:18 templates/techproc.html:18
+#: templates/techtaak.html:33
+msgid "Doel"
+msgstr "Purpose"
+
+#: templates/funcproc.html:33
+msgid "Uitgangssituatie(s)"
+msgstr "Initial situation(s)"
+
+#: templates/funcproc.html:43
+msgid "Resultaatsituatie(s)"
+msgstr "Result situation(s)"
+
+#: templates/funcproc.html:44
+msgid "en -product(en)"
+msgstr "and -product(s)"
+
+#: templates/gebrtaak.html:34
+msgid "Wanneer/hoe vaak uitvoeren"
+msgstr "Execute when/how often"
+
+#: templates/gebrtaak.html:44
+msgid "Wie mag/moet dit uitvoeren"
+msgstr "Who may/must execute this"
+
+#: templates/gebrtaak.html:54
+msgid "Waarvoor dient het uitvoeren"
+msgstr "Why execute this"
+
+#: templates/gebrtaak.html:64
+msgid "Onder welke voorwaarden"
+msgstr "Under which conditions"
+
+#: templates/layout.html:36
+msgid "huidige locatie"
+msgstr "current location"
+
+#: templates/lijst.html:3
+msgid "Voer een nieuw(e)"
+msgstr "Add a new"
+
+#: templates/lijst.html:3
+msgid "op"
+msgstr " "
+
+#: templates/lijst.html:4
+#, fuzzy
+msgid "of kies een bestaande"
+msgstr "select a section"
+
+#: templates/lijst.html:7
+#, fuzzy
+msgid "ga naar"
+msgstr "or go to"
+
+#: templates/programma.html:33
+msgid "Invoersituatie (o.a. aanroep-argumenten)"
+msgstr "Input situation (calling arguments etc.)"
+
+#: templates/programma.html:43
+msgid "Uitvoersituatie (incl. foutmeldingen)"
+msgstr "Output situation (including error messages)"
+
+#: templates/programma.html:53
+msgid "Werkwijze"
+msgstr "Workflow"
+
+#: templates/programma.html:63 templates/techproc.html:63
+msgid "Bijzonderheden"
+msgstr "Remarks"
+
+#: templates/programma.html:73
+msgid "Hoe te testen (wanneer)"
+msgstr "Can be tested how (when)"
+
+#: templates/programma.html:83
+msgid "Waarmee te testen (testgevallen)"
+msgstr "Can be tested with (testcases)"
+
+#: templates/project.html:7
+#, fuzzy
+msgid "Naam Project:"
+msgstr "with project"
+
+#: templates/project.html:18
+msgid "Korte kenschets"
+msgstr "Short tagline"
+
+#: templates/project.html:30
+msgid "Statistieken:"
+msgstr "Statistics"
+
+#: templates/project.html:33
+msgid "probleemmeldingen"
+msgstr "problem descriptions"
+
+#: templates/project.html:34
+msgid "wijzigingsaanvragen"
+msgstr "change requests"
+
+#: templates/project.html:42
+#, fuzzy
+msgid "Omschrijving"
+msgstr "Short description"
+
+#: templates/project.html:51
+msgid "Opstarten met"
+msgstr "Start up using"
+
+#: templates/project.html:60
+msgid "Source repository"
+msgstr ""
+
+#: templates/project.html:71 templates/project.html.py:87
+msgid "link opent in nieuw venster"
+msgstr "link opens in new window"
+
+#: templates/project.html:75
+#, fuzzy
+msgid "Actieregistratie"
+msgstr "Issue registration"
+
+#: templates/project.html:79 templates/project.html.py:88
+msgid "Default  user"
+msgstr ""
+
+#: templates/project.html:92
+msgid "Opmerkingen"
+msgstr "Remarks"
+
+#: templates/relateren.html:4
+msgid "Selecteer een"
+msgstr "Select a"
+
+#: templates/relateren.html:7
+#, fuzzy
+msgid "relateer"
+msgstr "relate"
+
+#: templates/start.html:3
+#, fuzzy
+msgid "Start een nieuw project"
+msgstr "New project "
+
+#: templates/start.html:4
+msgid "of ga naar de startpagina van een bestaand project"
+msgstr "or go to an existing project's homepage"
+
+#: templates/start.html:6
+msgid "naam"
+msgstr "name"
+
+#: templates/start.html:6
+msgid "repository"
+msgstr ""
+
+#: templates/start.html:6
+#, fuzzy
+msgid "actieregistratie"
+msgstr "issue tracker"
+
+#: templates/start.html:9
+#, fuzzy
+msgid "ga naar project"
+msgstr "go to project"
+
+#: templates/techproc.html:33
+msgid "Uitgangssituatie"
+msgstr "Initial situation"
+
+#: templates/techproc.html:43
+msgid "Resultaatsituatie"
+msgstr "Resulting situation"
+
+#: templates/techtaak.html:43
+msgid "Periodiciteit"
+msgstr "Periodicity"
+
+#: templates/techtaak.html:52
+msgid "Beschrijving van het verloop (sturing)"
+msgstr "Description of process and control"
+
+#: templates/userspec.html:33
+msgid "Gewenste functionaliteit"
+msgstr "Desired functionality"
+
+#: templates/userspec.html:43
+msgid "Gewenste vormgeving"
+msgstr "Desired lookand-feel"
+
+#: templates/userspec.html:53
+msgid "Gewenst uitvoerproduct(en)"
+msgstr "Desired output product(s)"
+
+#: templates/userspec.html:67
+msgid "Wat moet het opleveren"
+msgstr "What are the benefits"
+
+#: templates/userspec.html:78
+msgid "Wat mag het kosten"
+msgstr "What are the allowed costs"
+
+#: templates/userspec.html:89
+msgid "Overige zaken"
+msgstr "Miscellaneous"
+
+#: templates/userwijz.html:20
+msgid "Wens"
+msgstr "Request"
+
+#: templates/userwijz.html:70
+msgid "Toelichting"
+msgstr "Additional information"
