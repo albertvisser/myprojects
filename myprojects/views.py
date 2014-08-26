@@ -172,6 +172,9 @@ def lijst(request, proj='', soort='', id='',  edit='', srt=''):
         info_dict['ref'] = (srt, srtnm_mv, id)
         info_dict["soort"] = soort # '/'.join((srt,id,soort))
     info_dict['title'] = title # 'Doctool! ' + title
+    if pr:
+        info_dict['title'] = "Project {0} - {1}".format(
+            pr.naam, info_dict["title"])
     if lijst.count() == 0:
         meld = soortnm_mv.join((_("Geen "), _(" aanwezig")))
         if proj:
@@ -405,7 +408,7 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
             info_dict['wijz_stats'] = get_stats_texts(all, 'userwijz')
     else:
         info_dict['title'] = "Project {0} - {1}".format(
-            owner_proj.naam,info_dict["title"])
+            owner_proj.naam, info_dict["title"])
         if srt != '':
             info_dict['ref'] = (soort,naam_mv,verw)
         else:

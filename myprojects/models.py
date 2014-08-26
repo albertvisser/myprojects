@@ -77,7 +77,7 @@ class Userwijz(models.Model):
     actienummer = models.CharField(max_length=10)
     def __str__(self):
         oms = _(" [afgesloten]") if self.gereed else ""
-        return ": ".join((self.nummer,self.wens + oms))
+        return "{0}: {1} {2}".format(self.nummer, self.wens, oms)
     class Meta:
         verbose_name = _("aanvraag wijziging")
         verbose_name_plural = _("aanvraag wijzigingen")
@@ -98,7 +98,7 @@ class Userprob(models.Model):
     actienummer = models.CharField(max_length=10)
     def __str__(self):
         oms = _(" [afgesloten]") if self.gereed else ""
-        return "{0}: {1} {2}".format(self.nummer,self.kort,oms)
+        return "{0}: {1} {2}".format(self.nummer, self.kort, oms)
     class Meta:
         verbose_name = _("incident/probleem")
         verbose_name_plural = _("incidenten/problemen")
@@ -407,9 +407,9 @@ class Bevinding(models.Model):
     tplan = models.ManyToManyField(Testplan,related_name="tbev",null=True)
     def __str__(self):
         oms = _(" [afgehandeld]") if self.gereed else ""
-        return ": ".join((self.nummer,self.kort + oms))
+        return "{0}: {1} {2}".format(self.nummer, self.kort, oms)
     class Meta:
-        verbose_name_plural = _("bevinding")
+        verbose_name = _("bevinding")
         verbose_name_plural = _("bevindingen")
 
 rectypes = {
