@@ -48,6 +48,38 @@ def get_related(this_obj, other_obj, m2m=False):
     except UnboundLocalError:
         pass
 
+def get_relation(o, srt, soort):
+    result = -1
+    multiple = False
+    # relaties van andere naar deze
+    ## for relobj in my.rectypes[srt]._meta.get_all_related_objects():
+        ## if corr_naam(relobj.model._meta.module_name) == soort:
+            ## result = get_related(o, relobj)
+            ## break
+    ## if result is None:
+        ## for x in my.rectypes[srt]._meta.get_all_related_many_to_many_objects():
+            ## if corr_naam(x.model._meta.module_name) == soort:
+                ## multiple = True
+                ## result = get_related(o, x, m2m=multiple)
+                ## break
+    # relaties van deze naar andere
+    ## result = [corr_naam(relobj.rel.to._meta.module_name)
+        ## for relobj in my.rectypes[srt]._meta.fields if relobj.get_internal_type() == 'ForeignKey' and relobj.name != "project"]
+    for relobj in my.rectypes[srt]._meta.fields: # moet je hier ook nog checken op relobj.name != "project" ?
+        if (relobj.get_internal_type() == 'ForeignKey' and
+                corr_naam(relobj.rel.to._meta.module_name) == soort):
+            result = relobj.name # o.__getattribute__(relobj.name)
+            break
+    ## result = [corr_naam(x.rel.to._meta.module_name)
+        ## for x in my.rectypes[srt]._meta.many_to_many]
+    if result == -1:
+        for x in my.rectypes[srt]._meta.many_to_many:
+            if corr_naam(x.rel.to._meta.module_name) == soort:
+                multiple = True
+                result = x.name
+                break
+    return result, multiple
+
 def corr_naam(name):
     if name == "techtaak":
         name = 'techtask'
@@ -132,7 +164,7 @@ def index(request):
         'footer': ''
         }, context_instance=RequestContext(request))
 
-def lijst(request, proj='', soort='', id='',  edit='', srt=''):
+def lijst(request, proj='', soort='', id='',  rel='', srt=''):
     # proj = projectnummer, soort = onderdeelnaam
     ## raise ValueError('Testing...')
     entries = []
@@ -165,10 +197,20 @@ def lijst(request, proj='', soort='', id='',  edit='', srt=''):
         title = _(' bij project ').join((soortnm_mv.capitalize(), pr.naam))
     else:
         title = _('Lijst ') + soortnm_mv
-    if edit == 'rel':
-        title = str(_('{} relateren aan {} "{}"')).format(soortnm_ev, srtnm_ev,
-            my.rectypes[srt].objects.get(pk=id).naam)
+    if rel:
         info_dict['start'] = 'x' # forceert afwezigheid menu
+        ## if rel == 'from':
+            ## soort, srt = srt, soort
+            ## soortnm_ev, srtnm_ev = srtnm_ev, soortnm_ev
+            ## soortnm_mv, srtnm_mv = srtnm_mv, soortnm_mv
+        itemoms = '{} "{}"'.format(srtnm_ev, my.rectypes[srt].objects.get(pk=id).naam)
+        relstr = str(_('{} relateren aan {}'))
+        if rel == 'from':
+            title = relstr.format(itemoms, soortnm_ev)
+            info_dict['orient'] = 'van'
+        else:
+            title = relstr.format(soortnm_ev, itemoms)
+            info_dict['orient'] = 'naar'
         info_dict['ref'] = (srt, srtnm_mv, id)
         info_dict["soort"] = soort # '/'.join((srt,id,soort))
     info_dict['title'] = title # 'Doctool! ' + title
@@ -186,7 +228,7 @@ def lijst(request, proj='', soort='', id='',  edit='', srt=''):
         ## info_dict['notnw'] = 'new'
     info_dict["sctn"] = sect
     info_dict['notnw'] = 'new'
-    doc = 'relateren.html' if edit == 'rel' else 'lijst.html'
+    doc = 'relateren.html' if rel else 'lijst.html'
     return render_to_response(doc, info_dict, context_instance=RequestContext(request))
 
 def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld=''):
@@ -269,7 +311,7 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                         rel = {
                             'text': ' '.join((str(my.rectypes[soort].to_titles[srt]),
                                 str(my.rectypes[srt]._meta.verbose_name))),
-                            'btn': BTNTXT.format(proj, srt, id, "rel", soort,
+                            'btn': BTNTXT.format(proj, srt, "rel", soort, id,
                                 add_text),
                             'links': []
                             }
@@ -277,8 +319,8 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                         if result:
                             rel['links'].append(
                                 RELTXT.format(proj, srt, result.id, result) + " " +
-                                BTNTXT.format(proj, soort, id, "unrel/" + srt,
-                                    item.id, remove_text)
+                                BTNTXT.format(proj, soort, id, "unrel/van/" + srt,
+                                    result.id, remove_text)
                                 )
                         fkeys_to.append(rel)
                 info_dict['fkeys_to'] = fkeys_to
@@ -288,7 +330,7 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                     y = {
                         'text': ' '.join((str(my.rectypes[soort].to_titles[srt]),
                             str(my.rectypes[srt]._meta.verbose_name))),
-                        'btn': BTNTXT.format(proj, srt, id, "rel", soort,
+                        'btn': BTNTXT.format(proj, srt, "rel", soort, id,
                             add_text),
                         'links': []
                         }
@@ -296,7 +338,7 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                     for item in result.all():
                         y['links'].append(
                             RELTXT.format(proj, srt, item.id, item) + " " +
-                            BTNTXT.format(proj, soort, id, "unrel/" + srt,
+                            BTNTXT.format(proj, soort, id, "unrel/van/" + srt,
                                 item.id, remove_text)
                             )
                     m2ms_to.append(y)
@@ -327,8 +369,8 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                             for item in result.all():
                                 y['links'].append(
                                     RELTXT.format(proj, srt, item.id, item) + " " +
-                                    BTNTXT.format(proj, soort, id, "unrel/" + srt,
-                                        item.id, _remove_text)
+                                    BTNTXT.format(proj, srt, item.id, "unrel/naar/" + soort,
+                                        id, _remove_text)
                                     )
                         fkeys_from.append(y)
                 info_dict['fkeys_from'] = fkeys_from
@@ -348,8 +390,8 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                         for item in result.all():
                             y['links'].append(
                                 RELTXT.format(proj, srt, item.id, item) + " " +
-                                BTNTXT.format(proj, soort, id, "unrel/" + srt,
-                                    item.id, remove_text)
+                                BTNTXT.format(proj, srt, item.id, "unrel/naar/" + soort,
+                                    id, remove_text)
                                 )
                     m2ms_from.append(y)
                 info_dict['m2ms_from'] = m2ms_from
@@ -558,42 +600,52 @@ def edit_item(request, proj='',soort='',id='',srt='',verw=''):
         # bijwerken van de eventueel meegegeven relatie
         if srt in my.rectypes:
             data = my.rectypes[srt].objects.get(pk=verw)
-            rel,multiple = get_relation(o,soort,srt)
+            rel, multiple = get_relation(o, soort, srt)
             ## return HttpResponse(str(new_data))
             if multiple:
-                rel.add(data)
+                o.__getattribute__(rel).add(data)
             else:
-                rel = data
+                o.__setattr__(rel, data)
         o.save()
         id = o.id
         doc = '/%s/%s/%s/' % (proj,soort,id) if proj else '/%s/%s/' % (soort,id)
     return HttpResponseRedirect(doc)
 
-def maak_rel(request, proj='',srt='',id='',soort='',verw=''):
+def maak_rel(request, proj='',srt='',id='',soort='',verw='', rel=''):
     if srt in my.rectypes:
         o = my.rectypes[srt].objects.get(pk=id)
     if soort in my.rectypes:
         r = my.rectypes[soort].objects.get(pk=verw)
-    rel,multiple = get_relation(o,srt,soort)
+    attr_name, multiple = get_relation(o, srt, soort)
+    ## return HttpResponse('{} {}'.format(rel, multiple))
     if multiple:
-        rel.add(r)
+        o.__getattribute__(attr_name).add(r)
     else:
-        rel = r
+        o.__setattr__(attr_name, r)
+        ## return HttpResponse(rel)
+        ## rel = r
     o.save()
+    if rel == 'naar':
+        srt, id = soort, verw
     doc = '/{0}/{1}/{2}/'.format(proj,srt,id) if proj else '/{0}/{1}/'.format(srt,id)
     return HttpResponseRedirect(doc)
 
-def unrelate(request, proj='',srt='',id='',soort='',verw=''):
+def unrelate(request, proj='',srt='',id='',soort='',verw='', rel=''):
     if srt in my.rectypes:
         o = my.rectypes[srt].objects.get(pk=id)
     if soort in my.rectypes:
         r = my.rectypes[soort].objects.get(pk=verw)
-    rel, multiple = get_relation(o,srt,soort)
+    attr_name, multiple = get_relation(o, srt, soort)
+    ## return HttpResponse('{} {}'.format(o, o.__getattribute__(rel))) # str(rel), str(multiple)))
     if multiple:
-        rel.remove(r)
+        o.__getattribute__(attr_name).remove(r)
     else:
-        rel.clear()
+        ## o.__getattribute__(rel).clear()  # werkt niet
+        ## o.__delattr__(rel) # werkt niet
+        o.__setattr__(attr_name, None)
     o.save()
+    if rel == 'naar':
+        srt, id = soort, verw
     doc = '/{0}/{1}/{2}/'.format(proj,srt,id) if proj else '/{0}/{1}/'.format(srt,id)
     return HttpResponseRedirect(doc)
 

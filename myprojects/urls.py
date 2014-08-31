@@ -59,11 +59,13 @@ urlpatterns = patterns('',
         'myprojects.views.edit_item'),
 
     # relateren document aan ander document
-    (r'^(?P<proj>\d+)/(?P<srt>\w+)/(?P<id>\d+)/(?P<edit>rel)/(?P<soort>\w+)/$',
-        'myprojects.views.lijst'),
-    (r'^(?P<proj>\d+)/(?P<srt>\w+)/(?P<id>\d+)/rel/(?P<soort>\w+)/(?P<verw>\d+)/$',
+    (r'^(?P<proj>\d+)/(?P<soort>\w+)/rel/(?P<srt>\w+)/(?P<id>\d+)/$',
+        'myprojects.views.lijst', {'rel': 'from'}),
+    (r'^(?P<proj>\d+)/(?P<srt>\w+)/(?P<id>\d+)/rel/(?P<soort>\w+)/$',
+        'myprojects.views.lijst', {'rel': 'to'}),
+    (r'^(?P<proj>\d+)/(?P<srt>\w+)/(?P<id>\d+)/rel/(?P<rel>\w+)/(?P<soort>\w+)/(?P<verw>\d+)/$',
         'myprojects.views.maak_rel'),
-    (r'^(?P<proj>\d+)/(?P<srt>\w+)/(?P<id>\d+)/unrel/(?P<soort>\w+)/(?P<verw>\d+)/$',
+    (r'^(?P<proj>\d+)/(?P<srt>\w+)/(?P<id>\d+)/unrel/(?P<rel>\w+)/(?P<soort>\w+)/(?P<verw>\d+)/$',
         'myprojects.views.unrelate'),
 
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs'

@@ -4,7 +4,11 @@
 {% trans 'Selecteer een' %} {{lijstitem}}:<br/><br/>
 <ul>
 {% for x in lijst %}
-<li><a href="/{{proj}}/{{srt}}/{{id}}/rel/{{soort}}/{{x.id}}/" title="{% trans 'relateer' %}">{{x}}</a></li>
+{% if orient == 'naar' %}
+<li><a href="/{{proj}}/{{soort}}/{{x.id}}/rel/{{orient}}/{{srt}}/{{id}}/" title="{% trans 'relateer' %}">{{x}}</a></li>
+{% else %}
+<li><a href="/{{proj}}/{{srt}}/{{id}}/rel/{{orient}}/{{soort}}/{{x.id}}/" title="{% trans 'relateer' %}">{{x}}</a></li>
+{% endif %}
 {% endfor %}
 </ul>
 {% endif %}
