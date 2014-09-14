@@ -308,20 +308,19 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                         continue
                     if fld.get_internal_type() == 'ForeignKey':
                         srt = corr_naam(fld.rel.to._meta.module_name)
-                        rel = {
-                            'text': ' '.join((str(my.rectypes[soort].to_titles[srt]),
-                                str(my.rectypes[srt]._meta.verbose_name))),
-                            'btn': BTNTXT.format(proj, srt, "rel", soort, id,
-                                add_text),
-                            'links': []
-                            }
                         result = o.__getattribute__(fld.name)
+                        rel = {'text': ' '.join((str(my.rectypes[soort].to_titles[srt]),
+                                    str(my.rectypes[srt]._meta.verbose_name))),
+                                'links': []}
                         if result:
                             rel['links'].append(
                                 RELTXT.format(proj, srt, result.id, result) + " " +
                                 BTNTXT.format(proj, soort, id, "unrel/van/" + srt,
                                     result.id, remove_text)
                                 )
+                        else:
+                            rel['btn'] = BTNTXT.format(proj, srt, "rel", soort, id,
+                                    add_text)
                         fkeys_to.append(rel)
                 info_dict['fkeys_to'] = fkeys_to
                 m2ms_to = []
