@@ -8,3 +8,4 @@ syntax: glob
 *.ini
 myprojects/files/*
 myprojects/oud/*
+myprojects/settings.py
