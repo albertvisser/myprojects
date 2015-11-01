@@ -40,7 +40,7 @@ def get_related(this_obj, other_obj, m2m=False):
         fields = [x for x in other_obj.model._meta.fields if x.name != 'project' and
             x.get_internal_type() == 'ForeignKey']
     for fld in fields:
-        if fld.rel.to._meta.module_name == this_obj._meta.module_name:
+        if fld.rel.to._meta.model_name == this_obj._meta.model_name:
             related_name = fld.related_query_name()
             break
     try:
@@ -53,28 +53,28 @@ def get_relation(o, srt, soort):
     multiple = False
     # relaties van andere naar deze
     ## for relobj in my.rectypes[srt]._meta.get_all_related_objects():
-        ## if corr_naam(relobj.model._meta.module_name) == soort:
+        ## if corr_naam(relobj.model._meta.model_name) == soort:
             ## result = get_related(o, relobj)
             ## break
     ## if result is None:
         ## for x in my.rectypes[srt]._meta.get_all_related_many_to_many_objects():
-            ## if corr_naam(x.model._meta.module_name) == soort:
+            ## if corr_naam(x.model._meta.model_name) == soort:
                 ## multiple = True
                 ## result = get_related(o, x, m2m=multiple)
                 ## break
     # relaties van deze naar andere
-    ## result = [corr_naam(relobj.rel.to._meta.module_name)
+    ## result = [corr_naam(relobj.rel.to._meta.model_name)
         ## for relobj in my.rectypes[srt]._meta.fields if relobj.get_internal_type() == 'ForeignKey' and relobj.name != "project"]
     for relobj in my.rectypes[srt]._meta.fields: # moet je hier ook nog checken op relobj.name != "project" ?
         if (relobj.get_internal_type() == 'ForeignKey' and
-                corr_naam(relobj.rel.to._meta.module_name) == soort):
+                corr_naam(relobj.rel.to._meta.model_name) == soort):
             result = relobj.name # o.__getattribute__(relobj.name)
             break
-    ## result = [corr_naam(x.rel.to._meta.module_name)
+    ## result = [corr_naam(x.rel.to._meta.model_name)
         ## for x in my.rectypes[srt]._meta.many_to_many]
     if result == -1:
         for x in my.rectypes[srt]._meta.many_to_many:
-            if corr_naam(x.rel.to._meta.module_name) == soort:
+            if corr_naam(x.rel.to._meta.model_name) == soort:
                 multiple = True
                 result = x.name
                 break
@@ -307,7 +307,7 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                     if fld.name == "project":
                         continue
                     if fld.get_internal_type() == 'ForeignKey':
-                        srt = corr_naam(fld.rel.to._meta.module_name)
+                        srt = corr_naam(fld.rel.to._meta.model_name)
                         result = o.__getattribute__(fld.name)
                         rel = {'text': ' '.join((str(my.rectypes[soort].to_titles[srt]),
                                     str(my.rectypes[srt]._meta.verbose_name))),
@@ -325,7 +325,7 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                 info_dict['fkeys_to'] = fkeys_to
                 m2ms_to = []
                 for x in opts.many_to_many:
-                    srt = corr_naam(x.rel.to._meta.module_name)
+                    srt = corr_naam(x.rel.to._meta.model_name)
                     y = {
                         'text': ' '.join((str(my.rectypes[soort].to_titles[srt]),
                             str(my.rectypes[srt]._meta.verbose_name))),
@@ -345,7 +345,7 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                 ## button_lijst = [] # of button_lijst = my.rectypes[soort].from_titles.keys()
                 fkeys_from = []
                 for relobj in opts.get_all_related_objects():
-                    srt = corr_naam(relobj.model._meta.module_name)
+                    srt = corr_naam(relobj.related_model._meta.model_name)
                     if (soort,srt) == ('entiteit','attribuut'):
                         info_dict["andere"] = [x.naam for x in
                             my.Entiteit.objects.filter(project=o.project) if x != o]
@@ -375,7 +375,7 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                 info_dict['fkeys_from'] = fkeys_from
                 m2ms_from = []
                 for x in opts.get_all_related_many_to_many_objects():
-                    srt = corr_naam(x.model._meta.module_name)
+                    srt = corr_naam(x.related_model._meta.model_name)
                     button_lijst.append(srt)
                     y = {
                         'text': ' '.join((str(my.rectypes[soort].from_titles[srt]),
