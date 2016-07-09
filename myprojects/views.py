@@ -161,6 +161,7 @@ def index(request):
         'meld': meld,
         'start': True,
         'projecten': my.Project.objects.all().order_by('naam'),
+        'sites': SITES,
         'footer': ''
         }, context_instance=RequestContext(request))
 
@@ -203,7 +204,12 @@ def lijst(request, proj='', soort='', id='',  rel='', srt=''):
             ## soort, srt = srt, soort
             ## soortnm_ev, srtnm_ev = srtnm_ev, soortnm_ev
             ## soortnm_mv, srtnm_mv = srtnm_mv, soortnm_mv
-        itemoms = '{} "{}"'.format(srtnm_ev, my.rectypes[srt].objects.get(pk=id).naam)
+        if srt in ('userwijz', 'userprob', 'bevinding'):
+            attr = 'nummer'
+        else:
+            attr = 'naam'
+        itemoms = '{} "{}"'.format(srtnm_ev,
+            my.rectypes[srt].objects.get(pk=id).__getattribute__(attr))
         relstr = str(_('{} relateren aan {}'))
         if rel == 'from':
             title = relstr.format(itemoms, soortnm_ev)
