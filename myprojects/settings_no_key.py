@@ -7,6 +7,8 @@ SECRET_KEY = ''
 
 DEBUG = True
 
+ALLOWED_HOSTS = ['.lemoncurry.nl']
+
 INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
