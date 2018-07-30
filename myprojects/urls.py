@@ -79,6 +79,6 @@ urlpatterns = patterns(
     url(r'^admin/', include(admin.site.urls)),
 
     # media - static files to be served from development server
-    url(r'^files/(?P<path>.*)$', 'django.views.static.serve',
+    url(r'^files/(?P<path>.+)$', 'django.views.static.serve',
         {'document_root': '/home/albert/www/django/myprojects/files'}),
 )
