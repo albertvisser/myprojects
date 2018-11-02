@@ -3,12 +3,11 @@
 import datetime
 ## from django.template import Context, loader
 ## from django.http import Http404
-from django.shortcuts import render_to_response     # , get_object_or_404
+from django.shortcuts import render     # , get_object_or_404
 ## from django.core.exceptions import MultiValueDictKeyError, ObjectDoesNotExist #, DoesNotExist
 from django.core.exceptions import ObjectDoesNotExist  # , DoesNotExist
 from django.http import HttpResponseRedirect    # HttpResponse,
 ## from django.views.decorators.cache import cache_control
-from django.template import RequestContext
 from django.utils.translation import ugettext as _
 ## from django.db import models
 import myprojects.models as my
@@ -182,15 +181,14 @@ def index(request):
     meld = ''
     ## return HttpResponse(os.path.splitext(my.__file__)[0] + '.py')
     ## raise ValueError('Testing...')
-    return render_to_response(
-        'start.html', {
-            'title': _('Welcome to MyProjects (formerly known as DocTool)!'),
-            'meld': meld,
-            'start': True,
-            'projecten': my.Project.objects.all().order_by('naam'),
-            'sites': SITES,
-            'footer': ''},
-        context_instance=RequestContext(request))
+    return render(request,
+                  'start.html',
+                  {'title': _('Welcome to MyProjects (formerly known as DocTool)!'),
+                   'meld': meld,
+                   'start': True,
+                   'projecten': my.Project.objects.all().order_by('naam'),
+                   'sites': SITES,
+                   'footer': ''})
 
 
 def lijst(request, proj='', soort='', id='', rel='', srt=''):
@@ -262,7 +260,7 @@ def lijst(request, proj='', soort='', id='', rel='', srt=''):
     info_dict["sctn"] = sect
     info_dict['notnw'] = 'new'
     doc = 'relateren.html' if rel else 'lijst.html'
-    return render_to_response(doc, info_dict, context_instance=RequestContext(request))
+    return render(request, doc, info_dict)
 
 
 def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld=''):
@@ -504,14 +502,11 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
         ## )))
     if edit:
         info_dict['edit'] = 'edit'
-        ## return render_to_response('{0}_edit.html'.format(soort), info_dict,
-            ## context_instance=RequestContext(request)) # {'title': 'nieuw', 'soort': soort, 'id': id, 'proj': proj})
+        ## return render(request, '{0}_edit.html'.format(soort), info_dict)
     else:
         info_dict['edit'] = 'view'
-        ## return render_to_response('{0}_view.html'.format(soort), info_dict,
-            ## context_instance=RequestContext(request)) # {'title': 'nieuw', 'soort': soort, 'id': id, 'proj': proj})
-    return render_to_response('{}.html'.format(soort), info_dict,
-                              context_instance=RequestContext(request))
+        ## return render(request, '{0}_view.html'.format(soort), info_dict)
+    return render(request, '{}.html'.format(soort), info_dict)
                               # {'title': 'nieuw', 'soort': soort, 'id': id, 'proj': proj})
 
 
@@ -556,7 +551,7 @@ def edit_item(request, proj='', soort='', id='', srt='', verw=''):
     if proj:
         try:
             p = my.Project.objects.get(pk=proj)
-        except:
+        except ObjectDoesNotExist:
             pass
     if soort == '':
         soort = 'project'
@@ -691,7 +686,7 @@ def edit_sub(request, proj='', srt1='', id1='', srt2='', id2=''):
     """
     try:  # do we have form data?
         data = request.POST
-    except:
+    except AttributeError:
         data = {}
     if id2:
         o2 = my.rectypes[srt2].objects.get(pk=id2)
@@ -724,4 +719,4 @@ def viewdoc(request):
     """display an uploaded document
     """
     parts = request.path.split('files/')
-    return render_to_response(MEDIA_ROOT + parts[1], {})
+    return render(request, MEDIA_ROOT + parts[1], {})
