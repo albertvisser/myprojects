@@ -48,37 +48,14 @@ def get_related(this_obj, other_obj, m2m=False):
 
 
 def get_relation(o, srt, soort):
-    """Geeft naam van een relatie terug + cardinaliteit (?)
+    """Geeft naam van een relatie terug + cardinaliteit
     """
-    result = -1
-    multiple = False
-    # relaties van andere naar deze
-    ## for relobj in my.rectypes[srt]._meta.get_all_related_objects():
-        ## if corr_naam(relobj.model._meta.model_name) == soort:
-            ## result = get_related(o, relobj)
-            ## break
-    ## if result is None:
-        ## for x in my.rectypes[srt]._meta.get_all_related_many_to_many_objects():
-            ## if corr_naam(x.model._meta.model_name) == soort:
-                ## multiple = True
-                ## result = get_related(o, x, m2m=multiple)
-                ## break
-    # relaties van deze naar andere
-    ## result = [corr_naam(relobj.rel.to._meta.model_name)
-        ## for relobj in my.rectypes[srt]._meta.fields if relobj.get_internal_type() == 'ForeignKey' and relobj.name != "project"]
-    for relobj in my.rectypes[srt]._meta.fields:  # moet je hier ook nog checken op relobj.name != "project" ?
-        if (relobj.get_internal_type() == 'ForeignKey' and
-                corr_naam(relobj.rel.to._meta.model_name) == soort):
-            result = relobj.name  # o.__getattribute__(relobj.name)
+    result, multiple = None, None
+    for relobj in my.rectypes[srt]._meta.get_fields():
+        if corr_naam(relobj.rel.to._meta.model_name) == soort:
+            result = relobj.name
+            multiple = True if relobj.get_internal_type() == 'ForeignKey' else False
             break
-    ## result = [corr_naam(x.rel.to._meta.model_name)
-        ## for x in my.rectypes[srt]._meta.many_to_many]
-    if result == -1:
-        for x in my.rectypes[srt]._meta.many_to_many:
-            if corr_naam(x.rel.to._meta.model_name) == soort:
-                multiple = True
-                result = x.name
-                break
     return result, multiple
 
 
@@ -93,42 +70,31 @@ def corr_naam(name):
             return name2
         if name == name2:
             return name1
-    ## if name == "techtaak":
-        ## name = 'techtask'
-    ## elif name == "programma":
-        ## name = 'procproc'
-    ## elif name == "techtask":
-        ## name = 'techtaak'
-    ## elif name == "procproc":
-        ## name = 'programma'
-    ## return name
+    return name
 
 
-def naam_dict(name):
-    """get verbose names from model definition
-    """
-    opts = my.rectypes[name]._meta
-    try:
-        sect = my.rectypes[name].section
-    except AttributeError:
-        sect = ''
-    return str(opts.verbose_name), str(opts.verbose_name_plural), sect
-
-
-def getfields(name, alles=False):
+def get_field_attr(name, alles=False):
     """leidt veldnaam, type en lengte af uit de definities in models.py
     de variant met een repeating group (entiteit, dataitem) levert hier
     nog een probleem op."""
     fields = []
     opts = my.rectypes[name]._meta
     if alles:
-        for x in opts.fields + opts.many_to_many:
-            fields.append((x.name, x.get_internal_type(), x.maxlength))
+        for rel in opts.get_fields():
+            print(rel, rel.one_to_many or rel.many_to_many)
+            if rel.one_to_many or rel.many_to_many:
+                try:
+                    fields.append((rel.name, rel.get_internal_type(), rel.max_length))
+                except AttributeError:
+                    fields.append((rel.name, rel.get_internal_type(), -1))
     else:
-        for x in opts.fields:
+        for x in opts.get_fields():  # fields:
             fldname = x.name
             fldtype = x.get_internal_type()
-            length = -1 if x.max_length is None else x.max_length
+            try:
+                length = x.max_length
+            except AttributeError:
+                length = -1
             if fldname != 'id' and fldtype != 'ForeignKey':
                 fields.append((fldname, fldtype[:-5], length))
     return fields
@@ -152,35 +118,36 @@ def get_new_id(sel):
     return h
 
 
-def get_stats_texts(all, action_type):
+def get_stats_texts(proj, action_type):
     """get certain texts for certain document types
     """
-    first, next = '', ''
-    solved = all.filter(gereed=True).count()
-    working = all.filter(gereed=False).filter(actie__isnull=False).count()
-    all = all.count()
-    if all == 0:
-        first = _("(nog) geen")
-        next = (_("opgevoerd") if action_type == 'bevinding' else
-                _("gemeld") if action_type == 'probleem' else
-                _('ingediend'))
+    first = _("(nog) geen")
+    if action_type == 'userwijz':
+        all_objects = my.Userwijz.objects.filter(project=proj)
+        second = _('ingediend')
+        hlp = _("gerealiseerd"), _('in behandeling via')
+    elif action_type == 'probleem':
+        all_objects = my.Userprob.objects.filter(project=proj)
+        second = _("gemeld")
+        hlp = _('opgelost'), _('doorgekoppeld naar')
+    elif action_type == 'bevinding':
+        all_objects = my.Bevinding.objects.filter(project=proj)
+        second = _("opgevoerd")
+        hlp = _('opgelost'), _('doorgekoppeld naar')
     else:
-        first = all
-        if action_type == 'userwijz':
-            hlp = _("gerealiseerd"), _('in behandeling via')
-        else:
-            hlp = _('opgelost'), _('doorgekoppeld naar')
-        next = str(_("waarvan {} {} en {} {} Actiereg").format(
-            solved, hlp[0], working, hlp[1]))
-    return first, next
+        return '', ''
+    solved = all_objects.filter(gereed=True).count()
+    working = all_objects.filter(gereed=False).filter(actie__isnull=False).count()
+    if all_objects.count() != 0:
+        first = all_objects.count()
+        second = str(_("waarvan {} {} en {} {} Actiereg").format(solved, hlp[0], working, hlp[1]))
+    return first, second
 
 
 def index(request):
     """Show the landing page
     """
     meld = ''
-    ## return HttpResponse(os.path.splitext(my.__file__)[0] + '.py')
-    ## raise ValueError('Testing...')
     return render(request,
                   'start.html',
                   {'title': _('Welcome to MyProjects (formerly known as DocTool)!'),
@@ -196,13 +163,19 @@ def lijst(request, proj='', soort='', id='', rel='', srt=''):
 
     arguments: proj = projectnummer, soort = onderdeelnaam
     """
-    naam_ev, naam_mv, sect = naam_dict(soort)
+    soortnm_ev = my.rectypes[soort]._meta.verbose_name
+    soortnm_mv = my.rectypes[soort]._meta.verbose_name_plural
+    sect = my.rectypes[soort].section
+    if srt:
+        srtnm_ev = my.rectypes[srt]._meta.verbose_name
+        srtnm_mv = my.rectypes[srt]._meta.verbose_name_plural
+        # sect = my.rectypes[srt].section
     info_dict = {'soort': soort,
                  'srt': srt,
                  'id': id,
                  'proj': proj,
-                 'lijstitem': naam_ev,
-                 'lijstvan': naam_mv,
+                 'lijstitem': soortnm_ev,
+                 'lijstvan': soortnm_mv,
                  'projecten': my.Project.objects.all().order_by('naam')}
     meld = ''
     if soort in my.rectypes:
@@ -215,9 +188,6 @@ def lijst(request, proj='', soort='', id='', rel='', srt=''):
         else:
             lijst = lijst.order_by('naam')
         info_dict['lijst'] = lijst
-    soortnm_ev, soortnm_mv, sect = naam_dict(soort)
-    if srt:
-        srtnm_ev, srtnm_mv, sect = naam_dict(srt)
     if proj:
         pr = my.Project.objects.get(pk=proj)
         title = _(' bij project ').join((soortnm_mv.capitalize(), pr.naam))
@@ -225,16 +195,12 @@ def lijst(request, proj='', soort='', id='', rel='', srt=''):
         title = _('Lijst ') + soortnm_mv
     if rel:
         info_dict['start'] = 'x'  # forceert afwezigheid menu
-        ## if rel == 'from':
-            ## soort, srt = srt, soort
-            ## soortnm_ev, srtnm_ev = srtnm_ev, soortnm_ev
-            ## soortnm_mv, srtnm_mv = srtnm_mv, soortnm_mv
         if srt in ('userwijz', 'userprob', 'bevinding'):
             attr = 'nummer'
         else:
             attr = 'naam'
-        itemoms = '{} "{}"'.format(
-            srtnm_ev, my.rectypes[srt].objects.get(pk=id).__getattribute__(attr))
+        itemoms = '{} "{}"'.format(srtnm_ev,
+                                   my.rectypes[srt].objects.get(pk=id).__getattribute__(attr))
         relstr = str(_('{} relateren aan {}'))
         if rel == 'from':
             title = relstr.format(itemoms, soortnm_ev)
@@ -246,17 +212,12 @@ def lijst(request, proj='', soort='', id='', rel='', srt=''):
         info_dict["soort"] = soort  # '/'.join((srt,id,soort))
     info_dict['title'] = title  # 'Doctool! ' + title
     if pr:
-        info_dict['title'] = "Project {0} - {1}".format(
-            pr.naam, info_dict["title"])
+        info_dict['title'] = "Project {0} - {1}".format(pr.naam, info_dict["title"])
     if lijst.count() == 0:
         meld = soortnm_mv.join((_("Geen "), _(" aanwezig")))
         if proj:
             meld += _(" bij dit project")
     info_dict['meld'] = meld
-    ## if soort:
-        ## info_dict['notnw'] = '%s/new' % soort
-    ## else:
-        ## info_dict['notnw'] = 'new'
     info_dict["sctn"] = sect
     info_dict['notnw'] = 'new'
     doc = 'relateren.html' if rel else 'lijst.html'
@@ -269,14 +230,6 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
     arguments: proj = projectnummer, soort = onderdeelnaam, edit = 'edit' of 'new',
                id = item nummer of niks bij nieuw
     """
-    ## try:  # do we have form data?
-        ## data = request.POST
-    ## except:  # AttributeError?
-        ## data = {}
-    ## try: # do we have other form data?
-        ## meld = request.GET.get('msg',"")
-    ## except:  # KeyError?
-        ## pass
     info_dict = {'title': '', 'start': '', 'prev': '', 'notnw': '', 'view': '',
                  'next': '', 'proj': proj if proj != 'proj' else '', 'sect': '',
                  'meld': meld, 'projecten': my.Project.objects.all().order_by('naam')}
@@ -337,6 +290,8 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                         prev = x.id
                 opts = my.rectypes[soort]._meta
                 fkeys_to = []
+                # dit opnieuw opzetten met één lus over opts.get_fields(show_hidden=True)
+                # in plaats van de vier lussen die ik nu heb
                 for fld in opts.fields:
                     if fld.name == "project":
                         continue
@@ -373,7 +328,9 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                 info_dict['m2ms_to'] = m2ms_to
                 ## button_lijst = [] # of button_lijst = my.rectypes[soort].from_titles.keys()
                 fkeys_from = []
-                for relobj in opts.get_all_related_objects():
+                # for relobj in opts.get_all_related_objects():
+                for relobj in [x for x in opts.get_fields()
+                        if (x.one_to_many or x.one_to_one) and x.auto_created and not x.concrete]:
                     srt = corr_naam(relobj.related_model._meta.model_name)
                     if (soort, srt) == ('entiteit', 'attribuut'):
                         info_dict["andere"] = [x.naam for x in my.Entiteit.objects.filter(
@@ -399,7 +356,9 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                         fkeys_from.append(y)
                 info_dict['fkeys_from'] = fkeys_from
                 m2ms_from = []
-                for x in opts.get_all_related_many_to_many_objects():
+                # for x in opts.get_all_related_many_to_many_objects():
+                for x in [y for y in opts.get_fields()  # include_hidden=True)
+                          if y.one_to_many and y.auto_created]:
                     srt = corr_naam(x.related_model._meta.model_name)
                     button_lijst.append(srt)
                     y = {'text': ' '.join((str(my.rectypes[soort].from_titles[srt]),
@@ -423,12 +382,12 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                                                       '\n'.join(relaties)))
                 buttons = []
                 for s in button_lijst:    # build buttons to create related documents
-                    buttons.append(BTNTXT.format(proj, s, "new", soort, id,
-                                                 _("Opvoeren ") + naam_dict(s)[0]))
+                    buttons.append(BTNTXT.format(proj, s, "new", soort, id, _("Opvoeren ") +
+                                                 str(my.rectypes[s]._meta.verbose_name)))
                 info_dict["buttons"] = buttons
     info_dict["prev"] = prev
     info_dict["next"] = next
-    for x, y, z in getfields(soort):  # inhoud per veld (naam,type,lengte) op scherm zetten
+    for x, y, z in get_field_attr(soort):  # inhoud per veld (naam,type,lengte) op scherm zetten
         lengte[x] = z
         """bij Entiteit en Dataitem moet nog het vullen van {{attrdata}}
         met de onderliggende gegevens"""
@@ -446,10 +405,13 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                         info_dict[x] = get_new_id(owner_proj.tbev)
     info_dict['notnw'] = 'new'
     info_dict["lengte"] = lengte
-    naam_ev, naam_mv, sect = naam_dict(soort)
+    # naam_ev, naam_mv, sect = naam_dict(soort)
+    naam_ev = my.rectypes[soort]._meta.verbose_name
+    naam_mv = my.rectypes[soort]._meta.verbose_name_plural
+    sect = my.rectypes[soort].section
     if edit == 'new':
         info_dict['new'] = 'nieuw'
-        info_dict['title'] = _('Nieuw(e) ') + naam_ev
+        info_dict['title'] = _('Nieuw(e) ') + str(naam_ev)
     else:
         if edit == 'edit':
             info_dict['edit'] = 'view'
@@ -462,12 +424,9 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
         info_dict['data'] = o
     if soort == 'project':
         if not edit:
-            all = my.Bevinding.objects.filter(project=proj)
-            info_dict['test_stats'] = get_stats_texts(all, 'bevinding')
-            all = my.Userprob.objects.filter(project=proj)
-            info_dict['prob_stats'] = get_stats_texts(all, 'userprob')
-            all = my.Userwijz.objects.filter(project=proj)
-            info_dict['wijz_stats'] = get_stats_texts(all, 'userwijz')
+            info_dict['test_stats'] = get_stats_texts(proj, 'bevinding')
+            info_dict['prob_stats'] = get_stats_texts(proj, 'probleem')
+            info_dict['wijz_stats'] = get_stats_texts(proj, 'userwijz')
     else:
         info_dict['title'] = "Project {} - {}".format(
             owner_proj.naam, info_dict["title"])
@@ -491,23 +450,11 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
     else:
         info_dict["ar_user"] = o.aruser if soort == "project" else owner_proj.aruser
 
-    ## return HttpResponse("soort = %s, id = %s, proj = %s, edit = %s" % (soort, id,proj,edit))
-    ## return HttpResponse('<br/>'.join((
-    ## raise ValueError('Stopped')
-    ## return HttpResponse('<br/>'.join((
-        ## str(info_dict['fkeys_to']),
-        ## str(info_dict['m2ms_to']),
-        ## str(info_dict['fkeys_from']),
-        ## str(info_dict['m2ms_from'])
-        ## )))
     if edit:
         info_dict['edit'] = 'edit'
-        ## return render(request, '{0}_edit.html'.format(soort), info_dict)
     else:
         info_dict['edit'] = 'view'
-        ## return render(request, '{0}_view.html'.format(soort), info_dict)
     return render(request, '{}.html'.format(soort), info_dict)
-                              # {'title': 'nieuw', 'soort': soort, 'id': id, 'proj': proj})
 
 
 def koppel(request, proj='', soort='', id='', arid='0', arnum=''):
@@ -558,7 +505,7 @@ def edit_item(request, proj='', soort='', id='', srt='', verw=''):
         if proj == 'proj':
             p = my.Project()
         to_actiereg = True if p.actiereg == "" else False
-        for x, y, z in getfields('project'):  # naam,type,lengte
+        for x, y, z in get_field_attr('project'):  # naam,type,lengte
             p.__dict__[x] = request.POST[x]
         p.save()
         if to_actiereg and p.actiereg != "":
@@ -599,7 +546,7 @@ def edit_item(request, proj='', soort='', id='', srt='', verw=''):
         else:
             if soort in ('userwijz', 'userprob', 'bevinding'):
                 gereed = o.gereed
-            for x, y, z in getfields(soort):  # naam,type,lengte
+            for x, y, z in get_field_attr(soort):  # naam,type,lengte
                 if x == 'datum_gereed':
                     if request.POST['gereed'] == '1' and not gereed:
                         o.datum_gereed = datetime.datetime.today()
@@ -626,7 +573,6 @@ def edit_item(request, proj='', soort='', id='', srt='', verw=''):
         if srt in my.rectypes:
             data = my.rectypes[srt].objects.get(pk=verw)
             rel, multiple = get_relation(o, soort, srt)
-            ## return HttpResponse(str(new_data))
             if multiple:
                 o.__getattribute__(rel).add(data)
             else:
@@ -645,13 +591,10 @@ def maak_rel(request, proj='', srt='', id='', soort='', verw='', rel=''):
     if soort in my.rectypes:
         r = my.rectypes[soort].objects.get(pk=verw)
     attr_name, multiple = get_relation(o, srt, soort)
-    ## return HttpResponse('{} {}'.format(rel, multiple))
     if multiple:
         o.__getattribute__(attr_name).add(r)
     else:
         o.__setattr__(attr_name, r)
-        ## return HttpResponse(rel)
-        ## rel = r
     o.save()
     if rel == 'naar':
         srt, id = soort, verw
@@ -667,12 +610,9 @@ def unrelate(request, proj='', srt='', id='', soort='', verw='', rel=''):
     if soort in my.rectypes:
         r = my.rectypes[soort].objects.get(pk=verw)
     attr_name, multiple = get_relation(o, srt, soort)
-    ## return HttpResponse('{} {}'.format(o, o.__getattribute__(rel))) # str(rel), str(multiple)))
     if multiple:
         o.__getattribute__(attr_name).remove(r)
     else:
-        ## o.__getattribute__(rel).clear()  # werkt niet
-        ## o.__delattr__(rel) # werkt niet
         o.__setattr__(attr_name, None)
     o.save()
     if rel == 'naar':
