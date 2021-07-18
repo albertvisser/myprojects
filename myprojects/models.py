@@ -8,6 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 class Project(models.Model):
     """Software project
     """
+    section = ''
     naam = models.CharField(max_length=40)
     kort = models.CharField(max_length=80)
     oms = models.TextField()
@@ -32,7 +33,7 @@ class Userspec(models.Model):
     to_titles = {}
     from_titles = {'gebrtaak': _('Betrokken'),
                    'funcproc': _('Betrokken')}
-    project = models.ForeignKey(Project, related_name="specs")
+    project = models.ForeignKey(Project, related_name="specs", on_delete=models.CASCADE)
     naam = models.CharField(max_length=40)
     kort = models.CharField(max_length=80)
     functie = models.TextField()
@@ -56,7 +57,7 @@ class Userdoc(models.Model):
     section = 'user'
     to_titles = {}
     from_titles = {}
-    project = models.ForeignKey(Project, related_name="docs")
+    project = models.ForeignKey(Project, related_name="docs", on_delete=models.CASCADE)
     naam = models.CharField(max_length=40)
     oms = models.CharField(max_length=80)
     link = models.FileField(upload_to='userdoc')
@@ -75,10 +76,10 @@ class Userwijz(models.Model):
     """
     section = 'user'
     to_titles = {}
-    from_titles = {'gebrtaak': _('Raakt'),
+    from_titles = {'gebrtaak': _('Raakt'), 'gebrtaak_rfc': _('Raakt'),
                    'funcproc': _('Raakt'),
                    'entiteit': _('Raakt')}
-    project = models.ForeignKey(Project, related_name="rfcs")
+    project = models.ForeignKey(Project, related_name="rfcs", on_delete=models.CASCADE)
     nummer = models.CharField(max_length=10)
     datum_in = models.DateTimeField(default=datetime.datetime.now,
                                     editable=False)  # auto_now_add=True)
@@ -105,7 +106,7 @@ class Userprob(models.Model):
     section = 'user'
     to_titles = {}
     from_titles = {}
-    project = models.ForeignKey(Project, related_name="probs")
+    project = models.ForeignKey(Project, related_name="probs", on_delete=models.CASCADE)
     nummer = models.CharField(max_length=10)
     datum_in = models.DateTimeField(auto_now_add=True)
     gereed = models.BooleanField()
@@ -131,7 +132,7 @@ class Funcdoc(models.Model):
     section = 'func'
     to_titles = {}
     from_titles = {}
-    project = models.ForeignKey(Project, related_name="fdocs")
+    project = models.ForeignKey(Project, related_name="fdocs", on_delete=models.CASCADE)
     naam = models.CharField(max_length=40)
     oms = models.CharField(max_length=80)
     link = models.FileField(upload_to='funcdoc')
@@ -154,8 +155,9 @@ class Gebrtaak(models.Model):
     from_titles = {'funcproc': _('Wordt bediend door'),
                    'techtaak': _('Gerelateerde'),
                    'layout': _('Bijbehorende'),
-                   'testplan': _('Zie')}
-    project = models.ForeignKey(Project, related_name="gtaken")
+                   'testplan': _('Zie'),
+                   'gebrtaak_rfc': _('Gerelateerde')}
+    project = models.ForeignKey(Project, related_name="gtaken", on_delete=models.CASCADE)
     naam = models.CharField(max_length=40)
     doel = models.CharField(max_length=80)
     wanneer = models.TextField()
@@ -163,7 +165,7 @@ class Gebrtaak(models.Model):
     condities = models.TextField()
     waarvoor = models.TextField()
     beschrijving = models.TextField()
-    spec = models.ForeignKey(Userspec, related_name="gtaken", null=True)
+    spec = models.ForeignKey(Userspec, related_name="gtaken", null=True, on_delete=models.CASCADE)
     rfc = models.ManyToManyField(Userwijz, related_name="gtaken", null=True)
 
     def __str__(self):
@@ -186,13 +188,13 @@ class Funcproc(models.Model):
                    'funcproc': _('Gebruikt'),
                    'techproc': _('Gebruikt'),
                    'testplan': _('Zie')}
-    project = models.ForeignKey(Project, related_name="fprocs")
+    project = models.ForeignKey(Project, related_name="fprocs", on_delete=models.CASCADE)
     naam = models.CharField(max_length=40)
     doel = models.CharField(max_length=80)
     invoer = models.TextField()
     uitvoer = models.TextField()
     beschrijving = models.TextField()
-    spec = models.ForeignKey(Userspec, related_name="fprocs", null=True)
+    spec = models.ForeignKey(Userspec, related_name="fprocs", null=True, on_delete=models.CASCADE)
     rfc = models.ManyToManyField(Userwijz, related_name="fprocs", null=True)
     gt = models.ManyToManyField(Gebrtaak, related_name="fprocs", null=True)
     bom = models.ManyToManyField('self', symmetrical=False, related_name="used_by",
@@ -214,7 +216,7 @@ class Entiteit(models.Model):
                  'funcproc': _('Wordt gebruikt door')}
     from_titles = {'dataitem': _('Wordt gerealiseerd door'),
                    'testplan': _('Zie')}
-    project = models.ForeignKey(Project, related_name="fdata")
+    project = models.ForeignKey(Project, related_name="fdata", on_delete=models.CASCADE)
     naam = models.CharField(max_length=40)
     kort = models.CharField(max_length=80)
     functie = models.TextField()
@@ -233,16 +235,18 @@ class Entiteit(models.Model):
 class Attribuut(models.Model):
     """Data element
     """
+    section = 'func'  # stond er eerder niet, krijg ik hopenlijk geen problmen mee
     type_choices = (('A', _('Tekst')),
                     ('N', _('Numeriek (geheel getal)')),
                     ('B', _('Bedrag (numeriek, cijfers achter de komma)')),
                     ('D', _('Datum')))
-    hoort_bij = models.ForeignKey(Entiteit, related_name="attrs")
+    hoort_bij = models.ForeignKey(Entiteit, related_name="attrs", on_delete=models.CASCADE)
     naam = models.CharField(max_length=40)  # ,core=True)
     type = models.CharField(max_length=10, choices=type_choices)
     bereik = models.TextField()
     primarykey = models.PositiveSmallIntegerField()
-    relatie = models.ForeignKey(Entiteit, related_name="relatie", null=True)
+    relatie = models.ForeignKey(Entiteit, related_name="relatie", null=True,
+                                on_delete=models.CASCADE)
 
     def __str__(self):
         return self.naam
@@ -258,13 +262,13 @@ class Techtask(models.Model):
     section = 'tech'
     to_titles = {'gebrtaak': _('Bedient')}
     from_titles = {'techproc': _('Wordt bediend door')}
-    project = models.ForeignKey(Project, related_name="ttask")
+    project = models.ForeignKey(Project, related_name="ttask", on_delete=models.CASCADE)
     naam = models.CharField(max_length=40)
     kort = models.CharField(max_length=80)
     doel = models.TextField()
     periode = models.TextField()
     verloop = models.TextField()
-    gt = models.ForeignKey(Gebrtaak, related_name="ttask", null=True)
+    gt = models.ForeignKey(Gebrtaak, related_name="ttask", null=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return ": ".join((self.naam, self.kort))
@@ -285,7 +289,7 @@ class Techproc(models.Model):
                    'techproc': _('Gebruikt'),
                    'layout': _('Gebruikt'),
                    'programma': _('Gebruikt')}
-    project = models.ForeignKey(Project, related_name="tproc")
+    project = models.ForeignKey(Project, related_name="tproc", on_delete=models.CASCADE)
     naam = models.CharField(max_length=40)
     doel = models.CharField(max_length=80)
     invoer = models.TextField()
@@ -312,7 +316,7 @@ class Dataitem(models.Model):
     to_titles = {'entiteit': _('Is technische vertaling van'),
                  'techproc': _('Wordt gebruikt door')}
     from_titles = {}
-    project = models.ForeignKey(Project, related_name="tdata")
+    project = models.ForeignKey(Project, related_name="tdata", on_delete=models.CASCADE)
     naam = models.CharField(max_length=40)
     functie = models.CharField(max_length=80)
     levensloop = models.TextField()
@@ -330,12 +334,14 @@ class Dataitem(models.Model):
 class Dataelement(models.Model):
     """element belonging to technical unit of data
     """
-    hoort_bij = models.ForeignKey(Dataitem, related_name="elems")
+    section = 'tech'  # stond er eerder niet, krijg ik hopenlijk geen problmen mee
+    hoort_bij = models.ForeignKey(Dataitem, related_name="elems", on_delete=models.CASCADE)
     naam = models.CharField(max_length=40)  # ,core=True)
     omschrijving = models.CharField(max_length=80)
     soort = models.CharField(max_length=40)
     sleutel = models.PositiveSmallIntegerField(verbose_name="volgorde in sleutel")
-    relatie = models.ForeignKey(Dataitem, related_name="relatie", null=True)
+    relatie = models.ForeignKey(Dataitem, related_name="relatie", null=True,
+                                on_delete=models.CASCADE)
 
     def __str__(self):
         return ": ".join((self.naam, self.omschrijving))
@@ -352,7 +358,7 @@ class Layout(models.Model):
     to_titles = {'gebrtaak': 'Bedient',
                  'techproc': 'Wordt gebruikt door'}
     from_titles = {}
-    project = models.ForeignKey(Project, related_name="layout")
+    project = models.ForeignKey(Project, related_name="layout", on_delete=models.CASCADE)
     naam = models.CharField(max_length=40)
     kort = models.CharField(max_length=80)
     data = models.TextField()
@@ -369,7 +375,7 @@ class Procproc(models.Model):
     section = 'tech'
     to_titles = {'techproc': _('Wordt gebruikt door')}
     from_titles = {}
-    project = models.ForeignKey(Project, related_name="pproc")
+    project = models.ForeignKey(Project, related_name="pproc", on_delete=models.CASCADE)
     naam = models.CharField(max_length=40)
     doel = models.CharField(max_length=80)
     invoer = models.TextField()
@@ -397,7 +403,7 @@ class Testplan(models.Model):
                  'entiteit': _('t.b.v.')}
     from_titles = {'testcase': _('Betrokken'),
                    'bevinding': _('Betrokken')}
-    project = models.ForeignKey(Project, related_name="tplan")
+    project = models.ForeignKey(Project, related_name="tplan", on_delete=models.CASCADE)
     naam = models.CharField(max_length=40)
     oms = models.CharField(max_length=80)
     tekst = models.TextField()
@@ -419,7 +425,7 @@ class Testcase(models.Model):
     section = 'test'
     to_titles = {'testplan': _('Hoort bij')}
     from_titles = {}
-    project = models.ForeignKey(Project, related_name="tcase")
+    project = models.ForeignKey(Project, related_name="tcase", on_delete=models.CASCADE)
     naam = models.CharField(max_length=40)
     oms = models.CharField(max_length=80)
     tekst = models.TextField()
@@ -439,7 +445,7 @@ class Bevinding(models.Model):
     section = 'test'
     to_titles = {'testplan': _('Hoort bij')}
     from_titles = {}
-    project = models.ForeignKey(Project, related_name="tbev")
+    project = models.ForeignKey(Project, related_name="tbev", on_delete=models.CASCADE)
     nummer = models.CharField(max_length=10)
     datum_in = models.DateTimeField(auto_now_add=True)
     gereed = models.BooleanField()
@@ -458,6 +464,7 @@ class Bevinding(models.Model):
     class Meta:
         verbose_name = _("bevinding")
         verbose_name_plural = _("bevindingen")
+
 
 rectypes = {'project': Project,
             'userspec': Userspec,
