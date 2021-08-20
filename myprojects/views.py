@@ -457,6 +457,27 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
     return render(request, '{}.html'.format(soort), info_dict)
 
 
+# redirect versies van de vorige op basis van gewijzigde urlconf
+def new_project(request):
+    detail(request, edit='new')
+
+
+def edit_project(request, proj):
+    detail(request, proj, edit='edit')
+
+
+def new_document(request, proj, soort):
+    detail(request, proj, soort, edit='new')
+
+
+def edit_document(request, proj, soort, id):
+    detail(request, proj, soort, id, edit='edit')
+
+
+def new_from_relation(request, proj, soort, srt, verw):
+    detail(request, proj, soort, srt, verw, edit="new")
+
+
 def koppel(request, proj='', soort='', id='', arid='0', arnum=''):
     """terugkoppeling vanuit probreg:
     neem de teruggegeven actiegegevens op in het huidige item
@@ -582,6 +603,10 @@ def edit_item(request, proj='', soort='', id='', srt='', verw=''):
         doc = '/%s/%s/%s/' % (proj, soort, id) if proj else '/%s/%s/' % (soort, id)
     return HttpResponseRedirect(doc)
 
+
+# redirect versie van de vorige op basis van gewijzigde urlconf
+def add_new_proj(request):
+    edit_item(request, soort='project')
 
 def maak_rel(request, proj='', srt='', id='', soort='', verw='', rel=''):
     """associate documents
