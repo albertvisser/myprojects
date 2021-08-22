@@ -2,7 +2,7 @@
 """
 import datetime
 ## from django.template import Context, loader
-## from django.http import Http404
+from django.http import Http404
 from django.shortcuts import render     # , get_object_or_404
 ## from django.core.exceptions import MultiValueDictKeyError, ObjectDoesNotExist #, DoesNotExist
 from django.core.exceptions import ObjectDoesNotExist  # , DoesNotExist
@@ -119,7 +119,7 @@ def get_new_id(sel):
 
 
 def get_stats_texts(proj, action_type):
-    """get certain texts for certain document types
+    """get certain texts for certain document types (also registered in actiereg)
     """
     first = _("(nog) geen")
     if action_type == 'userwijz':
@@ -144,6 +144,11 @@ def get_stats_texts(proj, action_type):
     return first, second
 
 
+def get_names_for_type(typename):
+    return (my.rectypes[typename]._meta.verbose_name,
+            my.rectypes[typename]._meta.verbose_name_plural,
+            my.rectypes[typename].section)
+
 def index(request):
     """Show the landing page
     """
@@ -163,13 +168,9 @@ def lijst(request, proj='', soort='', id='', rel='', srt=''):
 
     arguments: proj = projectnummer, soort = onderdeelnaam
     """
-    soortnm_ev = my.rectypes[soort]._meta.verbose_name
-    soortnm_mv = my.rectypes[soort]._meta.verbose_name_plural
-    sect = my.rectypes[soort].section
+    soortnm_ev, soortnm_mv, sect = get_names_for_type(soort)
     if srt:
-        srtnm_ev = my.rectypes[srt]._meta.verbose_name
-        srtnm_mv = my.rectypes[srt]._meta.verbose_name_plural
-        # sect = my.rectypes[srt].section
+        srtnm_ev, srtnm_mv = get_names_for_type(srt)[:2]
     info_dict = {'soort': soort,
                  'srt': srt,
                  'id': id,
@@ -255,8 +256,9 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
             try:  # get project
                 o = my.Project.objects.get(pk=proj)
             except ObjectDoesNotExist:
-                meld = proj.join(('project ', _(' bestaat niet')))
+                meld = str(proj).join(('project ', _(' bestaat niet')))
                 proj = ''
+                raise Http404(meld)
         if not meld:
             if edit == 'new':
                 info_dict['title'] = 'Doctool! | ' + _('Nieuw project ')
@@ -264,7 +266,7 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                 info_dict['title'] = 'Doctool! | Project ' + o.naam
                 info_dict['data'] = o
             info_dict["start"] = ''
-            soort = 'project'
+        soort = 'project'
     else:         # other: read object(s), selector, menu
         owner_proj = my.Project.objects.get(pk=proj)
         add_text, remove_text = _("leg relatie"), _("verwijder relatie")
@@ -405,10 +407,7 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                         info_dict[x] = get_new_id(owner_proj.tbev)
     info_dict['notnw'] = 'new'
     info_dict["lengte"] = lengte
-    # naam_ev, naam_mv, sect = naam_dict(soort)
-    naam_ev = my.rectypes[soort]._meta.verbose_name
-    naam_mv = my.rectypes[soort]._meta.verbose_name_plural
-    sect = my.rectypes[soort].section
+    naam_ev, naam_mv, sect = get_names_for_type(soort)
     if edit == 'new':
         info_dict['new'] = 'nieuw'
         info_dict['title'] = _('Nieuw(e) ') + str(naam_ev)
@@ -436,7 +435,7 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
             info_dict['lijst'] = soort
             info_dict['lijstvan'] = naam_mv
         info_dict["soort"] = soort
-        info_dict["sect"] = '/'.join((soort, id))
+        info_dict["sect"] = '/'.join((soort, str(id)))
         info_dict["sctn"] = sect
     w = leftw_dict.get(soort, 120)
     info_dict["leftw"] = "{0}px".format(w)
@@ -459,23 +458,23 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
 
 # redirect versies van de vorige op basis van gewijzigde urlconf
 def new_project(request):
-    detail(request, edit='new')
+    return detail(request, edit='new')
 
 
 def edit_project(request, proj):
-    detail(request, proj, edit='edit')
+    return detail(request, proj, edit='edit')
 
 
 def new_document(request, proj, soort):
-    detail(request, proj, soort, edit='new')
+    return detail(request, proj, soort, edit='new')
 
 
 def edit_document(request, proj, soort, id):
-    detail(request, proj, soort, id, edit='edit')
+    return detail(request, proj, soort, id, edit='edit')
 
 
 def new_from_relation(request, proj, soort, srt, verw):
-    detail(request, proj, soort, srt, verw, edit="new")
+    return detail(request, proj, soort, srt, verw, edit="new")
 
 
 def koppel(request, proj='', soort='', id='', arid='0', arnum=''):
@@ -606,7 +605,7 @@ def edit_item(request, proj='', soort='', id='', srt='', verw=''):
 
 # redirect versie van de vorige op basis van gewijzigde urlconf
 def add_new_proj(request):
-    edit_item(request, soort='project')
+    return edit_item(request, soort='project')
 
 def maak_rel(request, proj='', srt='', id='', soort='', verw='', rel=''):
     """associate documents
