@@ -58,6 +58,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # media - static files to be served from development server
-    path('files/(?P<path>.+)', serve_static,
+    path('files/(<slug:path>/)', serve_static,
         {'document_root': '/home/albert/www/django/myprojects/files'}),
 ]

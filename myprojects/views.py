@@ -38,7 +38,7 @@ def get_related(this_obj, other_obj, m2m=False):
         fields = [x for x in other_obj.model._meta.fields if x.name != 'project' and
                   x.get_internal_type() == 'ForeignKey']
     for fld in fields:
-        if fld.rel.to._meta.model_name == this_obj._meta.model_name:
+        if fld.model._meta.model_name == this_obj._meta.model_name:
             related_name = fld.related_query_name()
             break
     try:
@@ -148,6 +148,7 @@ def get_names_for_type(typename):
     return (my.rectypes[typename]._meta.verbose_name,
             my.rectypes[typename]._meta.verbose_name_plural,
             my.rectypes[typename].section)
+
 
 def index(request):
     """Show the landing page
@@ -298,35 +299,37 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
                     if fld.name == "project":
                         continue
                     if fld.get_internal_type() == 'ForeignKey':
-                        srt = corr_naam(fld.rel.to._meta.model_name)
-                        result = o.__getattribute__(fld.name)
-                        rel = {'text': ' '.join((str(my.rectypes[soort].to_titles[srt]),
-                                                 str(my.rectypes[srt]._meta.verbose_name))),
-                               'links': []}
-                        if result:
-                            rel['links'].append(
-                                RELTXT.format(proj, srt, result.id, result) + " " +
-                                BTNTXT.format(proj, soort, id, "unrel/van/" + srt,
-                                              result.id, remove_text))
-                        else:
-                            rel['btn'] = BTNTXT.format(proj, srt, "rel", soort, id,
-                                                       add_text)
-                        fkeys_to.append(rel)
+                        srt = corr_naam(fld.model._meta.model_name)
+                        if srt != soort:
+                            result = o.__getattribute__(fld.name)
+                            rel = {'text': ' '.join((str(my.rectypes[soort].to_titles[srt]),
+                                                     str(my.rectypes[srt]._meta.verbose_name))),
+                                   'links': []}
+                            if result:
+                                rel['links'].append(
+                                    RELTXT.format(proj, srt, result.id, result) + " " +
+                                    BTNTXT.format(proj, soort, id, "unrel/van/" + srt,
+                                                  result.id, remove_text))
+                            else:
+                                rel['btn'] = BTNTXT.format(proj, srt, "rel", soort, id,
+                                                           add_text)
+                            fkeys_to.append(rel)
                 info_dict['fkeys_to'] = fkeys_to
                 m2ms_to = []
                 for x in opts.many_to_many:
-                    srt = corr_naam(x.rel.to._meta.model_name)
-                    y = {'text': ' '.join((str(my.rectypes[soort].to_titles[srt]),
-                                           str(my.rectypes[srt]._meta.verbose_name))),
-                         'btn': BTNTXT.format(proj, srt, "rel", soort, id, add_text),
-                         'links': []}
-                    result = o.__getattribute__(x.name)
-                    for item in result.all():
-                        y['links'].append(
-                            RELTXT.format(proj, srt, item.id, item) + " " +
-                            BTNTXT.format(proj, soort, id, "unrel/van/" + srt,
-                                          item.id, remove_text))
-                    m2ms_to.append(y)
+                    srt = corr_naam(x.model._meta.model_name)
+                    if srt != soort:
+                        y = {'text': ' '.join((str(my.rectypes[soort].to_titles[srt]),
+                                               str(my.rectypes[srt]._meta.verbose_name))),
+                             'btn': BTNTXT.format(proj, srt, "rel", soort, id, add_text),
+                             'links': []}
+                        result = o.__getattribute__(x.name)
+                        for item in result.all():
+                            y['links'].append(
+                                RELTXT.format(proj, srt, item.id, item) + " " +
+                                BTNTXT.format(proj, soort, id, "unrel/van/" + srt,
+                                              item.id, remove_text))
+                        m2ms_to.append(y)
                 info_dict['m2ms_to'] = m2ms_to
                 ## button_lijst = [] # of button_lijst = my.rectypes[soort].from_titles.keys()
                 fkeys_from = []
@@ -419,7 +422,7 @@ def detail(request, proj='', edit='', soort='', id='', srt='', verw='', meld='')
         try:
             info_dict['title'] = " ".join((naam_ev.capitalize(), o.naam))
         except AttributeError:
-            info_dict['title'] = " ".join((naam_ev, o.nummer))
+            info_dict['title'] = " ".join((naam_ev.capitalize(), o.nummer))
         info_dict['data'] = o
     if soort == 'project':
         if not edit:
@@ -462,19 +465,19 @@ def new_project(request):
 
 
 def edit_project(request, proj):
-    return detail(request, proj, edit='edit')
+    return detail(request, proj, 'edit')
 
 
 def new_document(request, proj, soort):
-    return detail(request, proj, soort, edit='new')
+    return detail(request, proj, 'new', soort)
 
 
 def edit_document(request, proj, soort, id):
-    return detail(request, proj, soort, id, edit='edit')
+    return detail(request, proj, 'edit', soort, id)
 
 
 def new_from_relation(request, proj, soort, srt, verw):
-    return detail(request, proj, soort, srt, verw, edit="new")
+    return detail(request, proj, "new", soort, srt=srt, verw=verw)
 
 
 def koppel(request, proj='', soort='', id='', arid='0', arnum=''):

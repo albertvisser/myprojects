@@ -60,7 +60,7 @@ class Userdoc(models.Model):
     project = models.ForeignKey(Project, related_name="docs", on_delete=models.CASCADE)
     naam = models.CharField(max_length=40)
     oms = models.CharField(max_length=80)
-    link = models.FileField(upload_to='userdoc')
+    link = models.FileField(upload_to='/userdocs')
     tekst = models.TextField()
 
     def __str__(self):
@@ -81,7 +81,7 @@ class Userwijz(models.Model):
                    'entiteit': _('Raakt')}
     project = models.ForeignKey(Project, related_name="rfcs", on_delete=models.CASCADE)
     nummer = models.CharField(max_length=10)
-    datum_in = models.DateTimeField(default=datetime.datetime.now,
+    datum_in = models.DateTimeField(default=datetime.datetime.now(),
                                     editable=False)  # auto_now_add=True)
     gereed = models.BooleanField()
     datum_gereed = models.DateTimeField(null=True)
@@ -135,7 +135,7 @@ class Funcdoc(models.Model):
     project = models.ForeignKey(Project, related_name="fdocs", on_delete=models.CASCADE)
     naam = models.CharField(max_length=40)
     oms = models.CharField(max_length=80)
-    link = models.FileField(upload_to='funcdoc')
+    link = models.FileField(upload_to='/funcdocs')
     tekst = models.TextField()
 
     def __str__(self):
@@ -166,7 +166,7 @@ class Gebrtaak(models.Model):
     waarvoor = models.TextField()
     beschrijving = models.TextField()
     spec = models.ForeignKey(Userspec, related_name="gtaken", null=True, on_delete=models.CASCADE)
-    rfc = models.ManyToManyField(Userwijz, related_name="gtaken", null=True)
+    rfc = models.ManyToManyField(Userwijz, related_name="gtaken")
 
     def __str__(self):
         return ": ".join((self.naam, self.doel))
@@ -194,11 +194,10 @@ class Funcproc(models.Model):
     invoer = models.TextField()
     uitvoer = models.TextField()
     beschrijving = models.TextField()
-    spec = models.ForeignKey(Userspec, related_name="fprocs", null=True, on_delete=models.CASCADE)
-    rfc = models.ManyToManyField(Userwijz, related_name="fprocs", null=True)
-    gt = models.ManyToManyField(Gebrtaak, related_name="fprocs", null=True)
-    bom = models.ManyToManyField('self', symmetrical=False, related_name="used_by",
-                                 null=True)
+    spec = models.ForeignKey(Userspec, related_name="fprocs", on_delete=models.CASCADE)
+    rfc = models.ManyToManyField(Userwijz, related_name="fprocs")
+    gt = models.ManyToManyField(Gebrtaak, related_name="fprocs")
+    bom = models.ManyToManyField('self', symmetrical=False, related_name="used_by")
 
     def __str__(self):
         return ": ".join((self.naam, self.doel))
@@ -221,8 +220,8 @@ class Entiteit(models.Model):
     kort = models.CharField(max_length=80)
     functie = models.TextField()
     levensloop = models.TextField()
-    rfc = models.ManyToManyField(Userwijz, related_name="fdata", null=True)
-    fp = models.ManyToManyField(Funcproc, related_name="fdata", null=True)
+    rfc = models.ManyToManyField(Userwijz, related_name="fdata")
+    fp = models.ManyToManyField(Funcproc, related_name="fdata")
 
     def __str__(self):
         return ": ".join((self.naam, self.kort))
@@ -296,10 +295,9 @@ class Techproc(models.Model):
     uitvoer = models.TextField()
     beschrijving = models.TextField()
     omgeving = models.TextField()
-    fp = models.ManyToManyField(Funcproc, related_name="tproc", null=True)
-    tt = models.ManyToManyField(Techtask, related_name="tproc", null=True)
-    bom = models.ManyToManyField('self', symmetrical=False, related_name="used_by",
-                                 null=True)
+    fp = models.ManyToManyField(Funcproc, related_name="tproc")
+    tt = models.ManyToManyField(Techtask, related_name="tproc")
+    bom = models.ManyToManyField('self', symmetrical=False, related_name="used_by")
 
     def __str__(self):
         return ": ".join((self.naam, self.doel))
@@ -320,8 +318,8 @@ class Dataitem(models.Model):
     naam = models.CharField(max_length=40)
     functie = models.CharField(max_length=80)
     levensloop = models.TextField()
-    ent = models.ManyToManyField(Entiteit, related_name="tdata", null=True)
-    tp = models.ManyToManyField(Techproc, related_name="tdata", null=True)
+    ent = models.ManyToManyField(Entiteit, related_name="tdata")
+    tp = models.ManyToManyField(Techproc, related_name="tdata")
 
     def __str__(self):
         return ": ".join((self.naam, self.functie))
@@ -362,9 +360,9 @@ class Layout(models.Model):
     naam = models.CharField(max_length=40)
     kort = models.CharField(max_length=80)
     data = models.TextField()
-    link = models.FileField(upload_to='layout')
-    gt = models.ManyToManyField(Gebrtaak, related_name="layout", null=True)
-    tp = models.ManyToManyField(Techproc, related_name="layout", null=True)
+    link = models.FileField(upload_to='/layouts')
+    gt = models.ManyToManyField(Gebrtaak, related_name="layout")
+    tp = models.ManyToManyField(Techproc, related_name="layout")
 
     def __str__(self):
         return ": ".join((self.naam, self.kort))
@@ -384,7 +382,7 @@ class Procproc(models.Model):
     bijzonder = models.TextField()
     hoetetesten = models.TextField()
     testgevallen = models.TextField()
-    tp = models.ManyToManyField(Techproc, related_name="pproc", null=True)
+    tp = models.ManyToManyField(Techproc, related_name="pproc")
 
     def __str__(self):
         return ": ".join((self.naam, self.doel))
@@ -407,9 +405,9 @@ class Testplan(models.Model):
     naam = models.CharField(max_length=40)
     oms = models.CharField(max_length=80)
     tekst = models.TextField()
-    gt = models.ManyToManyField(Gebrtaak, related_name="tplan", null=True)
-    fp = models.ManyToManyField(Funcproc, related_name="tplan", null=True)
-    ent = models.ManyToManyField(Entiteit, related_name="tplan", null=True)
+    gt = models.ManyToManyField(Gebrtaak, related_name="tplan")
+    fp = models.ManyToManyField(Funcproc, related_name="tplan")
+    ent = models.ManyToManyField(Entiteit, related_name="tplan")
 
     def __str__(self):
         return ": ".join((self.naam, self.oms))
@@ -429,7 +427,7 @@ class Testcase(models.Model):
     naam = models.CharField(max_length=40)
     oms = models.CharField(max_length=80)
     tekst = models.TextField()
-    tplan = models.ManyToManyField(Testplan, related_name="tcase", null=True)
+    tplan = models.ManyToManyField(Testplan, related_name="tcase")
 
     def __str__(self):
         return ": ".join((self.naam, self.oms))
@@ -455,7 +453,7 @@ class Bevinding(models.Model):
     oplossing = models.TextField()
     actie = models.IntegerField(null=True)
     actienummer = models.CharField(max_length=10)
-    tplan = models.ManyToManyField(Testplan, related_name="tbev", null=True)
+    tplan = models.ManyToManyField(Testplan, related_name="tbev")
 
     def __str__(self):
         oms = _(" [afgehandeld]") if self.gereed else ""
