@@ -1,8 +1,6 @@
 Files in this directory
 =======================
 
-fcgi_handler.py
-    maakt het mogelijk deze site via fastcgi te draaien
 files.rst
     this file
 .hgignore
@@ -11,8 +9,6 @@ manage.py
     controle module
 readme.rst
     basic info
-wsgi_handler.py
-    maakt het mogelijk deze site via wsgi te draaien
 
 myprojects
 ..........
@@ -30,7 +26,7 @@ urls.py
 views.py
     project views
 wsgi.py
-    door manage.py aangemaakt wsgi entry point? Deze wordt in elk geval daadwerkelijk gebruikt
+    wsgi server voor project 
 
 myprojects/locale
 .................
