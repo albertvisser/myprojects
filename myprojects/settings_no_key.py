@@ -7,7 +7,7 @@ SECRET_KEY = ''
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['.lemoncurry.nl']
+ALLOWED_HOSTS = ['.lemoncurry.nl', 'testserver']
 
 INSTALLED_APPS = (
     'django.contrib.admin',
@@ -21,15 +21,15 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
 )
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
+    'django.middleware.security.SecurityMiddleware',          # nieuw in 1.8
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    # 'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',  # nieuw in 1.6
-    'django.middleware.security.SecurityMiddleware',           # nieuw in 1.8
+    'django.middleware.clickjacking.XFrameOptionsMiddleware', # nieuw in 1.6
 )
 
 ROOT_URLCONF = 'myprojects.urls'
@@ -38,8 +38,8 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            str(HERE / 'templates'),
-        ],
+                str(HERE / 'templates'),
+            ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -49,9 +49,9 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
             ],
             ## 'loaders': [
-            ##     #     'django.template.loaders.eggs.Loader',
-            ##     'django.template.loaders.filesystem.Loader',
-            ##     'django.template.loaders.app_directories.Loader',
+            ## #     'django.template.loaders.eggs.Loader',
+                ## 'django.template.loaders.filesystem.Loader',
+                ## 'django.template.loaders.app_directories.Loader',
             ## ],
         },
     },
@@ -133,10 +133,11 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
-SITES = {"myprojects": "http://myprojects.lemoncurry.nl",
-         "probreg": "http://actiereg.lemoncurry.nl"}
-
+SITES = {
+        "myprojects": "http://myprojects.lemoncurry.nl",
+        "probreg": "http://actiereg.lemoncurry.nl",
+        }
 CSRF_COOKIE_DOMAIN = '.lemoncurry.nl'
