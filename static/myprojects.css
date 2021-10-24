@@ -17,11 +17,18 @@ span.clear {
 .left_view,
 .left_edit,
 .left_spacer,
+.th,
+.td,
 .kw3 {
 	display: inline;
 	float: left;
 	margin-bottom: 5px;
 }
+.th { font-size: 13px; font-weight: bold; }
+.td { font-size: 13px; }
+.start-left { width: 600px; margin-right: 10px;}
+.start-middle { width: 400px; margin-right: 10px;}
+.start-right { width: 60px;}
 .left_view,
 .left_edit {
     width: {{leftw}};

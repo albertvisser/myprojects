@@ -2,18 +2,25 @@
 {% block content-data %}
 <a href="/proj/new/" title="{% trans 'nieuw project' %}">{% trans 'Start een nieuw project' %} </a>,
 {% trans 'of ga naar de startpagina van een bestaand project' %}:<br/><br/><hr/>
-<table>
-<tr><th>{% trans 'naam' %}</th><th>{% trans 'repository' %}</th><th>{% trans 'actieregistratie' %}</th></tr>
-{% for x in projecten %}
-<tr>
-<td><a href="/{{x.id}}/" title="{% trans 'ga naar project' %}">{{x}}</a></td>
-<td>{% if x.fysloc %}
-  <a href="{{x.fysloc}}" title="hg repository" target="_blank">{{ x.fysloc }}</a>
-  {% else %}&nbsp;{%endif%}</td>
-<td>{% if x.actiereg %}
-  <a href="{{sites.probreg}}/{{ x.actiereg }}/" target="_blank">{{ x.actiereg }}</a>
-  {% else %}&nbsp;{%endif%}</td>
-</tr>
-{% endfor %}
-</table>
+<div class="table">
+  <div class="tr">
+    <div class="th start-left">{% trans 'naam' %}</div>
+    <div class="th start-middle">{% trans 'repository' %}</div>
+    <div class="th start-right">{% trans 'actieregistratie' %}</div>
+    <div class='clear'/></div><hr/>
+  {% for x in projecten %}
+    <div class="tr">
+      <div class="td start-left">
+        <a href="/{{x.id}}/" title="{% trans 'ga naar project' %}">{{x}}</a></div>
+      <div class="td start-middle">
+	{% if x.fysloc %}
+          <a href="{{x.fysloc}}" title="hg repository" target="_blank">{{ x.fysloc }}</a>
+        {% else %}&nbsp;{%endif%}</div>
+      <div class="td start-right">
+        {% if x.actiereg %}
+          <a href="{{sites.probreg}}/{{ x.actiereg }}/" target="_blank">{{ x.actiereg }}</a>
+        {% else %}&nbsp;{%endif%}</div>
+      <div class='clear'/></div>
+  {% endfor %}
+</div>
 {%endblock%}
