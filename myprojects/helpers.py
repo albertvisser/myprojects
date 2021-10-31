@@ -280,8 +280,8 @@ def init_infodict_for_detail(proj, soort, edit, meld):
     return {'start': '', 'soort': soort, 'prev': '', 'notnw': 'new', 'next': '', "sites": SITES,
             'proj': '' if proj == 'proj' else proj, 'sect': '', 'meld': meld,
             'projecten': get_projectlist(),
-            'edit': 'view' if edit == 'edit' else 'edit',
-            'view': 'edit' if edit != 'edit' else '',
+            'edit': 'edit' if edit == 'new' else edit,  # 'view' if edit == 'edit' else 'edit',
+            'view': 'view' if not edit else '',  # 'edit' if edit != 'edit' else '',
             'new': 'nieuw' if edit == 'new' else ''}
 
 
