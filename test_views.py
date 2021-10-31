@@ -158,11 +158,11 @@ def test_view_project(monkeypatch, capsys):
 
 
 def test_edit_project(monkeypatch, capsys):
-    def mock_view_project(*args, **kwargs):
-        return 'called view_project with args {} and kwargs {}'.format(args, kwargs)
+    def mock_view_project(*args):
+        return 'called view_project with args {}'.format(args)
     monkeypatch.setattr(views, 'view_project', mock_view_project)
     assert views.edit_project('request', 'proj') == ("called view_project with args ('request',"
-                                                     " 'proj') and kwargs {'edit': 'edit'}")
+                                                     " 'proj', 'edit')")
 
 
 def test_update_project(monkeypatch, capsys):
@@ -310,10 +310,10 @@ def test_view_document(monkeypatch, capsys):
 
 def test_new_document(monkeypatch, capsys):
     def mock_view_document(*args, **kwargs):
-        return 'called view_document with args {} and kwargs {}'.format(args, kwargs)
+        return 'called view_document with args {}'.format(args)
     monkeypatch.setattr(views, 'view_document', mock_view_document)
     assert views.new_document('request', 'proj', 'soort') == (
-            "called view_document with args ('request', 'proj', 'soort') and kwargs {'edit': 'new'}")
+            "called view_document with args ('request', 'proj', 'new', 'soort')")
 
 
 def test_new_from_relation(monkeypatch, capsys):
@@ -321,16 +321,16 @@ def test_new_from_relation(monkeypatch, capsys):
         return 'called view_document with args {} and kwargs {}'.format(args, kwargs)
     monkeypatch.setattr(views, 'view_document', mock_view_document)
     assert views.new_from_relation('request', 'proj', 'soort', 'srt', 'verw') == (
-            "called view_document with args ('request', 'proj', 'soort', 'srt', 'verw')"
-            " and kwargs {'edit': 'new'}")
+            "called view_document with args ('request', 'proj', 'new', 'soort')"
+            " and kwargs {'srt': 'srt', 'verw': 'verw'}")
 
 
 def test_edit_document(monkeypatch, capsys):
     def mock_view_document(*args, **kwargs):
-        return 'called view_document with args {} and kwargs {}'.format(args, kwargs)
+        return 'called view_document with args {}'.format(args)
     monkeypatch.setattr(views, 'view_document', mock_view_document)
     assert views.edit_document('request', 'proj', 'soort', 'id') == (
-            "called view_document with args ('request', 'proj', 'soort', 'id') and kwargs {'edit': 'edit'}")
+            "called view_document with args ('request', 'proj', 'edit', 'soort', 'id')")
 
 
 def mock_get_object(srt, id, new=False):

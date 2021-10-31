@@ -61,7 +61,6 @@ def new_project(request):
     return view_project(request, edit='new')
 
 
-# redirect versie van edit_item op basis van gewijzigde urlconf
 def add_new_proj(request):
     "opvoeren project: wijzigingen doorvoeren"
     return update_project(request, proj='proj')
@@ -100,7 +99,7 @@ def view_project(request, proj='', edit='', meld=''):
 # "redirect" op basis van gewijzigde urlconf
 def edit_project(request, proj):
     "project homepage openstellen voor wijzigingen"
-    return view_project(request, proj, edit='edit')
+    return view_project(request, proj, 'edit')
 
 
 # afsplitsing van oorspronkelijke edit_item view
@@ -170,17 +169,17 @@ def view_document(request, proj, edit='', soort='', id='', srt='', verw='', meld
 
 def new_document(request, proj, soort):
     "document pagina openzetten voor opvoeren (initiële waarden)"
-    return view_document(request, proj, soort, edit='new')
+    return view_document(request, proj, 'new', soort)
 
 
 def new_from_relation(request, proj, soort, srt, verw):
     "document pagina openzetten voor opvoeren (initiële waarden) met verwijzing naar 'vanuit'"
-    return view_document(request, proj, soort, srt, verw, edit="new")
+    return view_document(request, proj, 'new', soort, srt=srt, verw=verw)
 
 
 def edit_document(request, proj, soort, id):
     "document pagina openzetten voor wijzigen"
-    return view_document(request, proj, soort, id, edit='edit')
+    return view_document(request, proj, 'edit', soort, id)
 
 
 def update_document(request, proj='', soort='', id='', srt='', verw=''):
