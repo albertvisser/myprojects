@@ -60,7 +60,7 @@ class Userdoc(models.Model):
     project = models.ForeignKey(Project, related_name="docs", on_delete=models.CASCADE)
     naam = models.CharField(max_length=40)
     oms = models.CharField(max_length=80)
-    link = models.FileField(upload_to='/userdocs')
+    link = models.FileField(upload_to='userdocs')
     tekst = models.TextField()
 
     def __str__(self):
@@ -135,7 +135,7 @@ class Funcdoc(models.Model):
     project = models.ForeignKey(Project, related_name="fdocs", on_delete=models.CASCADE)
     naam = models.CharField(max_length=40)
     oms = models.CharField(max_length=80)
-    link = models.FileField(upload_to='/funcdocs')
+    link = models.FileField(upload_to='funcdocs')
     tekst = models.TextField()
 
     def __str__(self):
@@ -360,7 +360,7 @@ class Layout(models.Model):
     naam = models.CharField(max_length=40)
     kort = models.CharField(max_length=80)
     data = models.TextField()
-    link = models.FileField(upload_to='/layouts')
+    link = models.FileField(upload_to='layouts')
     gt = models.ManyToManyField(Gebrtaak, related_name="layout")
     tp = models.ManyToManyField(Techproc, related_name="layout")
 
