@@ -33,10 +33,10 @@ urlpatterns = [
 
     # relateren document aan ander document
     path('<int:proj>/<slug:soort>/rel/<slug:srt>/<int:id>/', views.lijst, {'rel': 'from'}),
-    path('<int:proj>/<slug:srt>)/<int:id>/rel/<slug:soort>/', views.lijst, {'rel': 'to'}),
-    path('<int:proj>/<slug:srt>)/<int:id>/rel/<slug:rel>/<slug:soort>/<int:verw>/',
+    path('<int:proj>/<slug:srt>/<int:id>/rel/<slug:soort>/', views.lijst, {'rel': 'to'}),
+    path('<int:proj>/<slug:srt>/<int:id>/rel/<slug:rel>/<slug:soort>/<int:verw>/',
         views.maak_rel),
-    path('<int:proj>/<slug:rt>)/<int:id>/unrel/<slug:rel>/<slug:soort>/<int:verw>/',
+    path('<int:proj>/<slug:srt>/<int:id>/unrel/<slug:rel>/<slug:soort>/<int:verw>/',
         views.unrelate),
 
     # opvoeren document via link vanuit ander document (bv. funcproc bij functaak)
@@ -46,15 +46,15 @@ urlpatterns = [
     # koppeling met actiereg
     # deze extra views is om vast te houden vanuit welle selectie je komt
     path('<int:proj>/<slug:soort>/<int:id>/koppel/', views.koppel),
-    path('<int:proj>/<slug:soort>/<int:id>/koppel/<slug:arid>)/<slug:arnum>/',
+    path('<int:proj>/<slug:soort>/<int:id>/koppel/<slug:arid>/<slug:arnum>/',
         views.koppel),
     path('<int:proj>/<slug:soort>/<int:id>/meld/', views.meld),
     path('<int:proj>/<slug:soort>/<int:id>/meld/<slug:arstat>/<slug:arfrom>/<int:arid>/',
         views.meld),
 
     # opvoeren/wijzigen attribuut/element bij entiteit/dataitem
-    path('<int:proj>/<slug:srt1>)/<int:id1>)/<slug:srt2>/add/', views.edit_sub),
-    path('<int:proj>/<slug:srt1>)/<int:id1>)/<slug:srt2>)/<int:id2>/mut/', views.edit_sub),
+    path('<int:proj>/<slug:srt1>/<int:id1>/<slug:srt2>/add/', views.edit_sub),
+    path('<int:proj>/<slug:srt1>/<int:id1>/<slug:srt2>/<int:id2>/mut/', views.edit_sub),
 
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs'
     # to INSTALLED_APPS to enable admin documentation:
@@ -64,6 +64,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # media - static files to be served from development server
-    path('files/(?P<path>.+)', serve_static,
+    path('files/<slug:path>/', serve_static,
         {'document_root': '/home/albert/www/django/myprojects/files'}),
 ]
