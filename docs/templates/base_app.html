@@ -155,15 +155,21 @@
 {%block content-data%}
 {%block content-top%}{%endblock%}
 {%block content-middle%}
-<div class="left_{{ mode }}">&nbsp;</div>
-<div class="right">
-{% if mode == 'edit' %}
-<input type="submit" name="pbKort" id="pbKort" value="{% trans 'Alle wijzigingen opslaan' %}" />
-{% else %}
-<a href="/docs/{% if soort %}{{proj}}/{{soort}}/{% endif %}{{ data.id }}/edit/">
-<input type="button" value="{% trans 'wijzigen' %}"/></a>
-{% endif %}
-</div><div class="clear">&nbsp;</div>
+  <div class="left_{{ mode }}">&nbsp;</div>
+  <div class="right">
+  {% if mode == 'edit' %}
+    <input type="submit" name="pbKort" id="pbKort" value="{% trans 'Alle wijzigingen opslaan' %}" />
+    {% if not new %}
+      <a href="/docs/{% if soort %}{{proj}}/{{soort}}/{% endif %}{{ data.id }}/view/">
+    {% else %}
+      <a href="javascript:history.go(-1)">
+    {% endif %}
+    <input type="button" value="{% trans 'afbreken' %}"/></a>
+  {% else %}
+    <a href="/docs/{% if soort %}{{proj}}/{{soort}}/{% endif %}{{ data.id }}/edit/">
+    <input type="button" value="{% trans 'wijzigen' %}"/></a>
+  {% endif %}
+  </div><div class="clear">&nbsp;</div>
 {%endblock%}
 {%block content-bottom%}{%endblock%}
 {%endblock%}
