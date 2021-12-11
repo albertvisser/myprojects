@@ -1,6 +1,7 @@
 {%extends "base_app.html" %}{% load i18n %}
 {% block content-data %}
-<a href="/proj/new/" title="{% trans 'nieuw project' %}">{% trans 'Start een nieuw project' %} </a>,
+<a href="/docs/proj/new/" title="{% trans 'nieuw project' %}">
+	{% trans 'Start een nieuw project' %} </a>,
 {% trans 'of ga naar de startpagina van een bestaand project' %}:<br/><br/><hr/>
 <div class="table">
   <div class="tr">
@@ -11,7 +12,7 @@
   {% for x in projecten %}
     <div class="tr">
       <div class="td start-left">
-        <a href="/{{x.id}}/" title="{% trans 'ga naar project' %}">{{x}}</a></div>
+        <a href="/docs/{{x.id}}/" title="{% trans 'ga naar project' %}">{{x}}</a></div>
       <div class="td start-middle">
 	{% if x.fysloc %}
           <a href="{{x.fysloc}}" title="hg repository" target="_blank">{{ x.fysloc }}</a>

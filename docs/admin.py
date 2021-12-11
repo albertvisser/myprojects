@@ -1,7 +1,7 @@
 """Register models to the admin site
 """
 from django.contrib import admin
-import myprojects.models as my
+import docs.models as my
 
 admin.site.register(my.Project)      # , ProjectAdmin)
 admin.site.register(my.Userspec)     # , UserspecAdmin)

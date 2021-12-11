@@ -1,0 +1,229 @@
+BEGIN;
+--
+-- Create model Entiteit
+--
+CREATE TABLE "docs_entiteit" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "naam" varchar(40) NOT NULL, "kort" varchar(80) NOT NULL, "functie" text NOT NULL, "levensloop" text NOT NULL);
+--
+-- Create model Funcproc
+--
+CREATE TABLE "docs_funcproc" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "naam" varchar(40) NOT NULL, "doel" varchar(80) NOT NULL, "invoer" text NOT NULL, "uitvoer" text NOT NULL, "beschrijving" text NOT NULL);
+CREATE TABLE "docs_funcproc_bom" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "from_funcproc_id" integer NOT NULL REFERENCES "docs_funcproc" ("id") DEFERRABLE INITIALLY DEFERRED, "to_funcproc_id" integer NOT NULL REFERENCES "docs_funcproc" ("id") DEFERRABLE INITIALLY DEFERRED);
+--
+-- Create model Gebrtaak
+--
+CREATE TABLE "docs_gebrtaak" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "naam" varchar(40) NOT NULL, "doel" varchar(80) NOT NULL, "wanneer" text NOT NULL, "wie" text NOT NULL, "condities" text NOT NULL, "waarvoor" text NOT NULL, "beschrijving" text NOT NULL);
+--
+-- Create model Project
+--
+CREATE TABLE "docs_project" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "naam" varchar(40) NOT NULL, "kort" varchar(80) NOT NULL, "oms" text NOT NULL, "start" varchar(80) NOT NULL, "fysloc" varchar(80) NOT NULL, "actiereg" varchar(40) NOT NULL, "aruser" varchar(40) NOT NULL, "status" text NOT NULL);
+--
+-- Create model Userwijz
+--
+CREATE TABLE "docs_userwijz" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "nummer" varchar(10) NOT NULL, "datum_in" datetime NOT NULL, "gereed" bool NOT NULL, "datum_gereed" datetime NULL, "wens" varchar(80) NOT NULL, "toelichting" text NOT NULL, "opmerkingen" text NOT NULL, "actie" integer NULL, "actienummer" varchar(10) NOT NULL, "project_id" integer NOT NULL REFERENCES "docs_project" ("id") DEFERRABLE INITIALLY DEFERRED);
+--
+-- Create model Userspec
+--
+CREATE TABLE "docs_userspec" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "naam" varchar(40) NOT NULL, "kort" varchar(80) NOT NULL, "functie" text NOT NULL, "beeld" text NOT NULL, "product" text NOT NULL, "baten" varchar(80) NOT NULL, "kosten" varchar(80) NOT NULL, "opmerkingen" text NOT NULL, "project_id" integer NOT NULL REFERENCES "docs_project" ("id") DEFERRABLE INITIALLY DEFERRED);
+--
+-- Create model Userprob
+--
+CREATE TABLE "docs_userprob" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "nummer" varchar(10) NOT NULL, "datum_in" datetime NOT NULL, "gereed" bool NOT NULL, "datum_gereed" datetime NULL, "kort" varchar(80) NOT NULL, "melding" text NOT NULL, "oplossing" text NOT NULL, "actie" integer NULL, "actienummer" varchar(10) NOT NULL, "project_id" integer NOT NULL REFERENCES "docs_project" ("id") DEFERRABLE INITIALLY DEFERRED);
+--
+-- Create model Userdoc
+--
+CREATE TABLE "docs_userdoc" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "naam" varchar(40) NOT NULL, "oms" varchar(80) NOT NULL, "link" varchar(100) NOT NULL, "tekst" text NOT NULL, "project_id" integer NOT NULL REFERENCES "docs_project" ("id") DEFERRABLE INITIALLY DEFERRED);
+--
+-- Create model Testplan
+--
+CREATE TABLE "docs_testplan" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "naam" varchar(40) NOT NULL, "oms" varchar(80) NOT NULL, "tekst" text NOT NULL, "project_id" integer NOT NULL REFERENCES "docs_project" ("id") DEFERRABLE INITIALLY DEFERRED);
+CREATE TABLE "docs_testplan_ent" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "testplan_id" integer NOT NULL REFERENCES "docs_testplan" ("id") DEFERRABLE INITIALLY DEFERRED, "entiteit_id" integer NOT NULL REFERENCES "docs_entiteit" ("id") DEFERRABLE INITIALLY DEFERRED);
+CREATE TABLE "docs_testplan_fp" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "testplan_id" integer NOT NULL REFERENCES "docs_testplan" ("id") DEFERRABLE INITIALLY DEFERRED, "funcproc_id" integer NOT NULL REFERENCES "docs_funcproc" ("id") DEFERRABLE INITIALLY DEFERRED);
+CREATE TABLE "docs_testplan_gt" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "testplan_id" integer NOT NULL REFERENCES "docs_testplan" ("id") DEFERRABLE INITIALLY DEFERRED, "gebrtaak_id" integer NOT NULL REFERENCES "docs_gebrtaak" ("id") DEFERRABLE INITIALLY DEFERRED);
+--
+-- Create model Testcase
+--
+CREATE TABLE "docs_testcase" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "naam" varchar(40) NOT NULL, "oms" varchar(80) NOT NULL, "tekst" text NOT NULL, "project_id" integer NOT NULL REFERENCES "docs_project" ("id") DEFERRABLE INITIALLY DEFERRED);
+CREATE TABLE "docs_testcase_tplan" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "testcase_id" integer NOT NULL REFERENCES "docs_testcase" ("id") DEFERRABLE INITIALLY DEFERRED, "testplan_id" integer NOT NULL REFERENCES "docs_testplan" ("id") DEFERRABLE INITIALLY DEFERRED);
+--
+-- Create model Techtask
+--
+CREATE TABLE "docs_techtask" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "naam" varchar(40) NOT NULL, "kort" varchar(80) NOT NULL, "doel" text NOT NULL, "periode" text NOT NULL, "verloop" text NOT NULL, "gt_id" integer NULL REFERENCES "docs_gebrtaak" ("id") DEFERRABLE INITIALLY DEFERRED, "project_id" integer NOT NULL REFERENCES "docs_project" ("id") DEFERRABLE INITIALLY DEFERRED);
+--
+-- Create model Techproc
+--
+CREATE TABLE "docs_techproc" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "naam" varchar(40) NOT NULL, "doel" varchar(80) NOT NULL, "invoer" text NOT NULL, "uitvoer" text NOT NULL, "beschrijving" text NOT NULL, "omgeving" text NOT NULL, "project_id" integer NOT NULL REFERENCES "docs_project" ("id") DEFERRABLE INITIALLY DEFERRED);
+CREATE TABLE "docs_techproc_bom" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "from_techproc_id" integer NOT NULL REFERENCES "docs_techproc" ("id") DEFERRABLE INITIALLY DEFERRED, "to_techproc_id" integer NOT NULL REFERENCES "docs_techproc" ("id") DEFERRABLE INITIALLY DEFERRED);
+CREATE TABLE "docs_techproc_fp" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "techproc_id" integer NOT NULL REFERENCES "docs_techproc" ("id") DEFERRABLE INITIALLY DEFERRED, "funcproc_id" integer NOT NULL REFERENCES "docs_funcproc" ("id") DEFERRABLE INITIALLY DEFERRED);
+CREATE TABLE "docs_techproc_tt" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "techproc_id" integer NOT NULL REFERENCES "docs_techproc" ("id") DEFERRABLE INITIALLY DEFERRED, "techtask_id" integer NOT NULL REFERENCES "docs_techtask" ("id") DEFERRABLE INITIALLY DEFERRED);
+--
+-- Create model Procproc
+--
+CREATE TABLE "docs_procproc" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "naam" varchar(40) NOT NULL, "doel" varchar(80) NOT NULL, "invoer" text NOT NULL, "uitvoer" text NOT NULL, "werkwijze" text NOT NULL, "bijzonder" text NOT NULL, "hoetetesten" text NOT NULL, "testgevallen" text NOT NULL, "project_id" integer NOT NULL REFERENCES "docs_project" ("id") DEFERRABLE INITIALLY DEFERRED);
+CREATE TABLE "docs_procproc_tp" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "procproc_id" integer NOT NULL REFERENCES "docs_procproc" ("id") DEFERRABLE INITIALLY DEFERRED, "techproc_id" integer NOT NULL REFERENCES "docs_techproc" ("id") DEFERRABLE INITIALLY DEFERRED);
+--
+-- Create model Layout
+--
+CREATE TABLE "docs_layout" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "naam" varchar(40) NOT NULL, "kort" varchar(80) NOT NULL, "data" text NOT NULL, "link" varchar(100) NOT NULL, "project_id" integer NOT NULL REFERENCES "docs_project" ("id") DEFERRABLE INITIALLY DEFERRED);
+CREATE TABLE "docs_layout_gt" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "layout_id" integer NOT NULL REFERENCES "docs_layout" ("id") DEFERRABLE INITIALLY DEFERRED, "gebrtaak_id" integer NOT NULL REFERENCES "docs_gebrtaak" ("id") DEFERRABLE INITIALLY DEFERRED);
+CREATE TABLE "docs_layout_tp" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "layout_id" integer NOT NULL REFERENCES "docs_layout" ("id") DEFERRABLE INITIALLY DEFERRED, "techproc_id" integer NOT NULL REFERENCES "docs_techproc" ("id") DEFERRABLE INITIALLY DEFERRED);
+--
+-- Add field project to gebrtaak
+--
+CREATE TABLE "new__docs_gebrtaak" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "naam" varchar(40) NOT NULL, "doel" varchar(80) NOT NULL, "wanneer" text NOT NULL, "wie" text NOT NULL, "condities" text NOT NULL, "waarvoor" text NOT NULL, "beschrijving" text NOT NULL, "project_id" integer NOT NULL REFERENCES "docs_project" ("id") DEFERRABLE INITIALLY DEFERRED);
+INSERT INTO "new__docs_gebrtaak" ("id", "naam", "doel", "wanneer", "wie", "condities", "waarvoor", "beschrijving", "project_id") SELECT "id", "naam", "doel", "wanneer", "wie", "condities", "waarvoor", "beschrijving", NULL FROM "docs_gebrtaak";
+DROP TABLE "docs_gebrtaak";
+ALTER TABLE "new__docs_gebrtaak" RENAME TO "docs_gebrtaak";
+CREATE UNIQUE INDEX "docs_funcproc_bom_from_funcproc_id_to_funcproc_id_a125f464_uniq" ON "docs_funcproc_bom" ("from_funcproc_id", "to_funcproc_id");
+CREATE INDEX "docs_funcproc_bom_from_funcproc_id_85510e54" ON "docs_funcproc_bom" ("from_funcproc_id");
+CREATE INDEX "docs_funcproc_bom_to_funcproc_id_c9263c96" ON "docs_funcproc_bom" ("to_funcproc_id");
+CREATE INDEX "docs_userwijz_project_id_5e202649" ON "docs_userwijz" ("project_id");
+CREATE INDEX "docs_userspec_project_id_cc1700b8" ON "docs_userspec" ("project_id");
+CREATE INDEX "docs_userprob_project_id_ba22aa8c" ON "docs_userprob" ("project_id");
+CREATE INDEX "docs_userdoc_project_id_8755877b" ON "docs_userdoc" ("project_id");
+CREATE INDEX "docs_testplan_project_id_92c30356" ON "docs_testplan" ("project_id");
+CREATE UNIQUE INDEX "docs_testplan_ent_testplan_id_entiteit_id_18065ca3_uniq" ON "docs_testplan_ent" ("testplan_id", "entiteit_id");
+CREATE INDEX "docs_testplan_ent_testplan_id_a589b971" ON "docs_testplan_ent" ("testplan_id");
+CREATE INDEX "docs_testplan_ent_entiteit_id_54f83abb" ON "docs_testplan_ent" ("entiteit_id");
+CREATE UNIQUE INDEX "docs_testplan_fp_testplan_id_funcproc_id_6274e462_uniq" ON "docs_testplan_fp" ("testplan_id", "funcproc_id");
+CREATE INDEX "docs_testplan_fp_testplan_id_f18b1e66" ON "docs_testplan_fp" ("testplan_id");
+CREATE INDEX "docs_testplan_fp_funcproc_id_b7fd2803" ON "docs_testplan_fp" ("funcproc_id");
+CREATE UNIQUE INDEX "docs_testplan_gt_testplan_id_gebrtaak_id_085c4e40_uniq" ON "docs_testplan_gt" ("testplan_id", "gebrtaak_id");
+CREATE INDEX "docs_testplan_gt_testplan_id_e7d929d2" ON "docs_testplan_gt" ("testplan_id");
+CREATE INDEX "docs_testplan_gt_gebrtaak_id_0ba4fa38" ON "docs_testplan_gt" ("gebrtaak_id");
+CREATE INDEX "docs_testcase_project_id_f69d9cb4" ON "docs_testcase" ("project_id");
+CREATE UNIQUE INDEX "docs_testcase_tplan_testcase_id_testplan_id_01627014_uniq" ON "docs_testcase_tplan" ("testcase_id", "testplan_id");
+CREATE INDEX "docs_testcase_tplan_testcase_id_d7679c2e" ON "docs_testcase_tplan" ("testcase_id");
+CREATE INDEX "docs_testcase_tplan_testplan_id_4aa17354" ON "docs_testcase_tplan" ("testplan_id");
+CREATE INDEX "docs_techtask_gt_id_c1803be4" ON "docs_techtask" ("gt_id");
+CREATE INDEX "docs_techtask_project_id_cd790e87" ON "docs_techtask" ("project_id");
+CREATE INDEX "docs_techproc_project_id_326c480f" ON "docs_techproc" ("project_id");
+CREATE UNIQUE INDEX "docs_techproc_bom_from_techproc_id_to_techproc_id_6054202b_uniq" ON "docs_techproc_bom" ("from_techproc_id", "to_techproc_id");
+CREATE INDEX "docs_techproc_bom_from_techproc_id_68467242" ON "docs_techproc_bom" ("from_techproc_id");
+CREATE INDEX "docs_techproc_bom_to_techproc_id_8da0f6d3" ON "docs_techproc_bom" ("to_techproc_id");
+CREATE UNIQUE INDEX "docs_techproc_fp_techproc_id_funcproc_id_81bf8911_uniq" ON "docs_techproc_fp" ("techproc_id", "funcproc_id");
+CREATE INDEX "docs_techproc_fp_techproc_id_11eb1375" ON "docs_techproc_fp" ("techproc_id");
+CREATE INDEX "docs_techproc_fp_funcproc_id_021f54d1" ON "docs_techproc_fp" ("funcproc_id");
+CREATE UNIQUE INDEX "docs_techproc_tt_techproc_id_techtask_id_9eb398c6_uniq" ON "docs_techproc_tt" ("techproc_id", "techtask_id");
+CREATE INDEX "docs_techproc_tt_techproc_id_a7b64c1d" ON "docs_techproc_tt" ("techproc_id");
+CREATE INDEX "docs_techproc_tt_techtask_id_56132c91" ON "docs_techproc_tt" ("techtask_id");
+CREATE INDEX "docs_procproc_project_id_5c28aa49" ON "docs_procproc" ("project_id");
+CREATE UNIQUE INDEX "docs_procproc_tp_procproc_id_techproc_id_cb608ec0_uniq" ON "docs_procproc_tp" ("procproc_id", "techproc_id");
+CREATE INDEX "docs_procproc_tp_procproc_id_d820a6c5" ON "docs_procproc_tp" ("procproc_id");
+CREATE INDEX "docs_procproc_tp_techproc_id_42aaabad" ON "docs_procproc_tp" ("techproc_id");
+CREATE INDEX "docs_layout_project_id_ff9ada35" ON "docs_layout" ("project_id");
+CREATE UNIQUE INDEX "docs_layout_gt_layout_id_gebrtaak_id_1f4ab52c_uniq" ON "docs_layout_gt" ("layout_id", "gebrtaak_id");
+CREATE INDEX "docs_layout_gt_layout_id_69d7eeb2" ON "docs_layout_gt" ("layout_id");
+CREATE INDEX "docs_layout_gt_gebrtaak_id_586b5e4f" ON "docs_layout_gt" ("gebrtaak_id");
+CREATE UNIQUE INDEX "docs_layout_tp_layout_id_techproc_id_7872119c_uniq" ON "docs_layout_tp" ("layout_id", "techproc_id");
+CREATE INDEX "docs_layout_tp_layout_id_79d3ee41" ON "docs_layout_tp" ("layout_id");
+CREATE INDEX "docs_layout_tp_techproc_id_097a155c" ON "docs_layout_tp" ("techproc_id");
+CREATE INDEX "docs_gebrtaak_project_id_c8c98850" ON "docs_gebrtaak" ("project_id");
+--
+-- Add field rfc to gebrtaak
+--
+CREATE TABLE "docs_gebrtaak_rfc" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "gebrtaak_id" integer NOT NULL REFERENCES "docs_gebrtaak" ("id") DEFERRABLE INITIALLY DEFERRED, "userwijz_id" integer NOT NULL REFERENCES "docs_userwijz" ("id") DEFERRABLE INITIALLY DEFERRED);
+--
+-- Add field spec to gebrtaak
+--
+CREATE TABLE "new__docs_gebrtaak" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "naam" varchar(40) NOT NULL, "doel" varchar(80) NOT NULL, "wanneer" text NOT NULL, "wie" text NOT NULL, "condities" text NOT NULL, "waarvoor" text NOT NULL, "beschrijving" text NOT NULL, "project_id" integer NOT NULL REFERENCES "docs_project" ("id") DEFERRABLE INITIALLY DEFERRED, "spec_id" integer NULL REFERENCES "docs_userspec" ("id") DEFERRABLE INITIALLY DEFERRED);
+INSERT INTO "new__docs_gebrtaak" ("id", "naam", "doel", "wanneer", "wie", "condities", "waarvoor", "beschrijving", "project_id", "spec_id") SELECT "id", "naam", "doel", "wanneer", "wie", "condities", "waarvoor", "beschrijving", "project_id", NULL FROM "docs_gebrtaak";
+DROP TABLE "docs_gebrtaak";
+ALTER TABLE "new__docs_gebrtaak" RENAME TO "docs_gebrtaak";
+CREATE UNIQUE INDEX "docs_gebrtaak_rfc_gebrtaak_id_userwijz_id_583df677_uniq" ON "docs_gebrtaak_rfc" ("gebrtaak_id", "userwijz_id");
+CREATE INDEX "docs_gebrtaak_rfc_gebrtaak_id_2a471cfd" ON "docs_gebrtaak_rfc" ("gebrtaak_id");
+CREATE INDEX "docs_gebrtaak_rfc_userwijz_id_91d5b7d3" ON "docs_gebrtaak_rfc" ("userwijz_id");
+CREATE INDEX "docs_gebrtaak_project_id_c8c98850" ON "docs_gebrtaak" ("project_id");
+CREATE INDEX "docs_gebrtaak_spec_id_b43f6840" ON "docs_gebrtaak" ("spec_id");
+--
+-- Add field gt to funcproc
+--
+CREATE TABLE "docs_funcproc_gt" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "funcproc_id" integer NOT NULL REFERENCES "docs_funcproc" ("id") DEFERRABLE INITIALLY DEFERRED, "gebrtaak_id" integer NOT NULL REFERENCES "docs_gebrtaak" ("id") DEFERRABLE INITIALLY DEFERRED);
+--
+-- Add field project to funcproc
+--
+CREATE TABLE "new__docs_funcproc" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "naam" varchar(40) NOT NULL, "doel" varchar(80) NOT NULL, "invoer" text NOT NULL, "uitvoer" text NOT NULL, "beschrijving" text NOT NULL, "project_id" integer NOT NULL REFERENCES "docs_project" ("id") DEFERRABLE INITIALLY DEFERRED);
+INSERT INTO "new__docs_funcproc" ("id", "naam", "doel", "invoer", "uitvoer", "beschrijving", "project_id") SELECT "id", "naam", "doel", "invoer", "uitvoer", "beschrijving", NULL FROM "docs_funcproc";
+DROP TABLE "docs_funcproc";
+ALTER TABLE "new__docs_funcproc" RENAME TO "docs_funcproc";
+CREATE UNIQUE INDEX "docs_funcproc_gt_funcproc_id_gebrtaak_id_aefaa4f2_uniq" ON "docs_funcproc_gt" ("funcproc_id", "gebrtaak_id");
+CREATE INDEX "docs_funcproc_gt_funcproc_id_e66cad46" ON "docs_funcproc_gt" ("funcproc_id");
+CREATE INDEX "docs_funcproc_gt_gebrtaak_id_7087c7b9" ON "docs_funcproc_gt" ("gebrtaak_id");
+CREATE INDEX "docs_funcproc_project_id_81080260" ON "docs_funcproc" ("project_id");
+--
+-- Add field rfc to funcproc
+--
+CREATE TABLE "docs_funcproc_rfc" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "funcproc_id" integer NOT NULL REFERENCES "docs_funcproc" ("id") DEFERRABLE INITIALLY DEFERRED, "userwijz_id" integer NOT NULL REFERENCES "docs_userwijz" ("id") DEFERRABLE INITIALLY DEFERRED);
+--
+-- Add field spec to funcproc
+--
+CREATE TABLE "new__docs_funcproc" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "naam" varchar(40) NOT NULL, "doel" varchar(80) NOT NULL, "invoer" text NOT NULL, "uitvoer" text NOT NULL, "beschrijving" text NOT NULL, "project_id" integer NOT NULL REFERENCES "docs_project" ("id") DEFERRABLE INITIALLY DEFERRED, "spec_id" integer NOT NULL REFERENCES "docs_userspec" ("id") DEFERRABLE INITIALLY DEFERRED);
+INSERT INTO "new__docs_funcproc" ("id", "naam", "doel", "invoer", "uitvoer", "beschrijving", "project_id", "spec_id") SELECT "id", "naam", "doel", "invoer", "uitvoer", "beschrijving", "project_id", NULL FROM "docs_funcproc";
+DROP TABLE "docs_funcproc";
+ALTER TABLE "new__docs_funcproc" RENAME TO "docs_funcproc";
+CREATE UNIQUE INDEX "docs_funcproc_rfc_funcproc_id_userwijz_id_873bded4_uniq" ON "docs_funcproc_rfc" ("funcproc_id", "userwijz_id");
+CREATE INDEX "docs_funcproc_rfc_funcproc_id_57f0c710" ON "docs_funcproc_rfc" ("funcproc_id");
+CREATE INDEX "docs_funcproc_rfc_userwijz_id_b088f8ca" ON "docs_funcproc_rfc" ("userwijz_id");
+CREATE INDEX "docs_funcproc_project_id_81080260" ON "docs_funcproc" ("project_id");
+CREATE INDEX "docs_funcproc_spec_id_2275a36b" ON "docs_funcproc" ("spec_id");
+--
+-- Create model Funcdoc
+--
+CREATE TABLE "docs_funcdoc" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "naam" varchar(40) NOT NULL, "oms" varchar(80) NOT NULL, "link" varchar(100) NOT NULL, "tekst" text NOT NULL, "project_id" integer NOT NULL REFERENCES "docs_project" ("id") DEFERRABLE INITIALLY DEFERRED);
+--
+-- Add field fp to entiteit
+--
+CREATE TABLE "docs_entiteit_fp" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "entiteit_id" integer NOT NULL REFERENCES "docs_entiteit" ("id") DEFERRABLE INITIALLY DEFERRED, "funcproc_id" integer NOT NULL REFERENCES "docs_funcproc" ("id") DEFERRABLE INITIALLY DEFERRED);
+--
+-- Add field project to entiteit
+--
+CREATE TABLE "new__docs_entiteit" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "naam" varchar(40) NOT NULL, "kort" varchar(80) NOT NULL, "functie" text NOT NULL, "levensloop" text NOT NULL, "project_id" integer NOT NULL REFERENCES "docs_project" ("id") DEFERRABLE INITIALLY DEFERRED);
+INSERT INTO "new__docs_entiteit" ("id", "naam", "kort", "functie", "levensloop", "project_id") SELECT "id", "naam", "kort", "functie", "levensloop", NULL FROM "docs_entiteit";
+DROP TABLE "docs_entiteit";
+ALTER TABLE "new__docs_entiteit" RENAME TO "docs_entiteit";
+CREATE INDEX "docs_funcdoc_project_id_03d12e0d" ON "docs_funcdoc" ("project_id");
+CREATE UNIQUE INDEX "docs_entiteit_fp_entiteit_id_funcproc_id_6ad48777_uniq" ON "docs_entiteit_fp" ("entiteit_id", "funcproc_id");
+CREATE INDEX "docs_entiteit_fp_entiteit_id_e34a2951" ON "docs_entiteit_fp" ("entiteit_id");
+CREATE INDEX "docs_entiteit_fp_funcproc_id_affe293d" ON "docs_entiteit_fp" ("funcproc_id");
+CREATE INDEX "docs_entiteit_project_id_be053729" ON "docs_entiteit" ("project_id");
+--
+-- Add field rfc to entiteit
+--
+CREATE TABLE "docs_entiteit_rfc" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "entiteit_id" integer NOT NULL REFERENCES "docs_entiteit" ("id") DEFERRABLE INITIALLY DEFERRED, "userwijz_id" integer NOT NULL REFERENCES "docs_userwijz" ("id") DEFERRABLE INITIALLY DEFERRED);
+--
+-- Create model Dataitem
+--
+CREATE TABLE "docs_dataitem" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "naam" varchar(40) NOT NULL, "functie" varchar(80) NOT NULL, "levensloop" text NOT NULL, "project_id" integer NOT NULL REFERENCES "docs_project" ("id") DEFERRABLE INITIALLY DEFERRED);
+CREATE TABLE "docs_dataitem_ent" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "dataitem_id" integer NOT NULL REFERENCES "docs_dataitem" ("id") DEFERRABLE INITIALLY DEFERRED, "entiteit_id" integer NOT NULL REFERENCES "docs_entiteit" ("id") DEFERRABLE INITIALLY DEFERRED);
+CREATE TABLE "docs_dataitem_tp" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "dataitem_id" integer NOT NULL REFERENCES "docs_dataitem" ("id") DEFERRABLE INITIALLY DEFERRED, "techproc_id" integer NOT NULL REFERENCES "docs_techproc" ("id") DEFERRABLE INITIALLY DEFERRED);
+--
+-- Create model Dataelement
+--
+CREATE TABLE "docs_dataelement" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "naam" varchar(40) NOT NULL, "omschrijving" varchar(80) NOT NULL, "soort" varchar(40) NOT NULL, "sleutel" smallint unsigned NOT NULL CHECK ("sleutel" >= 0), "hoort_bij_id" integer NOT NULL REFERENCES "docs_dataitem" ("id") DEFERRABLE INITIALLY DEFERRED, "relatie_id" integer NULL REFERENCES "docs_dataitem" ("id") DEFERRABLE INITIALLY DEFERRED);
+--
+-- Create model Bevinding
+--
+CREATE TABLE "docs_bevinding" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "nummer" varchar(10) NOT NULL, "datum_in" datetime NOT NULL, "gereed" bool NOT NULL, "datum_gereed" datetime NULL, "kort" varchar(80) NOT NULL, "melding" text NOT NULL, "oplossing" text NOT NULL, "actie" integer NULL, "actienummer" varchar(10) NOT NULL, "project_id" integer NOT NULL REFERENCES "docs_project" ("id") DEFERRABLE INITIALLY DEFERRED);
+CREATE TABLE "docs_bevinding_tplan" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "bevinding_id" integer NOT NULL REFERENCES "docs_bevinding" ("id") DEFERRABLE INITIALLY DEFERRED, "testplan_id" integer NOT NULL REFERENCES "docs_testplan" ("id") DEFERRABLE INITIALLY DEFERRED);
+--
+-- Create model Attribuut
+--
+CREATE TABLE "docs_attribuut" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "naam" varchar(40) NOT NULL, "type" varchar(10) NOT NULL, "bereik" text NOT NULL, "primarykey" smallint unsigned NOT NULL CHECK ("primarykey" >= 0), "hoort_bij_id" integer NOT NULL REFERENCES "docs_entiteit" ("id") DEFERRABLE INITIALLY DEFERRED, "relatie_id" integer NULL REFERENCES "docs_entiteit" ("id") DEFERRABLE INITIALLY DEFERRED);
+CREATE UNIQUE INDEX "docs_entiteit_rfc_entiteit_id_userwijz_id_75d8f9a8_uniq" ON "docs_entiteit_rfc" ("entiteit_id", "userwijz_id");
+CREATE INDEX "docs_entiteit_rfc_entiteit_id_8bff371b" ON "docs_entiteit_rfc" ("entiteit_id");
+CREATE INDEX "docs_entiteit_rfc_userwijz_id_13f4516e" ON "docs_entiteit_rfc" ("userwijz_id");
+CREATE INDEX "docs_dataitem_project_id_74d08187" ON "docs_dataitem" ("project_id");
+CREATE UNIQUE INDEX "docs_dataitem_ent_dataitem_id_entiteit_id_d128cf3f_uniq" ON "docs_dataitem_ent" ("dataitem_id", "entiteit_id");
+CREATE INDEX "docs_dataitem_ent_dataitem_id_071222bb" ON "docs_dataitem_ent" ("dataitem_id");
+CREATE INDEX "docs_dataitem_ent_entiteit_id_7886a639" ON "docs_dataitem_ent" ("entiteit_id");
+CREATE UNIQUE INDEX "docs_dataitem_tp_dataitem_id_techproc_id_925a8984_uniq" ON "docs_dataitem_tp" ("dataitem_id", "techproc_id");
+CREATE INDEX "docs_dataitem_tp_dataitem_id_de43262a" ON "docs_dataitem_tp" ("dataitem_id");
+CREATE INDEX "docs_dataitem_tp_techproc_id_82e4da4f" ON "docs_dataitem_tp" ("techproc_id");
+CREATE INDEX "docs_dataelement_hoort_bij_id_4f47e064" ON "docs_dataelement" ("hoort_bij_id");
+CREATE INDEX "docs_dataelement_relatie_id_1d7052a8" ON "docs_dataelement" ("relatie_id");
+CREATE INDEX "docs_bevinding_project_id_5d0ea735" ON "docs_bevinding" ("project_id");
+CREATE UNIQUE INDEX "docs_bevinding_tplan_bevinding_id_testplan_id_7749a1bb_uniq" ON "docs_bevinding_tplan" ("bevinding_id", "testplan_id");
+CREATE INDEX "docs_bevinding_tplan_bevinding_id_7e42febd" ON "docs_bevinding_tplan" ("bevinding_id");
+CREATE INDEX "docs_bevinding_tplan_testplan_id_8fab1efe" ON "docs_bevinding_tplan" ("testplan_id");
+CREATE INDEX "docs_attribuut_hoort_bij_id_337c2f5a" ON "docs_attribuut" ("hoort_bij_id");
+CREATE INDEX "docs_attribuut_relatie_id_57790d07" ON "docs_attribuut" ("relatie_id");
+COMMIT;

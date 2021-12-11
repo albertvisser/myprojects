@@ -4,10 +4,10 @@ import datetime
 from django.http import Http404
 from django.core.exceptions import ObjectDoesNotExist, FieldError    # , DoesNotExist
 from django.utils.translation import ugettext as _
-import myprojects.models as my
-from .settings import MEDIA_ROOT, SITES
-RELTXT = '<br/><a href="/{0}/{1}/{2}/">{3}</a>'
-BTNTXT = '<a href="/{0}/{1}/{2}/{3}/{4}/"><input type="button" value="{5}" /></a>'
+import docs.models as my
+from myprojects.settings import MEDIA_ROOT, SITES
+RELTXT = '<br/><a href="/docs/{0}/{1}/{2}/">{3}</a>'
+BTNTXT = '<a href="/docs/{0}/{1}/{2}/{3}/{4}/"><input type="button" value="{5}" /></a>'
 ADD_TEXT, REMOVE_TEXT = _("leg relatie"), _("verwijder relatie")
 # let op: obj.model._meta bestaat niet (meer), obj,_meta.model wel
 # maar in get_related heb ik model._meta nou juist vervangen door _meta
@@ -280,8 +280,9 @@ def init_infodict_for_detail(proj, soort, edit, meld):
     return {'start': '', 'soort': soort, 'prev': '', 'notnw': 'new', 'next': '', "sites": SITES,
             'proj': '' if proj == 'proj' else proj, 'sect': '', 'meld': meld,
             'projecten': get_projectlist(),
-            'edit': 'edit' if edit == 'new' else edit,  # 'view' if edit == 'edit' else 'edit',
-            'view': 'view' if not edit else '',  # 'edit' if edit != 'edit' else '',
+            # 'edit': 'view' if edit else '',
+            # 'view': 'edit' if not edit else '',
+            'mode': 'edit' if edit else 'view',
             'new': 'nieuw' if edit == 'new' else ''}
 
 

@@ -1,28 +1,28 @@
 {% extends "base_app.html" %}{% load i18n %}
 {% block content-top %}
 
-{% if edit == 'edit' %}
+{% if mode == 'edit' %}
 <form action="{{form_addr}}" method="post"  enctype="multipart/form-data">{% csrf_token %}
 {% endif %}
 
 <div class="left_view">{% trans "Naam" %}:&nbsp;</div>
 <div class="right">
-{% if edit == 'edit' %}
+{% if mode == 'edit' %}
 <input type="text" name="naam" id="naam" value="
 {% endif %}
 {{ data.naam }}
-{% if edit == 'edit' %}
+{% if mode == 'edit' %}
 " size="{{lengte.naam}}" />
 {% endif %}
 </div><div class="clear">&nbsp;</div>
 
-<div class="left_{{ edit }}">{% trans "Korte omschrijving" %}:&nbsp;</div>
+<div class="left_{{ mode }}">{% trans "Korte omschrijving" %}:&nbsp;</div>
 <div class="right">
-{% if edit == 'edit' %}
+{% if mode == 'edit' %}
 <input type="text" name="oms" id="oms" value="
 {% endif %}
 {{ data.oms }}
-{% if edit == 'edit' %}
+{% if mode == 'edit' %}
 " size="{{lengte.oms}}" />
 {% endif %}
 </div><div class="clear">&nbsp;</div>
@@ -30,16 +30,16 @@
 {% endblock %}
 {% block content-bottom %}
 
-<div class="left_{{ edit }}">{% trans "Zie" %}:&nbsp;</div>
+<div class="left_{{ mode }}">{% trans "Zie" %}:&nbsp;</div>
 <div class="right">
 {% if data.link %}
-    {% if edit == 'edit' %}huidige locatie: {% else %}
+    {% if mode == 'edit' %}huidige locatie: {% else %}
         <a href="{{ data.link.url }}" title="download">
     {%endif%}
     {{data.link.url}}
-    {%if edit == 'edit' %}<br/>{% else %}</a>{%endif%}
+    {%if mode == 'edit' %}<br/>{% else %}</a>{%endif%}
 {%endif%}
-{% if edit == 'edit' %}
+{% if mode == 'edit' %}
 <input type="file" id="link_file" name="link_file" />
 {%endif%}
 </div><div class="clear">&nbsp;</div>
@@ -48,14 +48,14 @@
 <div class="left_view">{% trans "Tekst" %}:&nbsp;</div>
 <div class="right"><br/><br/>
 <div class="longtext">
-{% if edit == 'edit' %}
+{% if mode == 'edit' %}
 <textarea name="tekst" id="tekst" rows="8" cols="80" />{{ data.tekst }}</textarea>
 {% else %}
 <div class="longtext">{{ data.tekst|linebreaksbr }}</div>
 {% endif %}
 </div>
 </div><div class="clear">&nbsp;</div>
-{% if edit == 'edit' %}
+{% if mode == 'edit' %}
 </form>
 {% endif %}
 {% endblock %}

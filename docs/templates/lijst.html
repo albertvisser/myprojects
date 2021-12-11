@@ -1,0 +1,11 @@
+{% extends "base_app.html" %}{% load i18n %}
+{% block content-data %}
+<a href="/docs/{{proj}}/{{soort}}/new/" title="nieuw {{soort}}">{% trans 'Voer een nieuw(e)' %} {{lijstitem}} {% trans 'op' %} </a>
+{% if lijst %}, {% trans 'of kies een bestaande' %}:<hr/>
+<ul>
+{% for x in lijst %}
+<li><a href="/docs/{{proj}}/{{soort}}/{{x.id}}/" title="{% trans 'ga naar' %} {{soort}}">{{x}}</a></li>
+{% endfor %}
+</ul>
+{% endif %}
+{% endblock %}

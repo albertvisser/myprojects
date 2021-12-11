@@ -1,27 +1,27 @@
 {% extends "base_app.html" %}{% load i18n %}
 {% block content-top %}
-{% if edit == 'edit' %}
+{% if mode == 'edit' %}
 <form action="{{form_addr}}" method="post" >{% csrf_token %}
 {% endif %}
 
 <div class="left_view">{% trans 'Naam entiteit' %}:&nbsp;</div>
 <div class="right">
-{% if edit == 'edit' %}
+{% if mode == 'edit' %}
 <input type="text" name="naam" id="naam" value="
 {% endif %}
 {{ data.naam }}
-{% if edit == 'edit' %}
+{% if mode == 'edit' %}
 " size="{{lengte.naam}}" />
 {% endif %}
 </div><div class="clear">&nbsp;</div>
 
-<div class="left_{{ edit }}">{% trans 'Korte omschrijving' %}:&nbsp;</div>
+<div class="left_{{ mode }}">{% trans 'Korte omschrijving' %}:&nbsp;</div>
 <div class="right">
-{% if edit == 'edit' %}
+{% if mode == 'edit' %}
 <input type="text" name="kort" id="kort" value="
 {% endif %}
 {{ data.kort }}
-{% if edit == 'edit' %}
+{% if mode == 'edit' %}
 " size="{{lengte.kort}}" />
 {% endif %}
 </div><div class="clear">&nbsp;</div>
@@ -30,30 +30,30 @@
 {% block content-bottom %}
 <hr/>
 
-<div class="left_{{ edit }}">{% trans 'Functie' %}:&nbsp;</div>
+<div class="left_{{ mode }}">{% trans 'Functie' %}:&nbsp;</div>
 <div class="right">
-{% if edit == 'edit' %}
+{% if mode == 'edit' %}
 <textarea name="functie" id="functie" rows="8" cols="80" />{{ data.functie }}</textarea>
 {% else %}
 <div class="longtext">{{data.functie|linebreaksbr}}</div>
 {% endif %}
 </div><div class="clear">&nbsp;</div>
 
-<div class="left_{{ edit }}">{% trans 'Levensloop' %}:&nbsp;</div>
+<div class="left_{{ mode }}">{% trans 'Levensloop' %}:&nbsp;</div>
 <div class="right">
-{% if edit == 'edit' %}
+{% if mode == 'edit' %}
 <textarea name="levensloop" id="levensloop" rows="8" cols="80" />{{ data.levensloop }}</textarea>
 {% else %}
 <div class="longtext">{{data.levensloop|linebreaksbr}}</div>
 {% endif %}
 </div><div class="clear">&nbsp;</div>
 
-{% if edit == 'edit' %}
+{% if mode == 'edit' %}
 </form>
 {% endif %}
 
 {% if not new %}
-{% if edit == 'edit' %}
+{% if mode == 'edit' %}
 
         <div class="left_edit">Attributen:&nbsp;</div>
         <div class="right">

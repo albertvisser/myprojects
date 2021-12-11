@@ -1,0 +1,23 @@
+{% extends "base_app.html" %}{% load i18n %}
+{% block content-data %}
+  {% if lijst %}
+    {% trans 'Selecteer een' %} {{lijstitem}}:<br/><br/>
+    <ul>
+    {% for x in lijst %}
+      {% if orient == 'naar' %}
+        <li><a href="/docs/{{proj}}/{{soort}}/{{x.id}}/rel/{{orient}}/{{srt}}/{{id}}/"
+	       	title="{% trans 'relateer' %}">{{x}}</a></li>
+      {% else %}
+        <li><a href="/docs/{{proj}}/{{srt}}/{{id}}/rel/{{orient}}/{{soort}}/{{x.id}}/"
+	       	title="{% trans 'relateer' %}">{{x}}</a></li>
+      {% endif %}
+    {% endfor %}
+    </ul>
+  {% else %}
+  <p>
+  <a href="/docs/{{proj}}/{{soort}}/new/{{srt}}/{{id}}/" title="nieuw(e) {{soort}}">
+	    {% trans 'Voer een nieuw(e)' %} {{lijstitem}} {% trans 'op' %}</a>
+  
+  </p>
+  {% endif %}
+{% endblock %}

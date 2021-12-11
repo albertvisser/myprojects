@@ -1,36 +1,36 @@
 {% extends "base_app.html" %}{% load i18n %}
 {% block content-top %}
 
-{% if edit == 'edit' %}
+{% if mode == 'edit' %}
  <form action="{{form_addr}}" method="post">{% csrf_token %}
 {% endif %}
 
  <div class="left_view">{% trans 'Nummer' %}:&nbsp;</div>
  <div class="right">
-{% if edit == 'edit' %}
+{% if mode == 'edit' %}
 <input type="text" name="nummer" id="nummer" value="
 {% endif %}
 {%if data%}{{ data.nummer }}{%else%}{{nummer}}{% endif %}
-{% if edit == 'edit' %}
+{% if mode == 'edit' %}
 " size="10" readonly="readonly" />
 {% endif %}
  <input type="hidden" name="datum_in" id="datum_in" value="{{ data.datum_in }}"/>
  </div><div class="clear">&nbsp;</div>
 
- <div class="left_{{ edit }}">{% trans 'Korte omschrijving' %}:&nbsp;</div>
+ <div class="left_{{ mode }}">{% trans 'Wens' %}:&nbsp;</div>
  <div class="right">
-{% if edit == 'edit' %}
+{% if mode == 'edit' %}
 <input type="text" name="kort" id="kort" value="
 {% endif %}
-{{ data.kort }}
-{% if edit == 'edit' %}
-" size="{{lengte.kort}}" />
+{{ data.wens }}
+{% if mode == 'edit' %}
+" size="{{lengte.wens}}" />
 {% endif %}
 </div><div class="clear">&nbsp;</div>
 
-<div class="left_{{ edit }}">{% trans 'Gereed' %}:&nbsp;</div>
+<div class="left_{{ mode }}">{% trans 'Gereed' %}:&nbsp;</div>
  <div class="right">
-{% if edit == 'edit' %}
+{% if mode == 'edit' %}
 <select name="gereed" id="gereed"><option value="0">Nee</option>
  <option value="1"{%if data.gereed%} selected="selected"{%endif%}>Ja</option></select>
 {% else %}
@@ -41,22 +41,25 @@
 
 {% endblock %}
 {% block content-middle %}
-<div class="left_{{ edit }}">&nbsp;</div>
+<div class="left_{{ mode }}">&nbsp;</div>
  <div class="right">
-{% if edit == 'edit' %}
+{% if mode == 'edit' %}
 <input type="submit" name="pbKort" id="pbKort" value="{% trans 'Alle wijzigingen opslaan' %}" />
 {% else %}
 {% if not data.actie %}<a href="/{{proj}}/{{soort}}/{{ data.id }}/edit/">{% endif %}
  <input type="button" value="{% trans 'wijzigen' %}"{% if data.actie %}disabled="disabled"{% endif %}/>
  {% if not data.actie %}</a>{% endif %}
- {% if data.melding and ar_proj %}
+ {% if data.wens and ar_proj %}
  <form action= "{{sites.probreg}}/{{ar_proj}}/koppel/" method="post" style="display:inline">{% csrf_token %}
- <input type="hidden" name="hFrom" value="{{sites.doctool}}/{{proj}}/userprob/{{data.id}}/koppel/{0}/{1}/" />
+ <input type="hidden" name="hFrom" value="{{sites.doctool}}/{{proj}}/userwijz/{{data.id}}/koppel/{0}/{1}/" />
  <input type="hidden" name="hUser" value="{{ ar_user }}" />
- <input type="hidden" name="hMeld" value="{{ data.kort }}" />
- <input type="hidden" name="hOpm" value="{{ data.melding|escape}}" />
+ <input type="hidden" name="hMeld" value="{{ data.wens }}" />
+ <input type="hidden" name="hOpm" value="{{ data.toelichting|escape}}" />
  <input type="submit" name="pbDoor" id="pbDoor" value="{% trans 'Doorkoppelen naar actiereg' %}"
  {% if data.actie or data.gereed %}disabled="disabled"{% endif %}/>
+ {% if not data.actie and not data.gereed %} nr.: <input type="text" name="tActie" />{% endif %}
+  </form>
+
  </form>{% endif %}
 {% endif %}
  </div><div class="clear">&nbsp;</div>
@@ -64,25 +67,25 @@
 {% block content-bottom %}
  <hr/>
 
- <div class="left_{{ edit }}">{% trans 'Melding' %}:&nbsp;</div>
+ <div class="left_{{ mode }}">{% trans 'Toelichting' %}:&nbsp;</div>
  <div class="right"><br/><br/>
-{% if edit == 'edit' %}
- <textarea name="melding" id="melding" rows="8" cols="80" />{{ data.melding }}</textarea>
+{% if mode == 'edit' %}
+ <textarea name="toelichting" id="toelichting" rows="8" cols="80" />{{ data.toelichting }}</textarea>
 {% else %}
-<div class="longtext">{{ data.melding|linebreaksbr }}</div>
+<div class="longtext">{{ data.toelichting|linebreaksbr }}</div>
 {% endif %}
 </div><div class="clear">&nbsp;</div>
 
-<div class="left_{{ edit }}">{% trans 'Opmerking' %}:&nbsp;</div>
+<div class="left_{{ mode }}">{% trans 'Opmerking' %}:&nbsp;</div>
  <div class="right"><br/><br/>
-{% if edit == 'edit' %}
-<textarea name="oplossing" id="oplossing" rows="8" cols="80" />{{ data.oplossing }}</textarea>
+{% if mode == 'edit' %}
+<textarea name="opmerkingen" id="opmerkingen" rows="8" cols="80" />{{ data.opmerkingen }}</textarea>
 {% else %}
-<div class="longtext">{{ data.oplossing|linebreaksbr }}</div>
+<div class="longtext">{{ data.opmerkingen|linebreaksbr }}</div>
 {% endif %}
  </div><div class="clear">&nbsp;</div>
 
-{% if edit == 'edit' %}
+{% if mode == 'edit' %}
  <hr/>
 </form>
 {% else %}

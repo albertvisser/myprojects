@@ -1,8 +1,8 @@
 """Data definitions for MyProjects application
 """
-import datetime
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+import django.utils.timezone
 
 
 class Project(models.Model):
@@ -81,8 +81,7 @@ class Userwijz(models.Model):
                    'entiteit': _('Raakt')}
     project = models.ForeignKey(Project, related_name="rfcs", on_delete=models.CASCADE)
     nummer = models.CharField(max_length=10)
-    datum_in = models.DateTimeField(default=datetime.datetime.now(),
-                                    editable=False)  # auto_now_add=True)
+    datum_in = models.DateTimeField(default=django.utils.timezone.now, editable=False)
     gereed = models.BooleanField()
     datum_gereed = models.DateTimeField(null=True)
     wens = models.CharField(max_length=80)
