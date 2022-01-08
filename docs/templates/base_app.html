@@ -160,7 +160,7 @@
   {% if mode == 'edit' %}
     <input type="submit" name="pbKort" id="pbKort" value="{% trans 'Alle wijzigingen opslaan' %}" />
     {% if not new %}
-      <a href="/docs/{% if soort %}{{proj}}/{{soort}}/{% endif %}{{ data.id }}/view/">
+      <a href="/docs/{% if soort %}{{proj}}/{{soort}}/{% endif %}{{ data.id }}/">
     {% else %}
       <a href="javascript:history.go(-1)">
     {% endif %}
