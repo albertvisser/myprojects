@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-11 12:11+0100\n"
-"PO-Revision-Date: 2021-12-11 12:14+0100\n"
+"PO-Revision-Date: 2022-02-12 21:12+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.3\n"
+"X-Generator: Poedit 3.0\n"
 
 #: helpers.py:11 views_current.py:273 views_old.py:429
 msgid "leg relatie"
@@ -439,7 +439,7 @@ msgstr "test findings"
 
 #: templates/base_app.html:146
 msgid "Kies eventueel een ander project"
-msgstr "Select a project"
+msgstr "Select a different project if needed"
 
 #: templates/base_app.html:161 templates/bevinding.html:47
 #: templates/userprob.html:47 templates/userwijz.html:47
