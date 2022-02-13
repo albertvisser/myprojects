@@ -6,26 +6,31 @@
   <h1><b>&nbsp;{{branding|escape}}{% trans title %}</b></h1>
 {% endblock %}
 {% block breadcrumbs %}
+<div style="padding: 5px 10px 0px 40px;">  <!-- zie base.css id #content -->
   <a name="top"></a>&nbsp;&nbsp;&nbsp;
-  <a href="/" title="startpagina doctool">DocTool start</a>
+  <div class="breadc"><a href="/" title="startpagina doctool">DocTool start</a></div>
   {% if proj %}
-    &rsaquo; <a href="/docs/{{proj}}/" title="project homepage">{% trans 'project_cr' %}</a>
+    <div class="breadc">&nbsp;&rsaquo;&nbsp;</div> 
+    <div class="breadc"><a href="/docs/{{proj}}/" title="project homepage">{% trans 'project_cr' %}</a></div>
   {% endif %}
   {% if ref %}
-    &rsaquo; <a href="/docs/{{proj}}/{{ref.0}}/" title="selectielijst">
-    {% trans 'lijst_cr' %} {{ref.1}}</a>
+    <div class="breadc">&nbsp;&rsaquo;&nbsp;</div> 
+    <div class="breadc"><a href="/docs/{{proj}}/{{ref.0}}/" title="selectielijst">{% trans 'lijst_cr' %} {{ref.1}}</a></div>
     {% if ref.2 %} 
-      &rsaquo;<a href="/docs/{{proj}}/{{ref.0}}/{{ref.2}}/" title="item">item</a>
+      <div class="breadc">&nbsp;&rsaquo;&nbsp;</div>
+      <div class="breadc"><a href="/docs/{{proj}}/{{ref.0}}/{{ref.2}}/" title="item">item</a></div>
     {% endif %}
   {% endif %}
   {% if lijst %}
-    &rsaquo;<a href="/docs/{{proj}}/{{soort}}/" title="lijst items">
-    {% trans 'lijst_cr' %} {{lijstvan}}</a>
+    <div class="breadc">&nbsp;&rsaquo;&nbsp;</div>
+    <div class="breadc"><a href="/docs/{{proj}}/{{soort}}/" title="lijst items">{% trans 'lijst_cr' %} {{lijstvan}}</a></div>
   {% endif %}
   {% if sect %}
-    &rsaquo; <a href="/docs/{{proj}}/{{sect}}/" title="project onderdeel">item</a>
+    <div class="breadc">&nbsp;&rsaquo;&nbsp;</div>
+    <div class="breadc"><a href="/docs/{{proj}}/{{sect}}/" title="project onderdeel">item</a></div>
   {%endif%}
-  <br/>
+  <div class="clear">&nbsp;</div>
+  </div>
 {%endblock%}
 {% block content_title %}
   <!-- {% if title %}<h3>{{ title|escape }}</h3>{% endif %} -->
