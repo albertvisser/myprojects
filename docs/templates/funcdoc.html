@@ -34,7 +34,7 @@
 <div class="right">
 {% if data.link %}
     {% if mode == 'edit' %}huidige locatie: {% else %}
-        <a href="{{ data.link.url }}" title="download">
+    <a href="{{ data.link.url }}" title="download">
     {%endif%}
     {{data.link.url}}
     {%if mode == 'edit' %}<br/>{% else %}</a>{%endif%}
