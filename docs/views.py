@@ -35,7 +35,7 @@ def lijst(request, proj, soort='', id='', rel='', srt=''):
                  'projecten': funcs.get_projectlist(),
                  'lijst': funcs.get_ordered_objectlist(proj, soort)}
     title, naam_ev, naam_mv, sect = funcs.get_list_title_attrs(proj, soort, srt, id, rel)
-    info_dict['ref'] = (srt, naam_mv, id)
+    info_dict['ref'] = (srt, naam_mv, id) if srt else ()
     # info_dict["soort"] = '/'.join((srt,id,soort))
     info_dict['title'] = title
     info_dict['lijstitem'] = naam_ev
@@ -163,7 +163,7 @@ def view_document(request, proj, edit='', soort='', id='', srt='', verw='', meld
     if srt != '':
         info_dict['ref'] = (soort, naam_mv, verw)
     else:
-        info_dict['lijst'] = soort
+        info_dict['lijstsoort'] = soort
         info_dict['lijstvan'] = naam_mv
     info_dict["sctn"] = sect
 
@@ -195,7 +195,8 @@ def update_document(request, proj='', soort='', id='', srt='', verw=''):
     o = funcs.get_object(soort, id, new)
     if new:
         o.project = p
-    # TODO: aparte afhandeling voor documenten die een link kunnen bevatten"
+    # TODO: aparte afhandeling voor documenten die een link kunnen bevatten?
+    # lijkt goed te werken zonder dit
     # de vraag is misschien: hoeft dit of voorziet datgene wat ik al in execute_update
     #  heb zitten hierin?
     # if soort in ('funcdoc','userdoc','layout'):
