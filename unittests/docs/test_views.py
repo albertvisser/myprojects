@@ -6,7 +6,8 @@ import django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "myprojects.settings")
 django.setup()
 
-import myprojects.views as views
+# import myprojects.views as views
+import docs.views as views
 
 class MockRequest(django.http.request.HttpRequest):
     pass
@@ -187,15 +188,15 @@ def test_update_project(monkeypatch, capsys):
     monkeypatch.setattr(views, 'HttpResponseRedirect', lambda x: x)
     req = MockRequest()
     req.POST = 'postdict'
-    assert views.update_project(req, 'proj') == '/new_id/'
+    assert views.update_project(req, 'proj') == '/docs/new_id/'
     assert capsys.readouterr().out == ('called execute_update with args project `project new_id` '
                                        'postdict\n')
-    assert views.update_project(req, 1) == '/1/'
+    assert views.update_project(req, 1) == '/docs/1/'
     assert capsys.readouterr().out == ('called execute_update with args project `project 1` '
                                        'postdict\n')
     monkeypatch.setattr(views.funcs, 'get_object', mock_get_object_2)
     monkeypatch.setattr(views.funcs, 'execute_update', mock_execute_update_2)
-    assert views.update_project(req, 1) == 'http://actiereg.lemoncurry.nl/addext/1/1/kort/'
+    assert views.update_project(req, 1) == 'http://actiereg.lemoncurry.nl/docs/addext/1/1/kort/'
     assert capsys.readouterr().out == ('called execute_update with args project `project 1` '
                                        'postdict\n')
 
@@ -359,18 +360,18 @@ def test_update_document(monkeypatch, capsys):
     req = MockRequest()
     req.POST = 'postdict'
     req.FILES = 'filesdict'
-    assert views.update_document(req) == '//0/'
+    assert views.update_document(req) == '/docs//0/'
     assert capsys.readouterr().out == ('called execute_update with args  ` 0` postdict filesdict\n'
                                        'called update_related with args  ` 0`  \n')
-    assert views.update_document(req, 'proj', 'soort') == '/proj/soort/0/'
+    assert views.update_document(req, 'proj', 'soort') == '/docs/proj/soort/0/'
     assert capsys.readouterr().out == ('called execute_update with args soort `soort 0` '
                                        'postdict filesdict\n'
                                        'called update_related with args soort `soort 0`  \n')
-    assert views.update_document(req, 'proj', 'soort', 'id') == '/proj/soort/id/'
+    assert views.update_document(req, 'proj', 'soort', 'id') == '/docs/proj/soort/id/'
     assert capsys.readouterr().out == ('called execute_update with args soort `soort id` '
                                         'postdict filesdict\n'
                                        'called update_related with args soort `soort id`  \n')
-    assert views.update_document(req, 'proj', 'soort', 'id', 'srt', 'verw') == '/proj/soort/id/'
+    assert views.update_document(req, 'proj', 'soort', 'id', 'srt', 'verw') == '/docs/proj/soort/id/'
     assert capsys.readouterr().out == ('called execute_update with args soort `soort id` '
                                        'postdict filesdict\n'
                                        'called update_related with args soort `soort id` srt '
@@ -383,14 +384,14 @@ def test_koppel(monkeypatch, capsys):
     monkeypatch.setattr(views.funcs, 'get_object', mock_get_object)
     monkeypatch.setattr(views.funcs, 'update_link_from_actiereg', mock_update_link)
     monkeypatch.setattr(views, 'HttpResponseRedirect', lambda x: x)
-    assert views.koppel('request') == '////msg//'
+    assert views.koppel('request') == '/docs////msg//'
     assert capsys.readouterr().out == ''
-    assert views.koppel('request', 'proj', 'soort', 'id') == '/proj/soort/id/msg//'
+    assert views.koppel('request', 'proj', 'soort', 'id') == '/docs/proj/soort/id/msg//'
     assert capsys.readouterr().out == ''
-    assert views.koppel('request', 'proj', 'soort', 'id', 'arid', 'arnum') == '/proj/soort/id/'
+    assert views.koppel('request', 'proj', 'soort', 'id', 'arid', 'arnum') == '/docs/proj/soort/id/'
     assert capsys.readouterr().out == ("called update_link_from_actiereg with args:"
                                        " ('soort id', 'arid', 'arnum')\n")
-    assert views.koppel('request', 'pr', 'srt', 'id', arnum='arnum') == '/pr/srt/id/msg/arnum/'
+    assert views.koppel('request', 'pr', 'srt', 'id', arnum='arnum') == '/docs/pr/srt/id/msg/arnum/'
     assert capsys.readouterr().out == ''
 
 
@@ -400,14 +401,14 @@ def test_meld(monkeypatch, capsys):
     monkeypatch.setattr(views.funcs, 'get_object', mock_get_object)
     monkeypatch.setattr(views.funcs, 'update_status_from_actiereg', mock_update_status)
     monkeypatch.setattr(views, 'HttpResponseRedirect', lambda x: x)
-    assert views.meld('request') == 'http://actiereg.lemoncurry.nl///mld/Actie herleefd'
+    assert views.meld('request') == 'http://actiereg.lemoncurry.nl/docs///mld/Actie herleefd'
     assert capsys.readouterr().out == "called update_status_from_actiereg with args: (' ', '')\n"
-    assert views.meld('request', 'proj', 'soort', 'id') == ('http://actiereg.lemoncurry.nl/'
+    assert views.meld('request', 'proj', 'soort', 'id') == ('http://actiereg.lemoncurry.nl/docs/'
                                                             '//mld/Actie herleefd')
     assert capsys.readouterr().out == ("called update_status_from_actiereg with args: ('soort id',"
                                        " '')\n")
     assert views.meld('request', 'proj', 'soort', 'id', 'arch', 'arfrom', 'arid') == (
-            'http://actiereg.lemoncurry.nl/arfrom/arid/mld/Actie gearchiveerd')
+            'http://actiereg.lemoncurry.nl/docs/arfrom/arid/mld/Actie gearchiveerd')
     assert capsys.readouterr().out == ("called update_status_from_actiereg with args: ('soort id',"
                                        " 'arch')\n")
 
@@ -418,16 +419,16 @@ def test_maak_rel(monkeypatch, capsys):
     monkeypatch.setattr(views.funcs, 'get_object', mock_get_object)
     monkeypatch.setattr(views.funcs, 'set_relation', mock_set_relation)
     monkeypatch.setattr(views, 'HttpResponseRedirect', lambda x: x)
-    assert views.maak_rel('request', 'proj') == '/proj///'
+    assert views.maak_rel('request', 'proj') == '/docs/proj///'
     assert capsys.readouterr().out ==  "called set_relation with args: (' ', '', ' ', '')\n"
-    assert views.maak_rel('request', 'proj', 'srt', 'id') == '/proj/srt/id/'
+    assert views.maak_rel('request', 'proj', 'srt', 'id') == '/docs/proj/srt/id/'
     assert capsys.readouterr().out ==  "called set_relation with args: ('srt id', 'srt', ' ', '')\n"
     assert views.maak_rel('request', 'proj', 'srt', 'id', 'soort', 'verw', 'naar') == (
-            '/proj/soort/verw/')
+            '/docs/proj/soort/verw/')
     assert capsys.readouterr().out == ("called set_relation with args: ('srt id', 'srt',"
                                        " 'soort verw', 'soort')\n")
     assert views.maak_rel('request', '', 'srt', 'id', 'soort', 'verw', 'naar') == (
-            '/soort/verw/')
+            '/docs/soort/verw/')
     assert capsys.readouterr().out == ("called set_relation with args: ('srt id', 'srt',"
                                        " 'soort verw', 'soort')\n")
 
@@ -438,17 +439,17 @@ def test_unrelate(monkeypatch, capsys):
     monkeypatch.setattr(views.funcs, 'get_object', mock_get_object)
     monkeypatch.setattr(views.funcs, 'remove_relation', mock_remove_relation)
     monkeypatch.setattr(views, 'HttpResponseRedirect', lambda x: x)
-    assert views.unrelate('request', 'proj') == '/proj///'
+    assert views.unrelate('request', 'proj') == '/docs/proj///'
     assert capsys.readouterr().out == "called remove_relation with args: (' ', '', ' ', '')\n"
-    assert views.unrelate('request', 'proj', 'srt', 'id') == '/proj/srt/id/'
+    assert views.unrelate('request', 'proj', 'srt', 'id') == '/docs/proj/srt/id/'
     assert capsys.readouterr().out == ("called remove_relation with args: ('srt id', 'srt', ' ',"
                                        " '')\n")
     assert views.unrelate('request', 'proj', 'srt', 'id', 'soort', 'verw', 'naar') == (
-            '/proj/soort/verw/')
+            '/docs/proj/soort/verw/')
     assert capsys.readouterr().out == ("called remove_relation with args: ('srt id', 'srt',"
                                        " 'soort verw', 'soort')\n")
     assert views.unrelate('request', '', 'srt', 'id', 'soort', 'verw', 'naar') == (
-            '/soort/verw/')
+            '/docs/soort/verw/')
     assert capsys.readouterr().out == ("called remove_relation with args: ('srt id', 'srt',"
                                        " 'soort verw', 'soort')\n")
 
@@ -461,15 +462,15 @@ def test_edit_sub(monkeypatch, capsys):
     monkeypatch.setattr(views.funcs, 'get_object', mock_get_object)
     monkeypatch.setattr(views.funcs, 'update_subitem', mock_update_subitem)
     monkeypatch.setattr(views, 'HttpResponseRedirect', lambda x: x)
-    assert views.edit_sub(req) == '///edit/'
+    assert views.edit_sub(req) == '/docs///edit/'
     assert capsys.readouterr().out == ("called update_subitem with args: ('', ' ', '', 'new  ', "
                                        "True, {})\n")
-    assert views.edit_sub(req, 'proj', 'srt1', 'id1', 'srt2', 'id2') == '/proj/srt1/id1/edit/'
+    assert views.edit_sub(req, 'proj', 'srt1', 'id1', 'srt2', 'id2') == '/docs/proj/srt1/id1/edit/'
     assert capsys.readouterr().out == ("called update_subitem with args: ('srt1', 'srt1 id1',"
                                        " 'srt2', 'srt2 id2', False, {})\n")
     req = MockRequest()
     req.POST = {'x': 'y'}
-    assert views.edit_sub(req, 'proj', 'srt1', 'id1', 'srt2', 'id2') == '/proj/srt1/id1/edit/'
+    assert views.edit_sub(req, 'proj', 'srt1', 'id1', 'srt2', 'id2') == '/docs/proj/srt1/id1/edit/'
     assert capsys.readouterr().out == ("called update_subitem with args: ('srt1', 'srt1 id1',"
                                        " 'srt2', 'srt2 id2', False, {'x': 'y'})\n")
 

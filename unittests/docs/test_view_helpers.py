@@ -1,13 +1,9 @@
 import os
 from types import SimpleNamespace as NS
 import datetime
-import pytest      # mogelijk te gebruiken als ik "pytest-django" gebruik
-# geregeld d.m.v. pytest.ini en pytest_django
-# import django
-# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "myprojects.settings")
-# django.setup()
-import myprojects.helpers as funcs
-import myprojects.models as my
+import pytest
+import docs.helpers as funcs
+import docs.models as my
 from django.http import Http404
 from fixtures import (expected_relations, expected_field_attrs, expected_stats_texts,
                       expected_names_for_type, prepare_uploadfile)
