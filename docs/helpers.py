@@ -3,7 +3,7 @@
 import datetime
 from django.http import Http404
 from django.core.exceptions import ObjectDoesNotExist, FieldError    # , DoesNotExist
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 import docs.models as my
 from myprojects.settings import MEDIA_ROOT, SITES
 RELTXT = '<br/><a href="/docs/{0}/{1}/{2}/">{3}</a>'

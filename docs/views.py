@@ -3,7 +3,7 @@
 from django.shortcuts import render     # , get_object_or_404
 from django.template import loader
 from django.http import HttpResponseRedirect    # HttpResponse,
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 import docs.models as my
 import docs.helpers as funcs
 from myprojects.settings import MEDIA_ROOT, SITES
