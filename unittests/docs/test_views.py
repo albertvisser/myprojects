@@ -12,6 +12,9 @@ import docs.views as views
 class MockRequest(django.http.request.HttpRequest):
     pass
 
+@pytest.fixture(autouse=True)
+def lang_nl(settings):
+    settings.LANGUAGE_CODE = 'nl.nl'
 
 def test_index(monkeypatch):
     class MockQuerySet:
@@ -59,10 +62,10 @@ def test_lijst(monkeypatch):
     assert response[0] == request
     assert response[1] == 'lijst.html'
     lijst = response[2].pop('lijst')
-    assert response[2] == {'id': '', 'lijstitem': 'name', 'lijstvan': 'plural', 'meld': '', 'notnw': 'new',
+    assert response[2] == {'id': '', 'lijstitem': 'name', 'lijstvan': 'plural', 'meld': '',
+                           'notnw': 'new',
                            'orient': 'naar', 'proj': 1, 'projecten': [{'naam': 'x'}, {'naam': 'y'}],
-                           'ref': ('', 'plural', ''), 'sctn': 'section', 'soort': '', 'srt': '',
-                           'title': 'title'}
+                           'ref': (), 'sctn': 'section', 'soort': '', 'srt': '', 'title': 'title'}
     assert [x for x in lijst] == ['item 1', 'item 2']
 
     monkeypatch.setattr(views.funcs, 'get_ordered_objectlist', lambda x, y: MockQuerySet2())
@@ -71,17 +74,17 @@ def test_lijst(monkeypatch):
     assert response[2] == {'id': '', 'lijstitem': 'name', 'lijstvan': 'plural',
                            'meld': 'Geen plural aanwezig bij dit project', 'notnw': 'new',
                            'orient': 'naar', 'proj': 1, 'projecten': [{'naam': 'x'}, {'naam': 'y'}],
-                           'ref': ('', 'plural', ''), 'sctn': 'section', 'soort': '', 'srt': '',
-                           'title': 'title'}
+                           'ref': (), 'sctn': 'section', 'soort': '', 'srt': '', 'title': 'title'}
     assert [x for x in lijst] == []
 
     monkeypatch.setattr(views.funcs, 'get_ordered_objectlist', lambda x, y: MockQuerySet1())
     response = views.lijst(request, 1, 'soort', 'id', 'from', 'srt')
     lijst = response[2].pop('lijst')
-    assert response[2] == {'id': 'id', 'lijstitem': 'name', 'lijstvan': 'plural', 'meld': '', 'notnw': 'new',
+    assert response[2] == {'id': 'id', 'lijstitem': 'name', 'lijstvan': 'plural', 'meld': '',
+                           'notnw': 'new',
                            'orient': 'van', 'proj': 1, 'projecten': [{'naam': 'x'}, {'naam': 'y'}],
-                           'ref': ('srt', 'plural', 'id'), 'sctn': 'section', 'soort': 'soort', 'srt': 'srt',
-                           'start': 'x', 'title': 'title'}
+                           'ref': ('srt', 'plural', 'id'), 'sctn': 'section', 'soort': 'soort',
+                           'srt': 'srt', 'start': 'x', 'title': 'title'}
     assert [x for x in lijst] == ['item 1', 'item 2']
 
 
@@ -103,22 +106,20 @@ def test_add_new_proj(monkeypatch, capsys):
 
 def test_view_project(monkeypatch, capsys):
     def mock_init_infodict(*args):
-        return {'arg{}'.format(i): x for i, x in enumerate(args)}
+        print('call init_infodict with args', args)
+        return {}
     def mock_get_margins(*args):
         return 'x', 'y', 'z'
     def mock_get_update_url(*args):
-        return '/{}/{}/'.format(*args)
+        print('call get_update_url with args', args)
+        return '/update_url'
     def mock_get_fieldlengths(*args):
         return 'q'
     def mock_get_object(srt, id):
-        obj = types.SimpleNamespace(soort=srt, id=id)
-        obj.actiereg = 'arproj'
-        obj.aruser = 'aruser'
-        return obj
+        return types.SimpleNamespace(soort=srt, id=id, actiereg='arproj', aruser='aruser')
     def mock_get_detail_title(*args):
-        obj ='{} {}'.format(args[2].soort, args[2].id) if args[2] is not None else 'None'
-        title = 'title for (`{}`, `{}`, `{}`)'.format(args[0], args[1], obj)
-        return title
+        print('call get_detail_title with args', args)
+        return 'detail_title'
     def mock_get_stats_texts(*args):
         return 'stats_text for {}'.format(args)
     monkeypatch.setattr(views.funcs, 'init_infodict_for_detail', mock_init_infodict)
@@ -132,30 +133,38 @@ def test_view_project(monkeypatch, capsys):
     response = views.view_project('request')
     assert response[0] == 'request'
     assert response[1] == 'project.html'
-    data = response[2].pop('data')
-    assert response[2] == {'ar_proj': 'arproj', 'ar_user': 'aruser', 'arg0': '',
-                           'arg1': 'project', 'arg2': '', 'arg3': '',
-                           'form_addr': '///', 'leftw': 'x', 'lengte': 'q',
-                           'prob_stats': "stats_text for ('', 'probleem')", 'rightm': 'z',
-                           'rightw': 'y', 'test_stats': "stats_text for ('', 'bevinding')",
-                           'title': 'title for (`project`, ``, `project `)',
+    assert response[2] == {'ar_proj': 'arproj', 'ar_user': 'aruser', 'form_addr': '/docs/update_url',
+                           'data': types.SimpleNamespace(soort='project', id='', actiereg='arproj',
+                               aruser='aruser'),
+                           'leftw': 'x', 'lengte': 'q', 'rightm': 'z', 'rightw': 'y',
+                           'prob_stats': "stats_text for ('', 'probleem')",
+                           'test_stats': "stats_text for ('', 'bevinding')",
+                           'title': 'detail_title',
                            'wijz_stats': "stats_text for ('', 'userwijz')"}
-    assert '{} {}'.format(data.soort, data.id) == 'project '
+    assert capsys.readouterr().out == ("call init_infodict with args ('', '', '', '')\n"
+                                       "call get_update_url with args ('', '')\n"
+                                       "call get_detail_title with args ('project', '', namespace("
+                                       "soort='project', id='', actiereg='arproj', aruser='aruser'))\n")
 
     response = views.view_project('request', 'proj', 'new', 'meld')
-    assert response[2] == {'arg0': 'proj', 'arg1': 'project', 'arg2': 'new', 'arg3': 'meld',
-                           'form_addr': '/proj/new/', 'leftw': 'x', 'lengte': 'q',
-                           'rightm': 'z', 'rightw': 'y',
-                           'title': 'title for (`project`, `new`, `None`)'}
+    assert response[2] == {'data': None, 'form_addr': '/docs/update_url', 'leftw': 'x', 'lengte': 'q',
+                           'rightm': 'z', 'rightw': 'y', 'title': 'detail_title'}
+    assert capsys.readouterr().out == ("call init_infodict with args ('proj', '', 'new', 'meld')\n"
+                                       "call get_update_url with args ('proj', 'new')\n"
+                                       "call get_detail_title with args ('project', 'new', None)\n")
 
     response = views.view_project('request', 'proj', 'edit', 'meld')
-    data = response[2].pop('data')
-    assert response[2] == {'ar_proj': 'arproj', 'ar_user': 'aruser', 'arg0': 'proj',
-                           'arg1': 'project', 'arg2': 'edit', 'arg3': 'meld',
-                           'form_addr': '/proj/edit/', 'leftw': 'x', 'lengte': 'q',
-                           'rightm': 'z', 'rightw': 'y',
-                           'title': 'title for (`project`, `edit`, `project proj`)'}
-    assert '{} {}'.format(data.soort, data.id) == 'project proj'
+    # data = response[2].pop('data')
+    assert response[2] == {'ar_proj': 'arproj', 'ar_user': 'aruser', 'form_addr': '/docs/update_url',
+                           'data': types.SimpleNamespace(soort='project', id='proj', actiereg='arproj',
+                               aruser='aruser'),
+                           'leftw': 'x', 'lengte': 'q', 'rightm': 'z', 'rightw': 'y',
+                           'title': 'detail_title'}
+    assert capsys.readouterr().out == ("call init_infodict with args ('proj', '', 'edit', 'meld')\n"
+                                       "call get_update_url with args ('proj', 'edit')\n"
+                                       "call get_detail_title with args ('project', 'edit',"
+                                       " namespace(soort='project', id='proj', actiereg='arproj',"
+                                       " aruser='aruser'))\n")
 
 
 def test_edit_project(monkeypatch, capsys):
@@ -173,43 +182,44 @@ def test_update_project(monkeypatch, capsys):
         obj.actiereg = '' if new else '1'
         return obj
     def mock_execute_update(*args):
-        print('called execute_update with args {} `{} {}` {}'.format(args[0],
-                                                                     args[1].soort, args[1].id,
-                                                                     args[2]))
+        print('called execute_update with args', args)
+    def mock_update_related(*args):
+        print('called update_related with args', args)
     def mock_get_object_2(srt, id, new=False):
         obj = types.SimpleNamespace(soort=srt, id=1, kort='kort', actiereg = '')
         return obj
     def mock_execute_update_2(project, p, postdict):
         p.actiereg = 1
-        print('called execute_update with args {} `{} {}` {}'.format(project, p.soort, p.id,
-                                                                     postdict))
+        print('called execute_update with args {}'.format((project, p, postdict)))
     monkeypatch.setattr(views.funcs, 'get_object', mock_get_object)
     monkeypatch.setattr(views.funcs, 'execute_update', mock_execute_update)
     monkeypatch.setattr(views, 'HttpResponseRedirect', lambda x: x)
     req = MockRequest()
     req.POST = 'postdict'
     assert views.update_project(req, 'proj') == '/docs/new_id/'
-    assert capsys.readouterr().out == ('called execute_update with args project `project new_id` '
-                                       'postdict\n')
+    assert capsys.readouterr().out == ("called execute_update with args ('project', namespace(soort="
+                                       "'project', id='new_id', actiereg=''), 'postdict')\n")
     assert views.update_project(req, 1) == '/docs/1/'
-    assert capsys.readouterr().out == ('called execute_update with args project `project 1` '
-                                       'postdict\n')
+    assert capsys.readouterr().out == ("called execute_update with args ('project', namespace(soort="
+                                       "'project', id=1, actiereg='1'), 'postdict')\n")
     monkeypatch.setattr(views.funcs, 'get_object', mock_get_object_2)
     monkeypatch.setattr(views.funcs, 'execute_update', mock_execute_update_2)
-    assert views.update_project(req, 1) == 'http://actiereg.lemoncurry.nl/docs/addext/1/1/kort/'
-    assert capsys.readouterr().out == ('called execute_update with args project `project 1` '
-                                       'postdict\n')
+    assert views.update_project(req, 1) == 'http://actiereg.lemoncurry.nl/addext/1/1/kort/'
+    assert capsys.readouterr().out == ("called execute_update with args ('project', namespace(soort="
+                                       "'project', id=1, kort='kort', actiereg=1), 'postdict')\n")
 
 
 def test_view_document(monkeypatch, capsys):
     def mock_init_infodict(*args):
-        return {'arg{}'.format(i): x for i, x in enumerate(args)}
+        print('call init_infodict with args', args)
+        return {}
     def mock_get_margins(*args):
         return 'x', 'y', 'z'
     def mock_get_fieldlengths(*args):
         return 'q'
     def mock_get_update_url(*args):
-        return '/{}/{}/{}/{}/{}/'.format(*args)
+        print('call get_update_url with args', args)
+        return '/update_url'
     def mock_get_object(srt, id):
         obj = types.SimpleNamespace(soort=srt, id=id)
         if srt == 'project':
@@ -220,6 +230,7 @@ def test_view_document(monkeypatch, capsys):
     def mock_get_objectlist(proj, soort):
         return 'prev_item', 'this_item', 'next_item'
     def mock_determine_adjacent(*args):
+        print('call determine_adjacent with args', args)
         return args[0][0], args[0][2]
     class MockGetRelations:
         def __init__(self, obj, soort):
@@ -239,9 +250,8 @@ def test_view_document(monkeypatch, capsys):
     def mock_get_new_numberkey(proj, soort):
         return 'new_numberkey'
     def mock_get_detail_title(*args):
-        obj ='{} {}'.format(args[2].soort, args[2].id) if args[2] is not None else 'None'
-        title = 'title for (`{}`, `{}`, `{}`)'.format(args[0], args[1], obj)
-        return title
+        print('call get_detail_title with args', args)
+        return 'detail_title'
     def mock_get_names_for_type(soort):
         return 'soort_ev', 'soort_mv', 'sectnaam'
     monkeypatch.setattr(views.funcs, 'init_infodict_for_detail', mock_init_infodict)
@@ -260,43 +270,44 @@ def test_view_document(monkeypatch, capsys):
     response = views.view_document('request', 'proj', meld='melding')
     assert response[0] == 'request'
     assert response[1] == '.html'
-    assert response[2] == {'ar_proj': 'arproj', 'ar_user': 'aruser', 'arg0': 'proj',
-                           'arg1': '', 'arg2': '', 'arg3': 'melding', 'form_addr': '/proj/////',
-                           'leftw': 'x', 'lengte': 'q', 'lijst': '', 'lijstvan': 'soort_mv',
+    assert response[2] == {'ar_proj': 'arproj', 'ar_user': 'aruser', 'form_addr': '/docs/update_url',
+                           'leftw': 'x', 'lengte': 'q', 'lijstsoort': '', 'lijstvan': 'soort_mv',
                            'nummer': 'new_numberkey', 'rightm': 'z', 'rightw': 'y',
-                           'sctn': 'sectnaam',
-                           'title': 'Project projectnaam - title for (``, ``, `None`)'}
+                           'sctn': 'sectnaam', 'title': 'Project projectnaam - detail_title'}
+    assert capsys.readouterr().out == ("call init_infodict with args ('proj', '', '', 'melding')\n"
+                                       "call get_update_url with args ('proj', '', '', '', '', '')\n"
+                                       "call get_detail_title with args ('', '', None)\n")
     response = views.view_document('request', 'proj', 'view', 'soort', 'id')
     assert response[0] == 'request'
     assert response[1] == 'soort.html'
-    data = response[2].pop('data')
-    assert response[2] == {'ar_proj': 'arproj', 'ar_user': 'aruser', 'arg0': 'proj',
-                           'arg1': 'soort', 'arg2': 'view', 'arg3': '',
-                           'form_addr': '/proj/view/soort///',
-                           'leftw': 'x', 'lengte': 'q', 'lijst': 'soort', 'lijstvan': 'soort_mv',
-                           'rightm': 'z', 'rightw': 'y',
-                           'sctn': 'sectnaam', 'sect': 'soort/id',
-                           'title': 'Project projectnaam - title for (`soort`, `view`, `soort id`)',
-                           'andere': 'andere fkeys', 'attrs': 'fkey attrs',
-                           'buttons': "relation buttons for ('proj', 'soort', 'id', "
-                           "['fkey buttons', 'm2m buttons'])",
+    assert response[2] == {'ar_proj': 'arproj', 'ar_user': 'aruser', 'form_addr': '/docs/update_url',
+                           'data': types.SimpleNamespace(soort='soort', id='id'),
+                           'leftw': 'x', 'lengte': 'q', 'lijstsoort': 'soort', 'lijstvan': 'soort_mv',
+                           'rightm': 'z', 'rightw': 'y', 'sctn': 'sectnaam', 'sect': 'soort/id',
+                           'title': 'Project projectnaam - detail_title',
+                           'buttons': "relation buttons for ('proj', 'soort', 'id',"
+                           " ['fkey buttons', 'm2m buttons'])",
                            'fkeys_from': 'foreignkeys from soort id',
                            'fkeys_to': 'foreignkeys to soort id',
                            'm2ms_from': 'm2m relations from soort id',
                            'm2ms_to': 'many to many relations to soort id',
+                           'andere': 'andere fkeys', 'attrs': 'fkey attrs',
                            'next': 'next_item', 'prev': 'prev_item'}
-    assert data.id, data.soort == ('id', 'soort')
+    assert capsys.readouterr().out == ("call init_infodict with args ('proj', 'soort', 'view', '')\n"
+                                       "call get_update_url with args ('proj', 'view', 'soort', 'id',"
+                                       " '', '')\n"
+                                       "call determine_adjacent with args (('prev_item', 'this_item',"
+                                       " 'next_item'), namespace(soort='soort', id='id'))\n"
+                                       "call get_detail_title with args ('soort', 'view',"
+                                       " namespace(soort='soort', id='id'))\n")
     response = views.view_document('request', 'proj', 'view', 'soort', 'id', 'srt', 'ref')
     assert response[0] == 'request'
     assert response[1] == 'soort.html'
-    data = response[2].pop('data')
-    assert response[2] == {'ar_proj': 'arproj', 'ar_user': 'aruser', 'arg0': 'proj',
-                           'arg1': 'soort', 'arg2': 'view', 'arg3': '',
-                           'form_addr': '/proj/view/soort/srt/ref/',
-                           'leftw': 'x', 'lengte': 'q',
-                           'rightm': 'z', 'rightw': 'y',
+    assert response[2] == {'ar_proj': 'arproj', 'ar_user': 'aruser', 'form_addr': '/docs/update_url',
+                           'data': types.SimpleNamespace(soort='soort', id='id'),
+                           'leftw': 'x', 'lengte': 'q', 'rightm': 'z', 'rightw': 'y',
                            'sctn': 'sectnaam', 'sect': 'soort/id',
-                           'title': 'Project projectnaam - title for (`soort`, `view`, `soort id`)',
+                           'title': 'Project projectnaam - detail_title',
                            'andere': 'andere fkeys', 'attrs': 'fkey attrs',
                            'buttons': "relation buttons for ('proj', 'soort', 'id', "
                            "['fkey buttons', 'm2m buttons'])",
@@ -306,7 +317,13 @@ def test_view_document(monkeypatch, capsys):
                            'm2ms_to': 'many to many relations to soort id',
                            'next': 'next_item', 'prev': 'prev_item',
                            'ref': ('soort', 'soort_mv', 'ref')}
-    assert data.id, data.soort == ('id', 'soort')
+    assert capsys.readouterr().out == ("call init_infodict with args ('proj', 'soort', 'view', '')\n"
+                                       "call get_update_url with args ('proj', 'view', 'soort', 'id',"
+                                       " 'srt', 'ref')\n"
+                                       "call determine_adjacent with args (('prev_item', 'this_item',"
+                                       " 'next_item'), namespace(soort='soort', id='id'))\n"
+                                       "call get_detail_title with args ('soort', 'view',"
+                                       " namespace(soort='soort', id='id'))\n")
 
 
 def test_new_document(monkeypatch, capsys):
@@ -346,13 +363,9 @@ def test_update_document(monkeypatch, capsys):
         obj.id = 0 if new else id
         return obj
     def mock_execute_update(*args):
-        print('called execute_update with args {} `{} {}` {} {}'.format(args[0],
-                                                                        args[1].soort, args[1].id,
-                                                                        args[2], args[3]))
+        print('called execute_update with args', args)
     def mock_update_related(*args):
-        print('called update_related with args {} `{} {}` {} {}'.format(args[0],
-                                                                        args[1].soort, args[1].id,
-                                                                        args[2], args[3]))
+        print('called update_related with args', args)
     monkeypatch.setattr(views.funcs, 'get_object', mock_get_object)
     monkeypatch.setattr(views.funcs, 'execute_update', mock_execute_update)
     monkeypatch.setattr(views.funcs, 'update_related', mock_update_related)
@@ -361,21 +374,19 @@ def test_update_document(monkeypatch, capsys):
     req.POST = 'postdict'
     req.FILES = 'filesdict'
     assert views.update_document(req) == '/docs//0/'
-    assert capsys.readouterr().out == ('called execute_update with args  ` 0` postdict filesdict\n'
-                                       'called update_related with args  ` 0`  \n')
+    assert capsys.readouterr().out == ("called execute_update with args ('', namespace(soort='',"
+            " id=0, project=namespace(soort='project', id='')), 'postdict', 'filesdict')\n")
     assert views.update_document(req, 'proj', 'soort') == '/docs/proj/soort/0/'
-    assert capsys.readouterr().out == ('called execute_update with args soort `soort 0` '
-                                       'postdict filesdict\n'
-                                       'called update_related with args soort `soort 0`  \n')
+    assert capsys.readouterr().out == ("called execute_update with args ('soort', namespace(soort="
+            "'soort', id=0, project=namespace(soort='project', id='proj')), 'postdict', 'filesdict')\n")
     assert views.update_document(req, 'proj', 'soort', 'id') == '/docs/proj/soort/id/'
-    assert capsys.readouterr().out == ('called execute_update with args soort `soort id` '
-                                        'postdict filesdict\n'
-                                       'called update_related with args soort `soort id`  \n')
+    assert capsys.readouterr().out == ("called execute_update with args ('soort', namespace(soort="
+            "'soort', id='id'), 'postdict', 'filesdict')\n")
     assert views.update_document(req, 'proj', 'soort', 'id', 'srt', 'verw') == '/docs/proj/soort/id/'
-    assert capsys.readouterr().out == ('called execute_update with args soort `soort id` '
-                                       'postdict filesdict\n'
-                                       'called update_related with args soort `soort id` srt '
-                                       'verw\n')
+    assert capsys.readouterr().out == ("called execute_update with args ('soort', namespace(soort="
+                                       "'soort', id='id'), 'postdict', 'filesdict')\n"
+                                       "called update_related with args ('soort', namespace(soort="
+                                       "'soort', id='id'), 'srt', 'verw')\n")
 
 
 def test_koppel(monkeypatch, capsys):
@@ -401,14 +412,14 @@ def test_meld(monkeypatch, capsys):
     monkeypatch.setattr(views.funcs, 'get_object', mock_get_object)
     monkeypatch.setattr(views.funcs, 'update_status_from_actiereg', mock_update_status)
     monkeypatch.setattr(views, 'HttpResponseRedirect', lambda x: x)
-    assert views.meld('request') == 'http://actiereg.lemoncurry.nl/docs///mld/Actie herleefd'
+    assert views.meld('request') == 'http://actiereg.lemoncurry.nl///mld/Actie herleefd'
     assert capsys.readouterr().out == "called update_status_from_actiereg with args: (' ', '')\n"
-    assert views.meld('request', 'proj', 'soort', 'id') == ('http://actiereg.lemoncurry.nl/docs/'
+    assert views.meld('request', 'proj', 'soort', 'id') == ('http://actiereg.lemoncurry.nl/'
                                                             '//mld/Actie herleefd')
     assert capsys.readouterr().out == ("called update_status_from_actiereg with args: ('soort id',"
                                        " '')\n")
     assert views.meld('request', 'proj', 'soort', 'id', 'arch', 'arfrom', 'arid') == (
-            'http://actiereg.lemoncurry.nl/docs/arfrom/arid/mld/Actie gearchiveerd')
+            'http://actiereg.lemoncurry.nl/arfrom/arid/mld/Actie gearchiveerd')
     assert capsys.readouterr().out == ("called update_status_from_actiereg with args: ('soort id',"
                                        " 'arch')\n")
 

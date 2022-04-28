@@ -150,7 +150,7 @@ def get_new_numberkey_for_soort(owner_proj, soort):
     ny = str(datetime.date.today().year)
     h = ''
     try:
-        last_id = sel.latest(field_name="datum_in").nummer
+        last_id = sel.latest("datum_in").nummer
     except ObjectDoesNotExist:
         pass
     else:

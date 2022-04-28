@@ -114,7 +114,7 @@ def update_project(request, proj):
     funcs.execute_update('project', p, request.POST)
 
     if to_actiereg and p.actiereg != "":
-        doc = "/docs/{}/addext/{}/{}/{}/".format(SITES["probreg"], p.id, p.actiereg, p.kort)
+        doc = "{}/addext/{}/{}/{}/".format(SITES["probreg"], p.id, p.actiereg, p.kort)
     else:
         proj = p.id
         doc = '/docs/%s/' % proj
@@ -228,7 +228,7 @@ def meld(request, proj='', soort='', id='', arstat='', arfrom='', arid=''):
     """
     funcs.update_status_from_actiereg(funcs.get_object(soort, id), arstat)
     meld = _('Actie gearchiveerd') if arstat == 'arch' else _('Actie herleefd')
-    doc = '/docs/'.join((SITES["probreg"], arfrom, arid, 'mld', meld))
+    doc = '/'.join((SITES["probreg"], arfrom, arid, 'mld', meld))
     return HttpResponseRedirect(doc)
 
 
