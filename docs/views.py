@@ -195,15 +195,6 @@ def update_document(request, proj='', soort='', id='', srt='', verw=''):
     o = funcs.get_object(soort, id, new)
     if new:
         o.project = p
-    # TODO: aparte afhandeling voor documenten die een link kunnen bevatten?
-    # lijkt goed te werken zonder dit
-    # de vraag is misschien: hoeft dit of voorziet datgene wat ik al in execute_update
-    #  heb zitten hierin?
-    # if soort in ('funcdoc','userdoc','layout'):
-    #     err, o = execute_update_for_link(soort, o, request.POST, request.FILES)
-    #     if errors:
-    #         return o
-    # else:  - hieronder valt alleen execute_update
     funcs.execute_update(soort, o, request.POST, request.FILES)
     if srt:
         funcs.update_related(soort, o, srt, verw)
