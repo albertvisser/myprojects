@@ -7,4 +7,4 @@ helpers: docs/test_view_helpers.py
 
 [testees]
 views:   docs/views.py
-herpers: docs/helpers.py
+helpers: docs/helpers.py
