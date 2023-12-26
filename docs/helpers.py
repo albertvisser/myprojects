@@ -1,8 +1,8 @@
 """Processing for MyProjects Web Application
 """
 import datetime
-from django.http import Http404
-from django.core.exceptions import ObjectDoesNotExist, FieldError    # , DoesNotExist
+from django.http import Http404, HttpResponse
+from django.core.exceptions import ObjectDoesNotExist  # , FieldError    # , DoesNotExist
 from django.utils.translation import gettext as _
 import docs.models as my
 from myprojects.settings import MEDIA_ROOT, SITES
@@ -61,7 +61,7 @@ def get_relation(srt, soort):
         for relobj in my.rectypes[srt]._meta.get_fields():
             if relobj.related_model and corr_naam(relobj.related_model._meta.model_name) == soort:
                 result = relobj.name
-                multiple = False if relobj.get_internal_type() == 'ForeignKey' else True
+                multiple = relobj.get_internal_type() != 'ForeignKey'
                 break
     return result, multiple
 
@@ -156,9 +156,10 @@ def get_new_numberkey_for_soort(owner_proj, soort):
     else:
         yr, nr = last_id.split('-')
         if yr == ny:
-            h = '-'.join((yr, '%04i' % (int(nr) + 1)))
+            nr = int(nr) + 1
+            h = f'{yr}-{nr:04}'
     if h == '':
-        h = '-'.join((ny, '0001'))
+        h = f'{ny}-0001'
     return h
 
 
@@ -221,14 +222,14 @@ def get_ordered_objectlist(proj, soort):
 def get_object(soort, id, new=False):
     "return specified document object"
     if soort not in my.rectypes:
-        raise Http404('Onbekend type `{}`'.format(soort))
+        raise Http404(f'Onbekend type `{soort}`')
     if new:
         o = my.rectypes[soort]()
     else:
         try:
             o = my.rectypes[soort].objects.get(pk=id)
         except ObjectDoesNotExist:
-            raise Http404(str(id).join((soort + ' ', _(' bestaat niet'))))
+            raise Http404(str(id).join((soort + ' ', _(' bestaat niet')))) from None
     return o
 
 
@@ -261,18 +262,15 @@ def get_list_title_attrs(proj, soort, srt, id, rel):
         title = _('Lijst ') + str(soortnm_mv)
     if rel:
         document = my.rectypes[srt].objects.get(pk=id)
-        if srt in ('userwijz', 'userprob', 'bevinding'):
-            docid = document.nummer
-        else:
-            docid = document.naam
-        itemoms = '{} "{}"'.format(srtnm_ev, docid)
+        docid = document.nummer if srt in ('userwijz', 'userprob', 'bevinding') else document.naam
+        itemoms = f'{srtnm_ev} "{docid}"'
         relstr = str(_('{} relateren aan {}'))
         if rel == 'from':
             title = relstr.format(itemoms, soortnm_ev)
         else:
             title = relstr.format(soortnm_ev, itemoms)
     if pr:  # is dit niet dubbel? Ja zeker
-        title = "Project {0} - {1}".format(pr.naam, title)
+        title = f"Project {pr.naam} - {title}"
     return title, soortnm_ev, soortnm_mv, sect
 
 
@@ -290,13 +288,13 @@ def get_update_url(proj, edit, soort='', id='', srt='', verw=''):
     "return url to view that does the actual update"
     if edit == 'new':  # form action for new document
         if soort:
-            ref = '{}/{}/'.format(srt, verw) if srt else ''
-            return "/{}/{}/mut/{}".format(proj, soort, ref)
+            ref = f'{srt}/{verw}/' if srt else ''
+            return f"/{proj}/{soort}/mut/{ref}"
         return "/proj/mut/"
     elif edit:             # form action for existing
         if soort:
-            return "/{}/{}/{}/mut/".format(proj, soort, id)
-        return "/{}/mut/".format(proj)
+            return f"/{proj}/{soort}/{id}/mut/"
+        return f"/{proj}/mut/"
     return ''
 
 
@@ -316,10 +314,10 @@ def get_margins_for_type(typename):
                    "techtaak": 200,
                    "techproc": 140,
                    "testplan": 140,
-                   "bevinding": 140} .get(typename, 120)
-    leftw = "{0}px".format(left_margin)
-    rightw = "{0}px".format(910 - left_margin)
-    rightm = "{0}px".format(left_margin + 5)
+                   "bevinding": 140}.get(typename, 120)
+    leftw = f"{left_margin}px"
+    rightw = f"{910 - left_margin}px"
+    rightm = f"{left_margin + 5}px"
     return leftw, rightw, rightm
 
 
@@ -329,9 +327,9 @@ def get_detail_title(soort, edit, obj):
     if edit == 'new':
         return _('Nieuw(e) ') + str(naam_ev)
     try:
-        title = " ".join((naam_ev.capitalize(), obj.naam))
+        title = f"{naam_ev.capitalize()} {obj.naam}"
     except AttributeError:
-        title = " ".join((naam_ev.capitalize(), obj.nummer))
+        title = f"{naam_ev.capitalize()} {obj.nummer}"
     return title
 
 
@@ -350,23 +348,23 @@ def get_relation_buttons(proj, soort, id, button_lijst):
 def execute_update(soort, obj, postdict, files=None):
     if soort in ('userwijz', 'userprob', 'bevinding'):
         gereed = obj.gereed
-    for x, y, z in get_field_attr(soort):  # naam,type,lengte
-        if x == 'datum_gereed':
+    for name, type_, length in get_field_attr(soort):
+        if name == 'datum_gereed':
             if postdict['gereed'] == '1' and not gereed:
                 obj.datum_gereed = datetime.datetime.today()
-        elif x == "gereed":
-            obj.gereed = True if postdict[x] == "1" else False
-        elif x == 'link':
+        elif name == "gereed":
+            obj.gereed = postdict[name] == "1"
+        elif name == 'link':
             if 'link_file' in files:
                 uploaded = files['link_file']
-                pad = [y.upload_to for y in my.rectypes[soort]._meta.fields if y.name == 'link'][0]
-                save_name = "/".join((pad, uploaded.name))
+                pad = [x.upload_to for x in my.rectypes[soort]._meta.fields if x.name == 'link'][0]
+                save_name = f"{pad}/{uploaded.name}"
                 with open(MEDIA_ROOT + save_name, 'wb+') as destination:
                     for chunk in uploaded.chunks():
                         destination.write(chunk)
-                obj.__dict__[x] = save_name
-        elif x != 'datum_in':
-            obj.__dict__[x] = postdict[x]
+                obj.__dict__[name] = save_name
+        elif name != 'datum_in':
+            obj.__dict__[name] = postdict[name]
     obj.save()
 
 
@@ -375,8 +373,8 @@ def execute_update_for_link(soort, obj, postdict, files):
     manipulator = my.rectypes[soort].AddManipulator()
     new_data = postdict.copy()
     new_data.update({'project': proj})
-    for x,y,z in getfields(soort): # naam,type,lengte
-        if x == 'link' and y == 'File':
+    for name, type_, length in get_field_attr(soort):
+        if name == 'link' and type_ == 'File':
             new_data.update(files)
             continue
     # return HttpResponse(str(new_data))
@@ -411,19 +409,20 @@ def update_subitem(srt1, obj1, srt2, obj2, new, data):
         obj2.soort = data["type"]
         obj2.omschrijving = data["oms"]
         obj2.sleutel = data["sleutel"] if data["sleutel"] in ('1', '2', '3', '4', '5') else '0'
-    if "rel" in data:
-        if data["rel"] in [x.naam for x in my.Entiteit.objects.filter(project=obj1.project)]:
-            # try:
-            obj2.relatie = my.rectypes[srt1].objects.get(naam=data["rel"])
-            # except ObjectDoesNotExist:
-            # pass
+    # if "rel" in data and data["rel"] in [
+    #         x.naam for x in my.Entiteit.objects.filter(project=obj1.project)]:
+    if data.get("rel", None) in [x.naam for x in my.Entiteit.objects.filter(project=obj1.project)]:
+        # try:
+        obj2.relatie = my.rectypes[srt1].objects.get(naam=data["rel"])
+        # except ObjectDoesNotExist:
+        # pass
     obj2.save()
 
 
 def update_related(soort, obj, related, relobj):
     "bijwerken van de eventueel meegegeven relatie"
     if related not in my.rectypes:
-        raise Http404('Onbekend type `{}` voor relatie'.format(related))
+        raise Http404(f'Onbekend type `{related}` voor relatie')
     data = my.rectypes[related].objects.get(pk=relobj)
     set_relation(obj, soort, data, related)
 

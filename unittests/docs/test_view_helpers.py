@@ -1,4 +1,3 @@
-import os
 from types import SimpleNamespace as NS
 import datetime
 import pytest
@@ -17,9 +16,9 @@ def lang_nl(settings):
 
 def print_elementen():
     for name, cls in my.rectypes.items():
-        with open('naslag/{}_attr.rst'.format(name), 'w') as out:
-            print(','.join(('attr', 'name', 'type', 'auto', 'concrete', 'hidden', 'one2one',
-                  'many2one', 'one2many', 'm2m', 'is_rel', 'related class')), file=out)
+        with open(f'naslag/{name}_attr.rst', 'w') as out:
+            print('attr,name,type,auto,concrete,{hidden,one2one,many2one,one2many,m2m,is_rel,'
+                  'related_class)', file=out)
             for relobj in cls()._meta.get_fields(include_hidden=True):
                 print(relobj, ',', relobj.name, ',', relobj.get_internal_type(), ',',
                       relobj.auto_created, ',', relobj.concrete, ',', relobj.hidden,
@@ -47,8 +46,8 @@ def test_get_relation(expected_relations):
     """geen test op functionaliteit omdat monkeypatchen niet goed lukt
     daarom alleen test op resultaten
     """
-    for soort in my.rectypes.keys():
-        for srt in my.rectypes.keys():
+    for soort in my.rectypes:
+        for srt in my.rectypes:
             print(soort, srt)
             try:
                 assert funcs.get_relation(soort, srt) == expected_relations[soort, srt]
@@ -98,7 +97,7 @@ def test_remove_relation_2():
 
 
 def test_corr_naam():
-    for naam in my.rectypes.keys():
+    for naam in my.rectypes:
         if naam == 'techtaak':
             assert funcs.corr_naam(naam) == 'techtask'
         elif naam == 'programma':
@@ -109,30 +108,29 @@ def test_corr_naam():
 
 def test_get_field_attr(expected_field_attrs):
     "ook hier alleen test op resultaten"
-    for soort in my.rectypes.keys():
+    for soort in my.rectypes:
         assert funcs.get_field_attr(soort) == expected_field_attrs[soort]
 
 
 def _test_get_relation_fields():
-    "wordt niet gebruikt dus gaan we ook niet doen"
-    pass
+    "wordt niet gebruikt dus gaan we ook niet maken"
 
 
 @pytest.mark.django_db
 def test_get_new_numberkey_for_soort():
     pr = my.Project.objects.create(naam="test", kort="test project")
     yr = datetime.datetime.today().year
-    first_this_year = '{}-0001'.format(yr)
-    for naam in my.rectypes.keys():
+    first_this_year = f'{yr}-0001'
+    for naam in my.rectypes:
         if naam in ('userwijz', 'userprob', 'bevinding'):
             assert funcs.get_new_numberkey_for_soort(pr, naam) == first_this_year
         else:
             assert funcs.get_new_numberkey_for_soort(pr, naam) == ''
-    aw = my.Userwijz.objects.create(project=pr, gereed=False, nummer=first_this_year)
-    prb = my.Userprob.objects.create(project=pr, gereed=False, nummer=first_this_year)
-    bev = my.Bevinding.objects.create(project=pr, gereed=False, nummer=first_this_year)
+    my.Userwijz.objects.create(project=pr, gereed=False, nummer=first_this_year)
+    my.Userprob.objects.create(project=pr, gereed=False, nummer=first_this_year)
+    my.Bevinding.objects.create(project=pr, gereed=False, nummer=first_this_year)
     for naam in ('userwijz', 'userprob', 'bevinding'):
-        assert funcs.get_new_numberkey_for_soort(pr, naam) == '{}-0002'.format(yr)
+        assert funcs.get_new_numberkey_for_soort(pr, naam) == f'{yr}-0002'
 
 
 @pytest.mark.django_db
@@ -154,17 +152,17 @@ def test_get_stats_texts(expected_stats_texts):
                                                          ' en 0 doorgekoppeld naar Actiereg')
     aw1.gereed=True
     aw1.save()
-    aw2 = my.Userwijz.objects.create(project=pr, gereed=False, actie=1)
+    my.Userwijz.objects.create(project=pr, gereed=False, actie=1)
     assert funcs.get_stats_texts(pr, 'userwijz') == (2, 'waarvan 1 gerealiseerd'
                                                         ' en 1 in behandeling via Actiereg')
     prb1.gereed=True
     prb1.save()
-    prb2 = my.Userprob.objects.create(project=pr, gereed=False, actie=2)
+    my.Userprob.objects.create(project=pr, gereed=False, actie=2)
     assert funcs.get_stats_texts(pr, 'probleem') == (2, 'waarvan 1 opgelost'
                                                         ' en 1 doorgekoppeld naar Actiereg')
     bev1.gereed=True
     bev1.save()
-    bev2 = my.Bevinding.objects.create(project=pr, gereed=False, actie=3)
+    my.Bevinding.objects.create(project=pr, gereed=False, actie=3)
     assert funcs.get_stats_texts(pr, 'bevinding') == (2, 'waarvan 1 opgelost'
                                                          ' en 1 doorgekoppeld naar Actiereg')
 
@@ -172,7 +170,7 @@ def test_get_stats_texts(expected_stats_texts):
 def _test_get_names_for_type(expected_names_for_type):
     # test failt al op de eerste vergelijking:
     # AssertionError: assert (' project ', ' project ', '') == ('project', 'projecten', '')
-    for typename in my.rectypes.keys():
+    for typename in my.rectypes:
         assert funcs.get_names_for_type(typename) == expected_names_for_type[typename]
 
 
@@ -277,7 +275,7 @@ def test_get_update_url():
 
 
 def test_get_fieldlengths(expected_field_attrs):
-    for soort in my.rectypes.keys():
+    for soort in my.rectypes:
         assert funcs.get_fieldlengths(soort) == {x: z for x, y, z in expected_field_attrs[soort]}
 
 

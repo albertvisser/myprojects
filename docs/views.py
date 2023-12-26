@@ -1,7 +1,7 @@
 """Views for MyProjects Web Application
 """
 from django.shortcuts import render     # , get_object_or_404
-from django.template import loader
+# from django.template import loader
 from django.http import HttpResponseRedirect    # HttpResponse,
 from django.utils.translation import gettext as _
 import docs.models as my
@@ -108,9 +108,9 @@ def edit_project(request, proj):
 # afsplitsing van oorspronkelijke edit_item view
 def update_project(request, proj):
     "wijzigingen doorvoeren en (terug) naar homepage"
-    new = True if proj == 'proj' else False
+    new = proj == 'proj'
     p = funcs.get_object('project', proj, new)
-    to_actiereg = True if p.actiereg == "" else False
+    to_actiereg = p.actiereg == ""
     funcs.execute_update('project', p, request.POST)
 
     if to_actiereg and p.actiereg != "":
@@ -156,8 +156,7 @@ def view_document(request, proj, edit='', soort='', id='', srt='', verw='', meld
         obj = None
         info_dict['nummer'] = funcs.get_new_numberkey_for_soort(owner_proj, soort)
 
-    info_dict['title'] = "Project {} - {}".format(owner_proj.naam,
-                                                  funcs.get_detail_title(soort, edit, obj))
+    info_dict['title'] = f"Project {owner_proj.naam} - {funcs.get_detail_title(soort, edit, obj)}"
 
     naam_ev, naam_mv, sect = funcs.get_names_for_type(soort)
     if srt != '':
@@ -167,7 +166,7 @@ def view_document(request, proj, edit='', soort='', id='', srt='', verw='', meld
         info_dict['lijstvan'] = naam_mv
     info_dict["sctn"] = sect
 
-    return render(request, '{}.html'.format(soort), info_dict)
+    return render(request, f'{soort}.html', info_dict)
 
 
 def new_document(request, proj, soort):
@@ -191,14 +190,14 @@ def update_document(request, proj='', soort='', id='', srt='', verw=''):
     proj = projectnummer, soort = onderdeelnaam, id = item nummer of niks voor nieuw
     """
     p = funcs.get_object('project', proj)
-    new = False if id else True
+    new = not bool(id)
     o = funcs.get_object(soort, id, new)
     if new:
         o.project = p
     funcs.execute_update(soort, o, request.POST, request.FILES)
     if srt:
         funcs.update_related(soort, o, srt, verw)
-    doc = '/docs/%s/%s/%s/' % (proj, soort, o.id) if proj else '/docs/%s/%s/' % (soort, o.id)
+    doc = f'/docs/{proj}/{soort}/{o.id}/' if proj else f'/docs/{soort}/{o.id}/'
     return HttpResponseRedirect(doc)
 
 
@@ -206,9 +205,9 @@ def koppel(request, proj='', soort='', id='', arid='0', arnum=''):
     """terugkoppeling vanuit actiereg:
     neem de teruggegeven actiegegevens op in het huidige item
     """
-    doc = '/docs/%s/%s/%s/' % (proj, soort, id)
+    doc = f'/docs/{proj}/{soort}/{id}/'
     if arid == '0':
-        return HttpResponseRedirect(doc + 'msg/{}/'.format(arnum))
+        return HttpResponseRedirect(doc + f'msg/{arnum}/')
     funcs.update_link_from_actiereg(funcs.get_object(soort, id), arid, arnum)
     return HttpResponseRedirect(doc)
 
@@ -231,7 +230,7 @@ def maak_rel(request, proj='', srt='', id='', soort='', verw='', rel=''):
     funcs.set_relation(o, srt, r, soort)
     if rel == 'naar':
         srt, id = soort, verw
-    doc = '/docs/{}/{}/{}/'.format(proj, srt, id) if proj else '/docs/{}/{}/'.format(srt, id)
+    doc = f'/docs/{proj}/{srt}/{id}/' if proj else f'/docs/{srt}/{id}/'
     return HttpResponseRedirect(doc)
 
 
@@ -243,7 +242,7 @@ def unrelate(request, proj='', srt='', id='', soort='', verw='', rel=''):
     funcs.remove_relation(o, srt, r, soort)
     if rel == 'naar':
         srt, id = soort, verw
-    doc = '/docs/{}/{}/{}/'.format(proj, srt, id) if proj else '/docs/{}/{}/'.format(srt, id)
+    doc = f'/docs/{proj}/{srt}/{id}/' if proj else f'/docs/{srt}/{id}/'
     return HttpResponseRedirect(doc)
 
 
@@ -255,10 +254,10 @@ def edit_sub(request, proj='', srt1='', id1='', srt2='', id2=''):
     # except AttributeError:
     #     data = {}
     obj1 = funcs.get_object(srt1, id1)  # my.rectypes[srt1].objects.get(pk=id1)
-    new = True if not id2 else False
+    new = not id2
     obj2 = funcs.get_object(srt2, id2, new)  # my.rectypes[srt2].objects.get(pk=id2)
     funcs.update_subitem(srt1, obj1, srt2, obj2, new, data)
-    doc = '/docs/%s/%s/%s/edit/' % (proj, srt1, id1) if proj else '/docs/%s/%s/edit/' % (srt1, id1)
+    doc = f'/docs/{proj}/{srt1}/{id1}/edit/' if proj else f'/docs/{srt1}/{id1}/edit/'
     return HttpResponseRedirect(doc)
 
 

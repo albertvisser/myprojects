@@ -1,6 +1,6 @@
 """Url configuration for MyProjects application  - betere namen
 """
-from django.urls import path, include
+from django.urls import path
 from django.views.static import serve as serve_static
 from . import views
 

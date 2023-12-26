@@ -5,9 +5,7 @@ import pytest
 import django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "myprojects.settings")
 django.setup()
-
-# import myprojects.views as views
-import docs.views as views
+from docs import views
 
 class MockRequest(django.http.request.HttpRequest):
     pass
@@ -90,7 +88,7 @@ def test_lijst(monkeypatch):
 
 def test_new_project(monkeypatch, capsys):
     def mock_view_project(*args, **kwargs):
-        return 'called view_project with args {} and kwargs {}'.format(args, kwargs)
+        return f'called view_project with args {args} and kwargs {kwargs}'
     monkeypatch.setattr(views, 'view_project', mock_view_project)
     assert views.new_project('request') == ("called view_project with args ('request',)"
                                             " and kwargs {'edit': 'new'}")
@@ -98,7 +96,7 @@ def test_new_project(monkeypatch, capsys):
 
 def test_add_new_proj(monkeypatch, capsys):
     def mock_update_project(*args, **kwargs):
-        return 'called update_project with args {} and kwargs {}'.format(args, kwargs)
+        return f'called update_project with args {args} and kwargs {kwargs}'
     monkeypatch.setattr(views, 'update_project', mock_update_project)
     assert views.add_new_proj('request') == ("called update_project with args ('request',)"
                                              " and kwargs {'proj': 'proj'}")
@@ -121,7 +119,7 @@ def test_view_project(monkeypatch, capsys):
         print('call get_detail_title with args', args)
         return 'detail_title'
     def mock_get_stats_texts(*args):
-        return 'stats_text for {}'.format(args)
+        return f'stats_text with args {args}'
     monkeypatch.setattr(views.funcs, 'init_infodict_for_detail', mock_init_infodict)
     monkeypatch.setattr(views.funcs, 'get_margins_for_type', mock_get_margins)
     monkeypatch.setattr(views.funcs, 'get_update_url', mock_get_update_url)
@@ -137,10 +135,10 @@ def test_view_project(monkeypatch, capsys):
                            'data': types.SimpleNamespace(soort='project', id='', actiereg='arproj',
                                aruser='aruser'),
                            'leftw': 'x', 'lengte': 'q', 'rightm': 'z', 'rightw': 'y',
-                           'prob_stats': "stats_text for ('', 'probleem')",
-                           'test_stats': "stats_text for ('', 'bevinding')",
+                           'prob_stats': "stats_text with args ('', 'probleem')",
+                           'test_stats': "stats_text with args ('', 'bevinding')",
                            'title': 'detail_title',
-                           'wijz_stats': "stats_text for ('', 'userwijz')"}
+                           'wijz_stats': "stats_text with args ('', 'userwijz')"}
     assert capsys.readouterr().out == ("call init_infodict with args ('', '', '', '')\n"
                                        "call get_update_url with args ('', '')\n"
                                        "call get_detail_title with args ('project', '', namespace("
@@ -169,7 +167,7 @@ def test_view_project(monkeypatch, capsys):
 
 def test_edit_project(monkeypatch, capsys):
     def mock_view_project(*args):
-        return 'called view_project with args {}'.format(args)
+        return f'called view_project with args {args}'
     monkeypatch.setattr(views, 'view_project', mock_view_project)
     assert views.edit_project('request', 'proj') == ("called view_project with args ('request',"
                                                      " 'proj', 'edit')")
@@ -188,9 +186,9 @@ def test_update_project(monkeypatch, capsys):
     def mock_get_object_2(srt, id, new=False):
         obj = types.SimpleNamespace(soort=srt, id=1, kort='kort', actiereg = '')
         return obj
-    def mock_execute_update_2(project, p, postdict):
-        p.actiereg = 1
-        print('called execute_update with args {}'.format((project, p, postdict)))
+    def mock_execute_update_2(*args):  #  project, p, postdict):
+        args[1].actiereg = 1  # p.actiereg = 1
+        print(f'called execute_update with args', args)  #  ({project}, {p}, {postdict})')
     monkeypatch.setattr(views.funcs, 'get_object', mock_get_object)
     monkeypatch.setattr(views.funcs, 'execute_update', mock_execute_update)
     monkeypatch.setattr(views, 'HttpResponseRedirect', lambda x: x)
@@ -237,16 +235,16 @@ def test_view_document(monkeypatch, capsys):
             self.obj = obj
             self.soort = soort
         def get_foreignkeys_to(self):
-            return 'foreignkeys to {} {}'.format(self.soort, self.obj.id)
+            return f'foreignkeys to {self.soort} {self.obj.id}'
         def get_many2many_to(self):
-            return 'many to many relations to {} {}'.format(self.soort, self.obj.id)
+            return f'many to many relations to {self.soort} {self.obj.id}'
         def get_foreignkeys_from(self):
-            return (['fkey buttons'], 'foreignkeys from {} {}'.format(self.soort, self.obj.id),
+            return (['fkey buttons'], f'foreignkeys from {self.soort} {self.obj.id}',
                      'andere fkeys', 'fkey attrs')
         def get_many2many_from(self):
-            return ['m2m buttons'], 'm2m relations from {} {}'.format(self.soort, self.obj.id)
+            return ['m2m buttons'], f'm2m relations from {self.soort} {self.obj.id}'
     def mock_get_relation_buttons(*args):
-        return 'relation buttons for {}'.format(args)
+        return f'relation buttons with args {args}'
     def mock_get_new_numberkey(proj, soort):
         return 'new_numberkey'
     def mock_get_detail_title(*args):
@@ -277,7 +275,7 @@ def test_view_document(monkeypatch, capsys):
     assert capsys.readouterr().out == ("call init_infodict with args ('proj', '', '', 'melding')\n"
                                        "call get_update_url with args ('proj', '', '', '', '', '')\n"
                                        "call get_detail_title with args ('', '', None)\n")
-    response = views.view_document('request', 'proj', 'view', 'soort', 'id')
+    response = views.view_document('request', 'proj' , 'view', 'soort', 'id')
     assert response[0] == 'request'
     assert response[1] == 'soort.html'
     assert response[2] == {'ar_proj': 'arproj', 'ar_user': 'aruser', 'form_addr': '/docs/update_url',
@@ -285,7 +283,7 @@ def test_view_document(monkeypatch, capsys):
                            'leftw': 'x', 'lengte': 'q', 'lijstsoort': 'soort', 'lijstvan': 'soort_mv',
                            'rightm': 'z', 'rightw': 'y', 'sctn': 'sectnaam', 'sect': 'soort/id',
                            'title': 'Project projectnaam - detail_title',
-                           'buttons': "relation buttons for ('proj', 'soort', 'id',"
+                           'buttons': "relation buttons with args ('proj', 'soort', 'id',"
                            " ['fkey buttons', 'm2m buttons'])",
                            'fkeys_from': 'foreignkeys from soort id',
                            'fkeys_to': 'foreignkeys to soort id',
@@ -309,7 +307,7 @@ def test_view_document(monkeypatch, capsys):
                            'sctn': 'sectnaam', 'sect': 'soort/id',
                            'title': 'Project projectnaam - detail_title',
                            'andere': 'andere fkeys', 'attrs': 'fkey attrs',
-                           'buttons': "relation buttons for ('proj', 'soort', 'id', "
+                           'buttons': "relation buttons with args ('proj', 'soort', 'id', "
                            "['fkey buttons', 'm2m buttons'])",
                            'fkeys_from': 'foreignkeys from soort id',
                            'fkeys_to': 'foreignkeys to soort id',
@@ -328,7 +326,7 @@ def test_view_document(monkeypatch, capsys):
 
 def test_new_document(monkeypatch, capsys):
     def mock_view_document(*args, **kwargs):
-        return 'called view_document with args {}'.format(args)
+        return f'called view_document with args {args}'
     monkeypatch.setattr(views, 'view_document', mock_view_document)
     assert views.new_document('request', 'proj', 'soort') == (
             "called view_document with args ('request', 'proj', 'new', 'soort')")
@@ -336,7 +334,7 @@ def test_new_document(monkeypatch, capsys):
 
 def test_new_from_relation(monkeypatch, capsys):
     def mock_view_document(*args, **kwargs):
-        return 'called view_document with args {} and kwargs {}'.format(args, kwargs)
+        return f'called view_document with args {args} and kwargs {kwargs}'
     monkeypatch.setattr(views, 'view_document', mock_view_document)
     assert views.new_from_relation('request', 'proj', 'soort', 'srt', 'verw') == (
             "called view_document with args ('request', 'proj', 'new', 'soort')"
@@ -345,7 +343,7 @@ def test_new_from_relation(monkeypatch, capsys):
 
 def test_edit_document(monkeypatch, capsys):
     def mock_view_document(*args, **kwargs):
-        return 'called view_document with args {}'.format(args)
+        return f'called view_document with args {args}'
     monkeypatch.setattr(views, 'view_document', mock_view_document)
     assert views.edit_document('request', 'proj', 'soort', 'id') == (
             "called view_document with args ('request', 'proj', 'edit', 'soort', 'id')")
@@ -353,7 +351,7 @@ def test_edit_document(monkeypatch, capsys):
 
 def mock_get_object(srt, id, new=False):
     obj = "new " if new else ''
-    return '{}{} {}'.format(obj, srt, id)
+    return f'{obj}{srt} {id}'
 
 
 def test_update_document(monkeypatch, capsys):
@@ -391,7 +389,7 @@ def test_update_document(monkeypatch, capsys):
 
 def test_koppel(monkeypatch, capsys):
     def mock_update_link(*args):
-        print('called update_link_from_actiereg with args: {}'.format(args))
+        print('called update_link_from_actiereg with args', args)
     monkeypatch.setattr(views.funcs, 'get_object', mock_get_object)
     monkeypatch.setattr(views.funcs, 'update_link_from_actiereg', mock_update_link)
     monkeypatch.setattr(views, 'HttpResponseRedirect', lambda x: x)
@@ -400,7 +398,7 @@ def test_koppel(monkeypatch, capsys):
     assert views.koppel('request', 'proj', 'soort', 'id') == '/docs/proj/soort/id/msg//'
     assert capsys.readouterr().out == ''
     assert views.koppel('request', 'proj', 'soort', 'id', 'arid', 'arnum') == '/docs/proj/soort/id/'
-    assert capsys.readouterr().out == ("called update_link_from_actiereg with args:"
+    assert capsys.readouterr().out == ("called update_link_from_actiereg with args"
                                        " ('soort id', 'arid', 'arnum')\n")
     assert views.koppel('request', 'pr', 'srt', 'id', arnum='arnum') == '/docs/pr/srt/id/msg/arnum/'
     assert capsys.readouterr().out == ''
@@ -408,7 +406,7 @@ def test_koppel(monkeypatch, capsys):
 
 def test_meld(monkeypatch, capsys):
     def mock_update_status(*args):
-        print('called update_status_from_actiereg with args: {}'.format(args))
+        print('called update_status_from_actiereg with args:', args)
     monkeypatch.setattr(views.funcs, 'get_object', mock_get_object)
     monkeypatch.setattr(views.funcs, 'update_status_from_actiereg', mock_update_status)
     monkeypatch.setattr(views, 'HttpResponseRedirect', lambda x: x)
@@ -426,7 +424,7 @@ def test_meld(monkeypatch, capsys):
 
 def test_maak_rel(monkeypatch, capsys):
     def mock_set_relation(*args):
-        print('called set_relation with args: {}'.format(args))
+        print('called set_relation with args:', args)
     monkeypatch.setattr(views.funcs, 'get_object', mock_get_object)
     monkeypatch.setattr(views.funcs, 'set_relation', mock_set_relation)
     monkeypatch.setattr(views, 'HttpResponseRedirect', lambda x: x)
@@ -446,7 +444,7 @@ def test_maak_rel(monkeypatch, capsys):
 
 def test_unrelate(monkeypatch, capsys):
     def mock_remove_relation(*args):
-        print('called remove_relation with args: {}'.format(args))
+        print('called remove_relation with args:', args)
     monkeypatch.setattr(views.funcs, 'get_object', mock_get_object)
     monkeypatch.setattr(views.funcs, 'remove_relation', mock_remove_relation)
     monkeypatch.setattr(views, 'HttpResponseRedirect', lambda x: x)
@@ -467,7 +465,7 @@ def test_unrelate(monkeypatch, capsys):
 
 def test_edit_sub(monkeypatch, capsys):
     def mock_update_subitem(*args):
-        print('called update_subitem with args: {}'.format(args))
+        print('called update_subitem with args:', args)
     req = MockRequest()
     req.POST = {}
     monkeypatch.setattr(views.funcs, 'get_object', mock_get_object)

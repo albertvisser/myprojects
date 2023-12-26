@@ -19,7 +19,7 @@ class Project(models.Model):
     status = models.TextField()
 
     def __str__(self):
-        return ": ".join((self.naam, self.kort))
+        return f"{self.naam}: {self.kort}"
 
     class Meta:
         verbose_name = _("project")
@@ -44,7 +44,7 @@ class Userspec(models.Model):
     opmerkingen = models.TextField()
 
     def __str__(self):
-        return ": ".join((self.naam, self.kort))
+        return f"{self.naam}: {self.kort}"
 
     class Meta:
         verbose_name = _("gebruikersspecificatie")
@@ -64,7 +64,7 @@ class Userdoc(models.Model):
     tekst = models.TextField()
 
     def __str__(self):
-        return ": ".join((self.naam, self.oms))
+        return f"{self.naam}: {self.oms}"
 
     class Meta:
         verbose_name = _("naslagdocument")
@@ -92,7 +92,7 @@ class Userwijz(models.Model):
 
     def __str__(self):
         oms = _(" [afgesloten]") if self.gereed else ""
-        return "{}: {} {}".format(self.nummer, self.wens, oms)
+        return f"{self.nummer}: {self.wens} {oms}"
 
     class Meta:
         verbose_name = _("aanvraag wijziging")
@@ -118,7 +118,7 @@ class Userprob(models.Model):
 
     def __str__(self):
         oms = _(" [afgesloten]") if self.gereed else ""
-        return "{}: {} {}".format(self.nummer, self.kort, oms)
+        return f"{self.nummer}: {self.kort} {oms}"
 
     class Meta:
         verbose_name = _("incident/probleem")
@@ -138,7 +138,7 @@ class Funcdoc(models.Model):
     tekst = models.TextField()
 
     def __str__(self):
-        return ": ".join((self.naam, self.oms))
+        return f"{self.naam}: {self.oms}"
 
     class Meta:
         verbose_name = _("functioneel document")
@@ -168,7 +168,7 @@ class Gebrtaak(models.Model):
     rfc = models.ManyToManyField(Userwijz, related_name="gtaken")
 
     def __str__(self):
-        return ": ".join((self.naam, self.doel))
+        return f"{self.naam}: {self.doel}"
 
     class Meta:
         verbose_name = _("gebruikerstaak")
@@ -199,7 +199,7 @@ class Funcproc(models.Model):
     bom = models.ManyToManyField('self', symmetrical=False, related_name="used_by")
 
     def __str__(self):
-        return ": ".join((self.naam, self.doel))
+        return f"{self.naam}: {self.doel}"
 
     class Meta:
         verbose_name = _("functioneel proces")
@@ -223,7 +223,7 @@ class Entiteit(models.Model):
     fp = models.ManyToManyField(Funcproc, related_name="fdata")
 
     def __str__(self):
-        return ": ".join((self.naam, self.kort))
+        return f"{self.naam}: {self.kort}"
 
     class Meta:
         verbose_name = _("entiteit")
@@ -269,7 +269,7 @@ class Techtask(models.Model):
     gt = models.ForeignKey(Gebrtaak, related_name="ttask", null=True, on_delete=models.CASCADE)
 
     def __str__(self):
-        return ": ".join((self.naam, self.kort))
+        return f"{self.naam}: {self.kort}"
 
     class Meta:
         verbose_name = _("systeemtaak")
@@ -299,7 +299,7 @@ class Techproc(models.Model):
     bom = models.ManyToManyField('self', symmetrical=False, related_name="used_by")
 
     def __str__(self):
-        return ": ".join((self.naam, self.doel))
+        return f"{self.naam}: {self.doel}"
 
     class Meta:
         verbose_name = _("technisch proces")
@@ -321,7 +321,7 @@ class Dataitem(models.Model):
     tp = models.ManyToManyField(Techproc, related_name="tdata")
 
     def __str__(self):
-        return ": ".join((self.naam, self.functie))
+        return f"{self.naam}: {self.functie}"
 
     class Meta:
         verbose_name = _("data-item")
@@ -341,7 +341,7 @@ class Dataelement(models.Model):
                                 on_delete=models.CASCADE)
 
     def __str__(self):
-        return ": ".join((self.naam, self.omschrijving))
+        return f"{self.naam}: {self.omschrijving}"
 
     class Meta:
         verbose_name = _("data-element")
@@ -364,7 +364,7 @@ class Layout(models.Model):
     tp = models.ManyToManyField(Techproc, related_name="layout")
 
     def __str__(self):
-        return ": ".join((self.naam, self.kort))
+        return f"{self.naam}: {self.kort}"
 
 
 class Procproc(models.Model):
@@ -384,7 +384,7 @@ class Procproc(models.Model):
     tp = models.ManyToManyField(Techproc, related_name="pproc")
 
     def __str__(self):
-        return ": ".join((self.naam, self.doel))
+        return f"{self.naam}: {self.doel}"
 
     class Meta:
         verbose_name = _("programmabeschrijving")
@@ -409,7 +409,7 @@ class Testplan(models.Model):
     ent = models.ManyToManyField(Entiteit, related_name="tplan")
 
     def __str__(self):
-        return ": ".join((self.naam, self.oms))
+        return f"{self.naam}: {self.oms}"
 
     class Meta:
         verbose_name = _("testplan")
@@ -429,7 +429,7 @@ class Testcase(models.Model):
     tplan = models.ManyToManyField(Testplan, related_name="tcase")
 
     def __str__(self):
-        return ": ".join((self.naam, self.oms))
+        return f"{self.naam}: {self.oms}"
 
     class Meta:
         verbose_name = _("testgeval")
@@ -456,7 +456,7 @@ class Bevinding(models.Model):
 
     def __str__(self):
         oms = _(" [afgehandeld]") if self.gereed else ""
-        return "{}: {} {}".format(self.nummer, self.kort, oms)
+        return f"{self.nummer}: {self.kort} {oms}"
 
     class Meta:
         verbose_name = _("bevinding")

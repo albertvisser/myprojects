@@ -188,6 +188,6 @@ def expected_names_for_type():
 def prepare_uploadfile():
     "make sure file does not exist before (and after) executing test"
     def prepfunc(fname):
-        filepath = pathlib.Path('/home/albert/projects/myprojects/files{}'.format(fname))
+        filepath = pathlib.Path('/home/albert/projects/myprojects/files/{fname}')
         filepath.unlink(missing_ok=True)
     return prepfunc
