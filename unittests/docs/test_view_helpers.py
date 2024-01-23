@@ -1,3 +1,5 @@
+"""unittests for ./docs/helpers.py
+"""
 from types import SimpleNamespace as NS
 import datetime
 import pytest
@@ -11,10 +13,14 @@ FIXDATE = datetime.datetime(2021, 1, 1)
 
 @pytest.fixture(autouse=True)
 def lang_nl(settings):
+    """stub
+    """
     settings.LANGUAGE_CODE = 'nl.nl'
 
 
-def print_elementen():
+def print_elementen():  # wordt deze functie wel gebruikt en hoe?
+    """was bedoeld om wat info over attributen van models in files weg te zetten
+    """
     for name, cls in my.rectypes.items():
         with open(f'naslag/{name}_attr.rst', 'w') as out:
             print('attr,name,type,auto,concrete,{hidden,one2one,many2one,one2many,m2m,is_rel,'
@@ -28,7 +34,9 @@ def print_elementen():
 
 
 @pytest.mark.django_db
-def test_get_related(capsys):
+def test_get_related():
+    """unittest for helpers.get_related
+    """
     pr = my.Project.objects.create(naam="test", kort="test project", actiereg='TestProj',
                                    aruser='0001')
     sp = my.Userspec.objects.create(project=pr, naam="testspec", kort="poging 1")
@@ -37,13 +45,15 @@ def test_get_related(capsys):
     gt.rfc.add(aw)
     assert funcs.get_related(pr, my.Userwijz) is None
     assert funcs.get_related(pr, my.Gebrtaak) is None
-    assert [x for x in funcs.get_related(sp, my.Gebrtaak).all()] == [gt]
+    assert list(funcs.get_related(sp, my.Gebrtaak).all()) == [gt]
     # de vorige is raar, je wilt toch juist weten welke aw's naar deze gt verwijzen?
-    assert [x for x in funcs.get_related(aw, my.Gebrtaak, True).all()] == [gt]
+    assert list(funcs.get_related(aw, my.Gebrtaak, True).all()) == [gt]
 
 
 def test_get_relation(expected_relations):
-    """geen test op functionaliteit omdat monkeypatchen niet goed lukt
+    """unittest for helpers.get_relation
+
+    geen test op functionaliteit omdat monkeypatchen niet goed lukt
     daarom alleen test op resultaten
     """
     for soort in my.rectypes:
@@ -57,6 +67,8 @@ def test_get_relation(expected_relations):
 
 @pytest.mark.django_db
 def test_set_relation_1():
+    """unittest for helpers.set_relation: single
+    """
     pr = my.Project.objects.create(naam="test", kort="test project")
     gt = my.Gebrtaak.objects.create(project=pr, naam="testtaak")
     sp = my.Userspec.objects.create(project=pr, naam="testspec")
@@ -67,16 +79,20 @@ def test_set_relation_1():
 
 @pytest.mark.django_db
 def test_set_relation_2():
+    """unittest for helpers.set_relation: multiple
+    """
     pr = my.Project.objects.create(naam="test", kort="test project")
     gt = my.Gebrtaak.objects.create(project=pr, naam="testtaak")
     aw = my.Userwijz.objects.create(project=pr, nummer='testwijz', gereed=False)
     funcs.set_relation(gt, 'gebrtaak', aw, 'userwijz')
     gt_v2 = my.Gebrtaak.objects.get(pk=gt.id)
-    assert [x for x in gt_v2.rfc.all()] == [aw]
+    assert list(gt_v2.rfc.all()) == [aw]
 
 
 @pytest.mark.django_db
 def test_remove_relation_1():
+    """unittest for helpers.remove_relation: single
+    """
     pr = my.Project.objects.create(naam="test", kort="test project")
     sp = my.Userspec.objects.create(project=pr, naam="testspec")
     gt = my.Gebrtaak.objects.create(project=pr, naam="testtaak", spec=sp)
@@ -87,16 +103,20 @@ def test_remove_relation_1():
 
 @pytest.mark.django_db
 def test_remove_relation_2():
+    """unittest for helpers.remove_relation: multiple
+    """
     pr = my.Project.objects.create(naam="test", kort="test project")
     gt = my.Gebrtaak.objects.create(project=pr, naam="testtaak")
     aw = my.Userwijz.objects.create(project=pr, nummer='testwijz', gereed=False)
     gt.rfc.add(aw)
     funcs.remove_relation(gt, 'gebrtaak', aw, 'userwijz')
     gt_v2 = my.Gebrtaak.objects.get(pk=gt.id)
-    assert [x for x in gt_v2.rfc.all()] == []
+    assert not list(gt_v2.rfc.all())
 
 
 def test_corr_naam():
+    """unittest for helpers.corr_naam
+    """
     for naam in my.rectypes:
         if naam == 'techtaak':
             assert funcs.corr_naam(naam) == 'techtask'
@@ -107,17 +127,24 @@ def test_corr_naam():
 
 
 def test_get_field_attr(expected_field_attrs):
-    "ook hier alleen test op resultaten"
+    """unittest for helpers.get_field_attr
+
+    ook hier alleen test op resultaten
+    """
     for soort in my.rectypes:
         assert funcs.get_field_attr(soort) == expected_field_attrs[soort]
 
 
 def _test_get_relation_fields():
-    "wordt niet gebruikt dus gaan we ook niet maken"
+    """unittest for helpers.get_relation_fields
+    """
+    # wordt niet gebruikt dus gaan we ook niet maken
 
 
 @pytest.mark.django_db
 def test_get_new_numberkey_for_soort():
+    """unittest for helpers.get_new_numberkey_for_soort
+    """
     pr = my.Project.objects.create(naam="test", kort="test project")
     yr = datetime.datetime.today().year
     first_this_year = f'{yr}-0001'
@@ -135,6 +162,8 @@ def test_get_new_numberkey_for_soort():
 
 @pytest.mark.django_db
 def test_get_stats_texts(expected_stats_texts):
+    """unittest for helpers.get_stats_texts
+    """
     pr = my.Project.objects.create(naam="test", kort="test project", actiereg='TestProj',
                                         aruser='0001')
     assert funcs.get_stats_texts(pr, 'bevinding') == ('(nog) geen', 'opgevoerd')
@@ -150,17 +179,17 @@ def test_get_stats_texts(expected_stats_texts):
                                                         ' en 0 doorgekoppeld naar Actiereg')
     assert funcs.get_stats_texts(pr, 'bevinding') == (1, 'waarvan 0 opgelost'
                                                          ' en 0 doorgekoppeld naar Actiereg')
-    aw1.gereed=True
+    aw1.gereed = True
     aw1.save()
     my.Userwijz.objects.create(project=pr, gereed=False, actie=1)
     assert funcs.get_stats_texts(pr, 'userwijz') == (2, 'waarvan 1 gerealiseerd'
                                                         ' en 1 in behandeling via Actiereg')
-    prb1.gereed=True
+    prb1.gereed = True
     prb1.save()
     my.Userprob.objects.create(project=pr, gereed=False, actie=2)
     assert funcs.get_stats_texts(pr, 'probleem') == (2, 'waarvan 1 opgelost'
                                                         ' en 1 doorgekoppeld naar Actiereg')
-    bev1.gereed=True
+    bev1.gereed = True
     bev1.save()
     my.Bevinding.objects.create(project=pr, gereed=False, actie=3)
     assert funcs.get_stats_texts(pr, 'bevinding') == (2, 'waarvan 1 opgelost'
@@ -168,6 +197,8 @@ def test_get_stats_texts(expected_stats_texts):
 
 
 def _test_get_names_for_type(expected_names_for_type):
+    """unittest for helpers.get_names_for_type
+    """
     # test failt al op de eerste vergelijking:
     # AssertionError: assert (' project ', ' project ', '') == ('project', 'projecten', '')
     for typename in my.rectypes:
@@ -176,27 +207,33 @@ def _test_get_names_for_type(expected_names_for_type):
 
 @pytest.mark.django_db
 def test_get_projectlist():
+    """unittest for helpers.get_projectlist
+    """
     pr = my.Project.objects.create(naam="test", kort="test project")
     pr2 = my.Project.objects.create(naam="extra", kort="nog een test project")
-    assert [x for x in funcs.get_projectlist()] == [pr2, pr]
+    assert list(funcs.get_projectlist()) == [pr2, pr]
 
 
 @pytest.mark.django_db
 def test_get_ordered_objectlist():
+    """unittest for helpers.get_ordered_objectlist
+    """
     pr = my.Project.objects.create(naam="test", kort="test project")
     gt1 = my.Gebrtaak.objects.create(project=pr, naam='Software')
     gt2 = my.Gebrtaak.objects.create(project=pr, naam='Meer software')
     gt3 = my.Gebrtaak.objects.create(project=pr, naam='Nog meer software')
     gt4 = my.Gebrtaak.objects.create(project=pr, naam='Geen software')
-    assert [x for x in funcs.get_ordered_objectlist(pr, 'gebrtaak')] == [gt4, gt2, gt3, gt1]
+    assert list(funcs.get_ordered_objectlist(pr, 'gebrtaak')) == [gt4, gt2, gt3, gt1]
     aw1 = my.Userwijz.objects.create(project=pr, gereed=False, nummer='0015')
     aw2 = my.Userwijz.objects.create(project=pr, gereed=True, nummer='0001')
     aw3 = my.Userwijz.objects.create(project=pr, gereed=False, nummer='0005')
-    assert [x for x in funcs.get_ordered_objectlist(pr, 'userwijz')] == [aw2, aw3, aw1]
+    assert list(funcs.get_ordered_objectlist(pr, 'userwijz')) == [aw2, aw3, aw1]
 
 
 @pytest.mark.django_db
 def test_get_object():
+    """unittest for helpers.get_object
+    """
     pr = my.Project.objects.create(naam="test", kort="test project")
     pkey = pr.id
     with pytest.raises(Http404):
@@ -208,6 +245,8 @@ def test_get_object():
 
 
 def test_determine_adjacent():
+    """unittest for helpers.determine_adjacent
+    """
     assert funcs.determine_adjacent([NS(id=1), NS(id=2), NS(id=3)], NS(id=1)) == (0, 2)
     assert funcs.determine_adjacent([NS(id=1), NS(id=2), NS(id=3)], NS(id=2)) == (1, 3)
     assert funcs.determine_adjacent([NS(id=1), NS(id=2), NS(id=3)], NS(id=3)) == (2, 0)
@@ -215,6 +254,8 @@ def test_determine_adjacent():
 
 @pytest.mark.django_db
 def test_get_list_title_attrs():
+    """unittest for helpers.get_list_title_attrs
+    """
     pr = my.Project.objects.create(naam="test", kort="test project")
     assert funcs.get_list_title_attrs(pr.id, 'gebrtaak', '', 0, '') == (
             'Project test - Gebruikerstaken bij project test', 'gebruikerstaak',
@@ -248,6 +289,8 @@ def test_get_list_title_attrs():
 
 
 def test_init_infodict(monkeypatch):
+    """unittest for helpers.init_infodict
+    """
     monkeypatch.setattr(funcs, 'get_projectlist', lambda: ['x', 'y', 'z'])
     assert funcs.init_infodict_for_detail('proj', 'project', 'new', '') == {
         'start': '', 'soort': 'project', 'prev': '', 'notnw': 'new', 'next': '',
@@ -264,6 +307,8 @@ def test_init_infodict(monkeypatch):
 
 
 def test_get_update_url():
+    """unittest for helpers.get_update_url
+    """
     # goed situaties
     assert funcs.get_update_url('proj', 'new') == "/proj/mut/"
     assert funcs.get_update_url(1, 'notnew') == "/1/mut/"
@@ -275,11 +320,15 @@ def test_get_update_url():
 
 
 def test_get_fieldlengths(expected_field_attrs):
+    """unittest for helpers.get_fieldlengths
+    """
     for soort in my.rectypes:
         assert funcs.get_fieldlengths(soort) == {x: z for x, y, z in expected_field_attrs[soort]}
 
 
 def test_get_margins():
+    """unittest for helpers.get_margins_for_type
+    """
     assert funcs.get_margins_for_type('project') == ('140px', '770px', '145px')
     assert funcs.get_margins_for_type('userspec') == ('230px', '680px', '235px')
     assert funcs.get_margins_for_type('funcdoc') == ('160px', '750px', '165px')
@@ -294,6 +343,8 @@ def test_get_margins():
 
 
 def test_get_detail_title():
+    """unittest for helpers.get_detail_title
+    """
     testobj = None
     assert funcs.get_detail_title('gebrtaak', 'new', testobj) == 'Nieuw(e) gebruikerstaak'
     testobj = NS(naam='testnaam')
@@ -303,13 +354,17 @@ def test_get_detail_title():
 
 
 def test_get_relation_buttons():
+    """unittest for helpers.get_relation_buttons
+    """
     assert funcs.get_relation_buttons(1, 'gebrtaak', 2, []) == []
     button_list = ['userspec']
     assert len(funcs.get_relation_buttons(1, 'gebrtaak', 2, button_list)) == len(button_list)
 
 
 @pytest.mark.django_db
-def test_execute_update(monkeypatch, prepare_uploadfile):
+def test_execute_update(prepare_uploadfile):
+    """unittest for helpers.execute_update
+    """
     # de logica gaat alleen over velden in userwijz userprob en bevinding
     # en over `link` in userdoc, funcdoc en layout
     # class MockDatetime(datetime.datetime):
@@ -322,8 +377,12 @@ def test_execute_update(monkeypatch, prepare_uploadfile):
     #         retur
     # monkeypatch.setattr(funcs.datetime, 'datetime', MockDatetime)
     class Upload:
+        """stub
+        """
         name = 'testfile'
         def chunks(self):
+            """stub
+            """
             return [b'filechunk']
     prepfunc = prepare_uploadfile
     pr = my.Project.objects.create(naam="test", kort="test project")
@@ -331,7 +390,7 @@ def test_execute_update(monkeypatch, prepare_uploadfile):
     postdict = {'gereed': '1', 'nummer': 'nieuw_nummer', 'wens': '', 'toelichting': '',
                 'opmerkingen': '', 'actie': 0, 'actienummer': ''}
     funcs.execute_update('userwijz', aw, postdict)
-    aw_v2 = my.Userwijz.objects.get(pk=aw.id)  #.objects.create(project=pr, gereed=False)
+    aw_v2 = my.Userwijz.objects.get(pk=aw.id)  # .objects.create(project=pr, gereed=False)
     assert aw_v2.gereed  # laat dit datetimes maar zitten
     filename = 'userdocs/testfile'
     prepfunc(filename)
@@ -347,7 +406,9 @@ def test_execute_update(monkeypatch, prepare_uploadfile):
     prepfunc(filename)
 
 
-def _test_execute_update_for_link(monkeypatch, prepare_uploadfile):
+def _test_execute_update_for_link(prepare_uploadfile):
+    """unittest for helpers.execute_update_for_link
+    """
     # zit momenteel alleen in een gedeactiveerd gedeelte van update_document
     prepfunc = prepare_uploadfile
     filename = '/userdocs/testfile'
@@ -366,6 +427,8 @@ def _test_execute_update_for_link(monkeypatch, prepare_uploadfile):
 
 @pytest.mark.django_db
 def test_update_link_for_actiereg():
+    """unittest for helpers.update_link_for_actiereg
+    """
     pr = my.Project.objects.create(naam="test", kort="test project")
     testobj = my.Userwijz.objects.create(project=pr, gereed=False)
     volgnr = 1
@@ -378,6 +441,8 @@ def test_update_link_for_actiereg():
 
 @pytest.mark.django_db
 def test_update_status_from_actiereg():
+    """unittest for helpers.update_status_from_actiereg
+    """
     pr = my.Project.objects.create(naam="test", kort="test project")
     testobj = my.Userwijz.objects.create(project=pr, gereed=False)
     funcs.update_status_from_actiereg(testobj, 'arch')
@@ -390,11 +455,13 @@ def test_update_status_from_actiereg():
 
 @pytest.mark.django_db
 def test_update_subitem():
+    """unittest for helpers.update_subitem
+    """
     pr = my.Project.objects.create(naam="test", kort="test project")
     ent = my.Entiteit.objects.create(project=pr)
     att = my.Attribuut.objects.create(primarykey=1, hoort_bij=ent)
-    funcs.update_subitem('entiteit', ent, 'attribuut', att, True,{'naam': "testattr", 'type': 'x',
-                                                                  'bereik': 'y', 'key': 2})
+    funcs.update_subitem('entiteit', ent, 'attribuut', att, True, {'naam': "testattr", 'type': 'x',
+                                                                   'bereik': 'y', 'key': 2})
     att_v2 = my.Attribuut.objects.get(pk=att.id)
     assert att_v2.hoort_bij == att.hoort_bij
     # assert att_v2.primarykey == att.primarykey  # assert 0 == '0' ?
@@ -404,8 +471,8 @@ def test_update_subitem():
 
     itm = my.Dataitem.objects.create(project=pr)
     ele = my.Dataelement.objects.create(sleutel=1, hoort_bij=itm)
-    funcs.update_subitem('dataitem', itm, 'element', ele, False,{'naam': "testelement", 'type': 'x',
-                                                                 'oms': 'q', 'sleutel': '2'})
+    funcs.update_subitem('dataitem', itm, 'element', ele, False, {'naam': "testelement", 'type': 'x',
+                                                                  'oms': 'q', 'sleutel': '2'})
     ele_v2 = my.Dataelement.objects.get(pk=ele.id)
     assert ele_v2.hoort_bij == ele.hoort_bij
     # assert ele_v2.sleutel == ele.sleutel  # assert 2 == '2'
@@ -416,9 +483,11 @@ def test_update_subitem():
 
 @pytest.mark.django_db
 def test_update_related():
+    """unittest for helpers.update_related
+    """
     pr = my.Project.objects.create(naam="test", kort="test project")
     with pytest.raises(Http404):
-        funcs.update_related( 'project', pr, 'gargl', 'snork')
+        funcs.update_related('project', pr, 'gargl', 'snork')
     gt = my.Gebrtaak.objects.create(project=pr, naam="testtaak")
     # update gebrtaak.spec (fkey)
     sp = my.Userspec.objects.create(project=pr, naam="testspec")
@@ -429,13 +498,17 @@ def test_update_related():
     aw = my.Userwijz.objects.create(project=pr, nummer='testwijz', gereed=False)
     funcs.update_related('gebrtaak', gt, 'userwijz', aw.id)
     gt_v3 = my.Gebrtaak.objects.get(pk=gt.id)
-    assert [x for x in gt_v3.rfc.all()] == [aw]
+    assert list(gt_v3.rfc.all()) == [aw]
 
 
 @pytest.mark.django_db
 class TestGetRelations:
+    """unittests for helpers.GetRelations
+    """
 
     def test_init(self):
+        """unittest for GetRelations.init
+        """
         pr = my.Project.objects.create(naam="test", kort="test project")
         gt = my.Gebrtaak.objects.create(project=pr, naam="testtaak")
         testobj = funcs.GetRelations(gt, 'gebrtaak')  # , 'userspec')
@@ -445,8 +518,10 @@ class TestGetRelations:
         assert testobj.opts == my.Gebrtaak._meta
 
     def test_get_foreignkeys_to_1(self):
+        """unittest for GetRelations.get_foreignkeys_to
+        """
         pr = my.Project.objects.create(naam="test", kort="test project")
-        gt = my.Gebrtaak.objects.create(project=pr, naam="testtaak")  #, spec=sp)
+        gt = my.Gebrtaak.objects.create(project=pr, naam="testtaak")  # , spec=sp)
         testobj = funcs.GetRelations(gt, 'gebrtaak')
         result = testobj.get_foreignkeys_to()
         assert result[0]['btn'] == funcs.BTNTXT.format(pr.id, 'userspec', 'rel', 'gebrtaak', gt.id,
@@ -455,6 +530,8 @@ class TestGetRelations:
         assert result[0]['links'] == []
 
     def test_get_foreignkeys_to_2(self):
+        """unittest for GetRelations.get_foreignkeys_to
+        """
         pr = my.Project.objects.create(naam="test", kort="test project")
         sp = my.Userspec.objects.create(project=pr, naam="testproc")
         gt = my.Gebrtaak.objects.create(project=pr, naam="testtaak", spec=sp)
@@ -462,15 +539,17 @@ class TestGetRelations:
         result = testobj.get_foreignkeys_to()
         assert result[0]['text'] == 'Hoort bij gebruikersspecificatie'
         assert result[0]['links'] == [funcs.RELTXT.format(pr.id, 'userspec', sp.id,
-                                                          sp.naam + ': ') + ' ' +
-                                      funcs.BTNTXT.format(pr.id, 'gebrtaak', gt.id,
-                                                          'unrel/van/userspec', sp.id,
-                                                          funcs.REMOVE_TEXT)]
+                                                          sp.naam + ': ') + ' '
+                                      + funcs.BTNTXT.format(pr.id, 'gebrtaak', gt.id,
+                                                            'unrel/van/userspec', sp.id,
+                                                            funcs.REMOVE_TEXT)]
         assert 'btn' not in result[0]
 
     def test_get_mamy2many_to_1(self):
+        """unittest for GetRelations.get_mamy2many_to
+        """
         pr = my.Project.objects.create(naam="test", kort="test project")
-        gt = my.Gebrtaak.objects.create(project=pr, naam="testtaak")  #, spec=sp)
+        gt = my.Gebrtaak.objects.create(project=pr, naam="testtaak")  # , spec=sp)
         testobj = funcs.GetRelations(gt, 'gebrtaak')
         result = testobj.get_many2many_to()
         assert result[0]['text'] == 'Is geraakt door aanvraag wijziging'
@@ -479,9 +558,11 @@ class TestGetRelations:
         assert result[0]['links'] == []
 
     def test_get_mamy2many_to_2(self):
+        """unittest for GetRelations.get_mamy2many_to
+        """
         pr = my.Project.objects.create(naam="test", kort="test project")
         aw = my.Userwijz.objects.create(project=pr, nummer='testwijz', gereed=False)
-        gt = my.Gebrtaak.objects.create(project=pr, naam="testtaak")  #, spec=sp)
+        gt = my.Gebrtaak.objects.create(project=pr, naam="testtaak")  # , spec=sp)
         gt.rfc.add(aw)
         testobj = funcs.GetRelations(gt, 'gebrtaak')
         result = testobj.get_many2many_to()
@@ -489,12 +570,14 @@ class TestGetRelations:
         assert result[0]['btn'] == funcs.BTNTXT.format(pr.id, 'userwijz', 'rel', 'gebrtaak', gt.id,
                                    funcs.ADD_TEXT)
         assert result[0]['links'] == [funcs.RELTXT.format(pr.id, 'userwijz', aw.id,
-                                                          aw.nummer + ':  ') + ' ' +
-                                      funcs.BTNTXT.format(pr.id, 'gebrtaak', gt.id,
-                                                          'unrel/van/userwijz', aw.id,
-                                                          funcs.REMOVE_TEXT)]
+                                                          aw.nummer + ':  ') + ' '
+                                      + funcs.BTNTXT.format(pr.id, 'gebrtaak', gt.id,
+                                                            'unrel/van/userwijz', aw.id,
+                                                            funcs.REMOVE_TEXT)]
 
     def test_get_foreignkeys_from_1(self):
+        """unittest for GetRelations.get_foreignkeys_from: most element types
+        """
         pr = my.Project.objects.create(naam="test", kort="test project")
         sp = my.Userspec.objects.create(project=pr, naam="testspec")
         gt = my.Gebrtaak.objects.create(project=pr, naam="testtaak", spec=sp)
@@ -506,43 +589,49 @@ class TestGetRelations:
         assert result[1][0]['btn'] == funcs.BTNTXT.format(pr.id, 'userspec', sp.id, 'rel',
                                                           'gebrtaak', funcs.ADD_TEXT)
         assert result[1][0]['links'] == [funcs.RELTXT.format(pr.id, 'gebrtaak', gt.id,
-                                                             gt.naam + ': ') + ' ' +
-                                         funcs.BTNTXT.format(pr.id, 'gebrtaak', gt.id,
-                                                             'unrel/naar/userspec', sp.id,
-                                                             funcs.REMOVE_TEXT)]
+                                                             gt.naam + ': ') + ' '
+                                         + funcs.BTNTXT.format(pr.id, 'gebrtaak', gt.id,
+                                                               'unrel/naar/userspec', sp.id,
+                                                               funcs.REMOVE_TEXT)]
         assert result[1][1]['text'] == 'Betrokken functioneel proces'
         assert result[1][1]['btn'] == funcs.BTNTXT.format(pr.id, 'userspec', sp.id, 'rel',
                                                           'funcproc', funcs.ADD_TEXT)
         assert result[1][1]['links'] == [funcs.RELTXT.format(pr.id, 'funcproc', fp.id,
-                                                             fp.naam + ': ') + ' ' +
-                                         funcs.BTNTXT.format(pr.id, 'funcproc', fp.id,
-                                                             'unrel/naar/userspec', sp.id,
-                                                             funcs.REMOVE_TEXT)]
+                                                             fp.naam + ': ') + ' '
+                                         + funcs.BTNTXT.format(pr.id, 'funcproc', fp.id,
+                                                               'unrel/naar/userspec', sp.id,
+                                                               funcs.REMOVE_TEXT)]
         assert testobj.get_foreignkeys_from()[2:] == ([], [])
 
     def test_get_foreignkeys_from_2(self):
+        """unittest for GetRelations.get_foreignkeys_from: element type entiteit / dataelement
+        """
         pr = my.Project.objects.create(naam="test", kort="test project")
         ent = my.Entiteit.objects.create(project=pr, naam="testentiteit")
         att = my.Attribuut.objects.create(primarykey=1, naam="testattr", hoort_bij=ent)
         testobj = funcs.GetRelations(ent, 'entiteit')
         result = testobj.get_foreignkeys_from()
         assert result[:3] == ([], [], [])
-        assert [x for x in result[3]] == [att]
+        assert list(result[3]) == [att]
 
     def test_get_foreignkeys_from_3(self):
+        """unittest for GetRelations.get_foreignkeys_from: element type dataitem / dataelement
+        """
         pr = my.Project.objects.create(naam="test", kort="test project")
         itm = my.Dataitem.objects.create(project=pr, naam="testitem")
         ele = my.Dataelement.objects.create(sleutel=1, naam="testelement", hoort_bij=itm)
         testobj = funcs.GetRelations(itm, 'dataitem')
         result = testobj.get_foreignkeys_from()
         assert result[:3] == ([], [], [])
-        assert [x for x in result[3]] == [ele]
+        assert list(result[3]) == [ele]
 
     def test_get_mamy2many_from(self):
+        """unittest for GetRelations.get_mamy2many_from
+        """
         pr = my.Project.objects.create(naam="test", kort="test project")
         sp = my.Userspec.objects.create(project=pr, naam="testspec")
         aw = my.Userwijz.objects.create(project=pr, nummer='testwijz', gereed=False)
-        gt = my.Gebrtaak.objects.create(project=pr, naam="testtaak")  #, spec=sp)
+        gt = my.Gebrtaak.objects.create(project=pr, naam="testtaak")  # , spec=sp)
         gt.rfc.add(aw)
         fp = my.Funcproc.objects.create(project=pr, naam="testproc", spec=sp)
         fp.rfc.add(aw)
@@ -553,18 +642,18 @@ class TestGetRelations:
         assert result[1][0]['btn'] == funcs.BTNTXT.format(pr.id, 'userwijz', aw.id, 'rel',
                                                          'gebrtaak', funcs.ADD_TEXT)
         assert result[1][0]['links'] == [funcs.RELTXT.format(pr.id, 'gebrtaak', gt.id,
-                                                          gt.naam + ': ') + ' ' +
-                                         funcs.BTNTXT.format(pr.id, 'gebrtaak', gt.id,
-                                                             'unrel/naar/userwijz', aw.id,
-                                                             funcs.REMOVE_TEXT)]
+                                                          gt.naam + ': ') + ' '
+                                         + funcs.BTNTXT.format(pr.id, 'gebrtaak', gt.id,
+                                                               'unrel/naar/userwijz', aw.id,
+                                                               funcs.REMOVE_TEXT)]
         assert result[1][1]['text'] == 'Raakt functioneel proces'
         assert result[1][1]['btn'] == funcs.BTNTXT.format(pr.id, 'userwijz', aw.id, 'rel',
                                                          'funcproc', funcs.ADD_TEXT)
         assert result[1][1]['links'] == [funcs.RELTXT.format(pr.id, 'funcproc', fp.id,
-                                                          fp.naam + ': ') + ' ' +
-                                         funcs.BTNTXT.format(pr.id, 'funcproc', fp.id,
-                                                             'unrel/naar/userwijz', aw.id,
-                                                             funcs.REMOVE_TEXT)]
+                                                          fp.naam + ': ') + ' '
+                                         + funcs.BTNTXT.format(pr.id, 'funcproc', fp.id,
+                                                               'unrel/naar/userwijz', aw.id,
+                                                               funcs.REMOVE_TEXT)]
         assert result[1][2]['text'] == 'Raakt entiteit'
         assert result[1][2]['btn'] == funcs.BTNTXT.format(pr.id, 'userwijz', aw.id, 'rel',
                                                          'entiteit', funcs.ADD_TEXT)
