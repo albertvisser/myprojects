@@ -94,6 +94,14 @@ def test_lijst(monkeypatch):
     assert list(lijst) == ['item 1', 'item 2']
 
     monkeypatch.setattr(views.funcs, 'get_ordered_objectlist', lambda x, y: MockQuerySet2())
+    response = views.lijst(request, 0)
+    lijst = response[2].pop('lijst')
+    assert response[2] == {'id': '', 'lijstitem': 'name', 'lijstvan': 'plural',
+                           'meld': 'Geen plural aanwezig', 'notnw': 'new',
+                           'orient': 'naar', 'proj': 0, 'projecten': [{'naam': 'x'}, {'naam': 'y'}],
+                           'ref': (), 'sctn': 'section', 'soort': '', 'srt': '', 'title': 'title'}
+    assert not list(lijst)
+    monkeypatch.setattr(views.funcs, 'get_ordered_objectlist', lambda x, y: MockQuerySet2())
     response = views.lijst(request, 1)
     lijst = response[2].pop('lijst')
     assert response[2] == {'id': '', 'lijstitem': 'name', 'lijstvan': 'plural',
@@ -398,6 +406,27 @@ def test_view_document(monkeypatch, capsys):
                                        "call determine_adjacent with args (('prev_item', 'this_item',"
                                        " 'next_item'), namespace(soort='soort', id='id'))\n"
                                        "call get_detail_title with args ('soort', 'view',"
+                                       " namespace(soort='soort', id='id'))\n")
+    response = views.view_document('request', 'proj', 'edit', 'soort', 'id')
+    assert response[0] == 'request'
+    assert response[1] == 'soort.html'
+    assert response[2] == {'ar_proj': 'arproj', 'ar_user': 'aruser', 'form_addr': '/docs/update_url',
+                           'data': types.SimpleNamespace(soort='soort', id='id'),
+                           'leftw': 'x', 'lengte': 'q', 'lijstsoort': 'soort', 'lijstvan': 'soort_mv',
+                           'rightm': 'z', 'rightw': 'y', 'sctn': 'sectnaam', 'sect': 'soort/id',
+                           'title': 'Project projectnaam - detail_title',
+                           'fkeys_from': 'foreignkeys from soort id',
+                           'fkeys_to': 'foreignkeys to soort id',
+                           'm2ms_from': 'm2m relations from soort id',
+                           'm2ms_to': 'many to many relations to soort id',
+                           'andere': 'andere fkeys', 'attrs': 'fkey attrs',
+                           'next': 'next_item', 'prev': 'prev_item'}
+    assert capsys.readouterr().out == ("call init_infodict with args ('proj', 'soort', 'edit', '')\n"
+                                       "call get_update_url with args ('proj', 'edit', 'soort', 'id',"
+                                       " '', '')\n"
+                                       "call determine_adjacent with args (('prev_item', 'this_item',"
+                                       " 'next_item'), namespace(soort='soort', id='id'))\n"
+                                       "call get_detail_title with args ('soort', 'edit',"
                                        " namespace(soort='soort', id='id'))\n")
     response = views.view_document('request', 'proj', 'view', 'soort', 'id', 'srt', 'ref')
     assert response[0] == 'request'

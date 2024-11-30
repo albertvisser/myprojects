@@ -3,6 +3,7 @@
 import datetime
 from django.http import Http404, HttpResponse
 from django.core.exceptions import ObjectDoesNotExist  # , FieldError    # , DoesNotExist
+from django.utils.timezone import now as django_now
 from django.utils.translation import gettext as _
 import docs.models as my
 from myprojects.settings import MEDIA_ROOT, SITES
@@ -346,12 +347,13 @@ def get_relation_buttons(proj, soort, id, button_lijst):
 
 
 def execute_update(soort, obj, postdict, files=None):
+    "document opslaan na bijwerken velden die niet in het scherm staan"
     if soort in ('userwijz', 'userprob', 'bevinding'):
         gereed = obj.gereed
     for name, type_, length in get_field_attr(soort):
         if name == 'datum_gereed':
             if postdict['gereed'] == '1' and not gereed:
-                obj.datum_gereed = datetime.datetime.today()
+                obj.datum_gereed = django_now()  # datetime.datetime.today()
         elif name == "gereed":
             obj.gereed = postdict[name] == "1"
         elif name == 'link':
@@ -369,6 +371,7 @@ def execute_update(soort, obj, postdict, files=None):
 
 
 def execute_update_for_link(soort, obj, postdict, files):
+    "oude versie van upload bijwerken"
     model = models.get_model('myprojects', soort.capitalize())
     manipulator = my.rectypes[soort].AddManipulator()
     new_data = postdict.copy()
@@ -387,20 +390,20 @@ def execute_update_for_link(soort, obj, postdict, files):
 
 
 def update_link_from_actiereg(obj, arid, arnum):
+    "doorkoppeling vanuit actiereg verwerken"
     obj.actie = int(arid)  # int(data.get("id","0"))
     obj.actienummer = arnum  # data.get("actie","")
     obj.save()
 
 
 def update_status_from_actiereg(obj, arstat):
+    "doorkoppeling vanuit actiereg verwerken"
     obj.gereed = {"arch": True, "herl": False}[arstat]
     obj.save()
 
 
 def update_subitem(srt1, obj1, srt2, obj2, new, data):
-    if new:
-        obj2.hoort_bij = obj1
-    obj2.naam = data["naam"]
+    "automatisch gekoppelde documenten bijwerken"
     if (srt1, srt2) == ('entiteit', 'attribuut'):
         obj2.type = data["type"]
         obj2.bereik = data["bereik"]
@@ -409,6 +412,11 @@ def update_subitem(srt1, obj1, srt2, obj2, new, data):
         obj2.soort = data["type"]
         obj2.omschrijving = data["oms"]
         obj2.sleutel = data["sleutel"] if data["sleutel"] in ('1', '2', '3', '4', '5') else '0'
+    else:
+        raise NotImplementedError
+    if new:
+        obj2.hoort_bij = obj1
+    obj2.naam = data["naam"]
     # if "rel" in data and data["rel"] in [
     #         x.naam for x in my.Entiteit.objects.filter(project=obj1.project)]:
     if data.get("rel", None) in [x.naam for x in my.Entiteit.objects.filter(project=obj1.project)]:
@@ -439,6 +447,7 @@ class GetRelations:
         # maar eerst nog even met 4 functies
 
     def get_foreignkeys_to(self):
+        "verwijzingen naar document"
         fkeys_to = []
         for fld in self.opts.fields:
             if fld.name == "project":
@@ -461,6 +470,7 @@ class GetRelations:
         return fkeys_to
 
     def get_many2many_to(self):
+        "verwijzingen naar document waar er meer mogelijk zijn"
         m2ms_to = []
         for x in self.opts.many_to_many:
             srt = corr_naam(x.related_model._meta.model_name)
@@ -478,6 +488,7 @@ class GetRelations:
         return m2ms_to
 
     def get_foreignkeys_from(self):
+        "verwijzingen vanuit document"
         button_lijst, fkeys_from, andere, attrs = [], [], [], []
         # for relobj in opts.get_all_related_objects():
         for relobj in [x for x in self.opts.get_fields()
@@ -512,6 +523,7 @@ class GetRelations:
         return button_lijst, fkeys_from, andere, attrs
 
     def get_many2many_from(self):
+        "verwijzingen vanuit document waar er meer mogelijk zijn"
         button_lijst, m2ms_from = [], []
         # for x in opts.get_all_related_many_to_many_objects():
         for x in [y for y in self.opts.get_fields()  # include_hidden=True)

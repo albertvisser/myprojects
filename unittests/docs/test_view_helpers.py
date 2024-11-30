@@ -1,6 +1,7 @@
 """unittests for ./docs/helpers.py
 """
 from types import SimpleNamespace as NS
+import os.path
 import datetime
 import pytest
 import docs.helpers as funcs
@@ -8,7 +9,7 @@ import docs.models as my
 from django.http import Http404
 from fixtures import (expected_relations, expected_field_attrs, expected_stats_texts,
                       expected_names_for_type, prepare_uploadfile)
-FIXDATE = datetime.datetime(2021, 1, 1)
+FIXDATE = datetime.datetime(2021, 1, 1, tzinfo=datetime.timezone.utc)
 
 
 @pytest.fixture(autouse=True)
@@ -158,6 +159,12 @@ def test_get_new_numberkey_for_soort():
     my.Bevinding.objects.create(project=pr, gereed=False, nummer=first_this_year)
     for naam in ('userwijz', 'userprob', 'bevinding'):
         assert funcs.get_new_numberkey_for_soort(pr, naam) == f'{yr}-0002'
+    from_prev_year = f'{yr - 1}-0001'
+    my.Userwijz.objects.create(project=pr, gereed=False, nummer=from_prev_year)
+    my.Userprob.objects.create(project=pr, gereed=False, nummer=from_prev_year)
+    my.Bevinding.objects.create(project=pr, gereed=False, nummer=from_prev_year)
+    for naam in ('userwijz', 'userprob', 'bevinding'):
+        assert funcs.get_new_numberkey_for_soort(pr, naam) == f'{yr}-0001'
 
 
 @pytest.mark.django_db
@@ -365,17 +372,6 @@ def test_get_relation_buttons():
 def test_execute_update(prepare_uploadfile):
     """unittest for helpers.execute_update
     """
-    # de logica gaat alleen over velden in userwijz userprob en bevinding
-    # en over `link` in userdoc, funcdoc en layout
-    # class MockDatetime(datetime.datetime):
-    #     tzinfo = datetime.timezone.utc
-    #     def __init__(self, *args):
-    #         super().__init__()
-
-    #     @classmethod
-    #     def today(cls):
-    #         retur
-    # monkeypatch.setattr(funcs.datetime, 'datetime', MockDatetime)
     class Upload:
         """stub
         """
@@ -384,14 +380,44 @@ def test_execute_update(prepare_uploadfile):
             """stub
             """
             return [b'filechunk']
+    class Upload2:
+        """stub
+        """
+        name = 'testfile2'
+        def chunks(self):
+            """stub
+            """
+            return [b'filechunk', b'filechunk2']
     prepfunc = prepare_uploadfile
+    # gereedmelden document
     pr = my.Project.objects.create(naam="test", kort="test project")
     aw = my.Userwijz.objects.create(project=pr, gereed=False)
     postdict = {'gereed': '1', 'nummer': 'nieuw_nummer', 'wens': '', 'toelichting': '',
                 'opmerkingen': '', 'actie': 0, 'actienummer': ''}
+    assert not aw.datum_gereed
     funcs.execute_update('userwijz', aw, postdict)
-    aw_v2 = my.Userwijz.objects.get(pk=aw.id)  # .objects.create(project=pr, gereed=False)
-    assert aw_v2.gereed  # laat dit datetimes maar zitten
+    aw_v2 = my.Userwijz.objects.get(pk=aw.id)
+    assert aw_v2.gereed
+    assert aw_v2.datum_gereed
+    # niet gereedmelden document
+    aw = my.Userwijz.objects.create(project=pr, gereed=False)
+    postdict = {'gereed': '0', 'nummer': 'nieuw_nummer', 'wens': '', 'toelichting': '',
+                'opmerkingen': '', 'actie': 0, 'actienummer': ''}
+    assert not aw.datum_gereed
+    funcs.execute_update('userwijz', aw, postdict)
+    aw_v2 = my.Userwijz.objects.get(pk=aw.id)
+    assert not aw_v2.gereed
+    assert not aw_v2.datum_gereed
+    # gereedmelden gereed document
+    aw = my.Userwijz.objects.create(project=pr, gereed=True)
+    postdict = {'gereed': '1', 'nummer': 'nieuw_nummer', 'wens': '', 'toelichting': '',
+                'opmerkingen': '', 'actie': 0, 'actienummer': ''}
+    assert not aw.datum_gereed
+    funcs.execute_update('userwijz', aw, postdict)
+    aw_v2 = my.Userwijz.objects.get(pk=aw.id)
+    assert aw_v2.gereed
+    assert not aw_v2.datum_gereed
+    # uploaden attachment
     filename = 'userdocs/testfile'
     prepfunc(filename)
     doc = my.Userdoc.objects.create(project=pr)
@@ -400,10 +426,33 @@ def test_execute_update(prepare_uploadfile):
     funcs.execute_update('userdoc', doc, postdict, files)
     doc_v2 = my.Userdoc.objects.get(pk=doc.id)
     assert str(doc_v2.link) == filename
+    assert os.path.exists(funcs.MEDIA_ROOT + filename)
     with open(funcs.MEDIA_ROOT + filename) as _in:
         contents = _in.read()
     assert contents == 'filechunk'
+    # uploaden nieuw attachment (kan dit?)
+    filename2 = 'userdocs/testfile2'
+    prepfunc(filename2)
+    # doc = my.Userdoc.objects.create(project=pr)
+    postdict = {'naam': '', 'oms': '', 'tekst': ''}
+    files = {'link_file': Upload2()}
+    funcs.execute_update('userdoc', doc_v2, postdict, files)
+    doc_v3 = my.Userdoc.objects.get(pk=doc_v2.id)
+    assert str(doc_v3.link) == filename2
+    assert os.path.exists(funcs.MEDIA_ROOT + filename)
+    assert os.path.exists(funcs.MEDIA_ROOT + filename2)
+    with open(funcs.MEDIA_ROOT + filename2) as _in:
+        contents = _in.read()
+    assert contents == 'filechunkfilechunk2'
+    # uploaden leeg attachment (kan dit?)
     prepfunc(filename)
+    doc = my.Userdoc.objects.create(project=pr)
+    postdict = {'naam': '', 'oms': '', 'tekst': ''}
+    files = {}
+    funcs.execute_update('userdoc', doc, postdict, files)
+    doc_v2 = my.Userdoc.objects.get(pk=doc.id)
+    assert str(doc_v2.link) == ''
+    assert not os.path.exists(funcs.MEDIA_ROOT + filename)
 
 
 def _test_execute_update_for_link(prepare_uploadfile):
@@ -457,9 +506,17 @@ def test_update_status_from_actiereg():
 def test_update_subitem():
     """unittest for helpers.update_subitem
     """
+    with pytest.raises(NotImplementedError):
+        funcs.update_subitem('xxx', 'ent', 'yyy', 'att', True, {'naam': "testattr", 'type': 'x',
+                                                                'bereik': 'y', 'key': 2})
     pr = my.Project.objects.create(naam="test", kort="test project")
     ent = my.Entiteit.objects.create(project=pr)
     att = my.Attribuut.objects.create(primarykey=1, hoort_bij=ent)
+    # funcs.update_subitem('xxx', 'ent', 'attribuut', att, True, {'naam': "testattr", 'type': 'x',
+    #                                                                'bereik': 'y', 'key': 2})
+    # funcs.update_subitem('entiteit', ent, 'yyy', 'att', True, {'naam': "testattr", 'type': 'x',
+    #                                                                'bereik': 'y', 'key': 2})
+
     funcs.update_subitem('entiteit', ent, 'attribuut', att, True, {'naam': "testattr", 'type': 'x',
                                                                    'bereik': 'y', 'key': 2})
     att_v2 = my.Attribuut.objects.get(pk=att.id)
@@ -575,6 +632,10 @@ class TestGetRelations:
                                                             'unrel/van/userwijz', aw.id,
                                                             funcs.REMOVE_TEXT)]
 
+# 513->520	GetRelations.get_foreignkeys_from:
+#   self.obj.__getattribute__(relobj.related_name).all() leeg
+#   onder voorwaarde dat self.soort (tweede arg voor class) niet entiteit of dataitem
+#   dus dat zou binnen testmethode 1 vallen
     def test_get_foreignkeys_from_1(self):
         """unittest for GetRelations.get_foreignkeys_from: most element types
         """
@@ -588,20 +649,34 @@ class TestGetRelations:
         assert result[1][0]['text'] == 'Betrokken gebruikerstaak'
         assert result[1][0]['btn'] == funcs.BTNTXT.format(pr.id, 'userspec', sp.id, 'rel',
                                                           'gebrtaak', funcs.ADD_TEXT)
-        assert result[1][0]['links'] == [funcs.RELTXT.format(pr.id, 'gebrtaak', gt.id,
-                                                             gt.naam + ': ') + ' '
-                                         + funcs.BTNTXT.format(pr.id, 'gebrtaak', gt.id,
-                                                               'unrel/naar/userspec', sp.id,
-                                                               funcs.REMOVE_TEXT)]
+        assert result[1][0]['links'] == [
+                funcs.RELTXT.format(pr.id, 'gebrtaak', gt.id, gt.naam + ': ') + ' '
+                + funcs.BTNTXT.format(pr.id, 'gebrtaak', gt.id, 'unrel/naar/userspec', sp.id,
+                                      funcs.REMOVE_TEXT)]
         assert result[1][1]['text'] == 'Betrokken functioneel proces'
         assert result[1][1]['btn'] == funcs.BTNTXT.format(pr.id, 'userspec', sp.id, 'rel',
                                                           'funcproc', funcs.ADD_TEXT)
-        assert result[1][1]['links'] == [funcs.RELTXT.format(pr.id, 'funcproc', fp.id,
-                                                             fp.naam + ': ') + ' '
-                                         + funcs.BTNTXT.format(pr.id, 'funcproc', fp.id,
-                                                               'unrel/naar/userspec', sp.id,
-                                                               funcs.REMOVE_TEXT)]
-        assert testobj.get_foreignkeys_from()[2:] == ([], [])
+        assert result[1][1]['links'] == [
+                funcs.RELTXT.format(pr.id, 'funcproc', fp.id, fp.naam + ': ') + ' '
+                + funcs.BTNTXT.format(pr.id, 'funcproc', fp.id, 'unrel/naar/userspec', sp.id,
+                                      funcs.REMOVE_TEXT)]
+        assert result[2:] == ([], [])
+
+        # doc = my.Userdoc.objects.create(project=pr, naam="testdoc")
+        # testobj = funcs.GetRelations(doc, 'userdoc')
+        sp2 = my.Userspec.objects.create(project=pr, naam="testspec2")
+        testobj = funcs.GetRelations(sp2, 'userspec')
+        result = testobj.get_foreignkeys_from()
+        assert result[0] == ['gebrtaak', 'funcproc']
+        assert result[1][0]['text'] == 'Betrokken gebruikerstaak'
+        assert result[1][0]['btn'] == funcs.BTNTXT.format(pr.id, 'userspec', sp2.id, 'rel',
+                                                          'gebrtaak', funcs.ADD_TEXT)
+        assert result[1][0]['links'] == []
+        assert result[1][1]['text'] == 'Betrokken functioneel proces'
+        assert result[1][1]['btn'] == funcs.BTNTXT.format(pr.id, 'userspec', sp2.id, 'rel',
+                                                          'funcproc', funcs.ADD_TEXT)
+        assert result[1][1]['links'] == []
+        assert result[2:] == ([], [])
 
     def test_get_foreignkeys_from_2(self):
         """unittest for GetRelations.get_foreignkeys_from: element type entiteit / dataelement
