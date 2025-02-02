@@ -5,5 +5,12 @@ __pycache__/
 
 # development stuff
 logs/
-*.swp
-*.swo
+.coverage
+projdocs*
+pytest.ini
+.sessionrc
+
+# live site stuff
+myprojects/settings.py
+static/admin
+manage.py
