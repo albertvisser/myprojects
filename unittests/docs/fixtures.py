@@ -97,8 +97,9 @@ def expected_relations():
 @pytest.fixture
 def expected_field_attrs():
     attrdict = {'project': [('naam', 'Char', 40), ('kort', 'Char', 80), ('oms', 'Text', None),
-                            ('start', 'Char', 80), ('fysloc', 'Char', 80), ('actiereg', 'Char', 40),
-                            ('aruser', 'Char', 40), ('status', 'Text', None)],
+                            ('start', 'Char', 80), ('fysloc', 'Char', 80), ('wwwloc', 'Char', None),
+                            ('actiereg', 'Char', 40), ('aruser', 'Char', 40),
+                            ('status', 'Text', None)],
                 'userspec': [('naam', 'Char', 40), ('kort', 'Char', 80), ('functie', 'Text', None),
                              ('beeld', 'Text', None), ('product', 'Text', None),
                              ('baten', 'Char', 80), ('kosten', 'Char', 80),

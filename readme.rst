@@ -40,4 +40,4 @@ Requirements
 ------------
 
 - Python
-- Django
+- Django (version 5 and up)

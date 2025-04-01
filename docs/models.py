@@ -2,6 +2,7 @@
 """
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.db.models.functions import Concat, Reverse, Right, StrIndex
 import django.utils.timezone
 
 
@@ -14,6 +15,13 @@ class Project(models.Model):
     oms = models.TextField()
     start = models.CharField(max_length=80)
     fysloc = models.CharField(max_length=80)
+    # this feature needs Django 5.0 or higher
+    wwwloc = models.GeneratedField(
+            expression=Concat(models.Value('http://cgit.lemoncurry.nl/'),
+                              Right('fysloc', StrIndex(Reverse('fysloc'), models.Value('/'))-1),
+                              models.Value('/.git')),
+            output_field=models.CharField(max_length=80),
+            db_persist=False)
     actiereg = models.CharField(max_length=40)
     aruser = models.CharField(max_length=40)
     status = models.TextField()
