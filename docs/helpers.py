@@ -365,6 +365,10 @@ def execute_update(soort, obj, postdict, files=None):
                     for chunk in uploaded.chunks():
                         destination.write(chunk)
                 obj.__dict__[name] = save_name
+        elif name == 'actie':
+            obj.__dict__[name] = postdict.get(name, None)
+        elif name == 'actienummer':
+            obj.__dict__[name] = postdict.get(name, '')
         elif name != 'datum_in':
             obj.__dict__[name] = postdict[name]
     obj.save()
