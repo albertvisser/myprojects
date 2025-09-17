@@ -1,0 +1,20 @@
+# DISCLAIMER: this is an unmaintained version that worked when I was using Apache on Windows
+# (and probably Lighttpd on Ubuntu) many, many years ago 
+# as you can see from the link to python 2.6 (!)
+<VirtualHost *:80>
+    ServerName <myprojects>.com
+#    DocumentRoot "/home/albert/www/django"
+    ErrorLog /var/log/apache2/<myprojects>-error.log
+    CustomLog /var/log/apache2/<myprojects>-access.log common
+    Alias /media "/usr/share/pyshared/django/contrib/admin/media"
+#    Alias /admin_media /usr/lib/python2.6/site-packages/django/contrib/admin/media
+    <LocationMatch "^/favicon.ico">
+    SetHandler default
+    </LocationMatch>
+    alias /favicon.ico <project-root>/static/work.ico
+    <Location /admin_media>
+      Order allow,deny
+      Allow from all
+    </Location>
+    WSGIScriptAlias / <project-root>/myprojects/wsgi.py 
+</VirtualHost>
