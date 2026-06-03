@@ -459,19 +459,19 @@ def _test_execute_update_for_link(prepare_uploadfile):
     """unittest for helpers.execute_update_for_link
     """
     # zit momenteel alleen in een gedeactiveerd gedeelte van update_document
-    prepfunc = prepare_uploadfile
-    filename = '/userdocs/testfile'
-    prepfunc(filename)
-    doc = my.Userdoc.objects.create(project=pr)
-    postdict = {'naam': '', 'oms': '', 'tekst': ''}
-    files = {'link_file': Upload()}
-    funcs.execute_update('userdoc', doc, postdict, files)
-    doc_v2 = my.Userdoc.objects.get(pk=doc.id)
-    assert doc_v2.link == filename
-    with open(funcs.MEDIA_ROOT + filename) as _in:
-        contents = _in.read()
-    assert contents == 'filechunk'
-    prepfunc(filename)
+    # prepfunc = prepare_uploadfile
+    # filename = '/userdocs/testfile'
+    # prepfunc(filename)
+    # doc = my.Userdoc.objects.create(project=pr)
+    # postdict = {'naam': '', 'oms': '', 'tekst': ''}
+    # files = {'link_file': Upload()}
+    # funcs.execute_update('userdoc', doc, postdict, files)
+    # doc_v2 = my.Userdoc.objects.get(pk=doc.id)
+    # assert doc_v2.link == filename
+    # with open(funcs.MEDIA_ROOT + filename) as _in:
+    #     contents = _in.read()
+    # assert contents == 'filechunk'
+    # prepfunc(filename)
 
 
 @pytest.mark.django_db

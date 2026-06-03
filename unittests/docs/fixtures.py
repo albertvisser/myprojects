@@ -122,7 +122,7 @@ def expected_field_attrs():
                              ('wie', 'Text', None), ('condities', 'Text', None),
                              ('waarvoor', 'Text', None), ('beschrijving', 'Text', None)],
                 'funcproc': [('naam', 'Char', 40), ('doel', 'Char', 80), ('invoer', 'Text', None),
-                             ('uitvoer', 'Text', None), ('beschrijving', 'Text', None) ],
+                             ('uitvoer', 'Text', None), ('beschrijving', 'Text', None)],
                 'entiteit': [('naam', 'Char', 40), ('kort', 'Char', 80), ('functie', 'Text', None),
                              ('levensloop', 'Text', None)],
                 'attribuut': [('naam', 'Char', 40), ('type', 'Char', 10), ('bereik', 'Text', None),

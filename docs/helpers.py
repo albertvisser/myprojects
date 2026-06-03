@@ -30,8 +30,8 @@ def get_related(this_obj, other_obj, m2m=False):
     if m2m:
         fields = [x for x in other_obj._meta.many_to_many]
     else:
-        fields = [x for x in other_obj._meta.get_fields() if x.name != 'project' and
-                  x.get_internal_type() == 'ForeignKey']
+        fields = [x for x in other_obj._meta.get_fields() if x.name != 'project'
+                  and x.get_internal_type() == 'ForeignKey']
     for fld in fields:
         if fld.related_model == this_obj._meta.model:
             related_name = fld.related_query_name()
@@ -129,11 +129,11 @@ def get_relation_fields(name):
     opts = my.rectypes[name]._meta
     for rel in opts.get_fields():
         # print(rel, rel.one_to_many or rel.many_to_many)
-            if rel.one_to_many or rel.many_to_many:
-                try:
-                    fields.append((rel.name, rel.get_internal_type(), rel.max_length))
-                except AttributeError:
-                    fields.append((rel.name, rel.get_internal_type(), -1))
+        if rel.one_to_many or rel.many_to_many:
+            try:
+                fields.append((rel.name, rel.get_internal_type(), rel.max_length))
+            except AttributeError:
+                fields.append((rel.name, rel.get_internal_type(), -1))
     return fields
 
 
@@ -341,8 +341,8 @@ def get_relation_buttons(proj, soort, id, button_lijst):
     # en tenslotte dit setje knoppen, dat van mij ook wel bij de "leg relatie" knoppen mag
     buttons = []
     for s in button_lijst:
-        buttons.append(BTNTXT.format(proj, s, "new", soort, id, _("Opvoeren ") +
-                                     str(my.rectypes[s]._meta.verbose_name)))
+        buttons.append(BTNTXT.format(proj, s, "new", soort, id, _("Opvoeren ")
+                                     + str(my.rectypes[s]._meta.verbose_name)))
     return buttons
 
 
@@ -376,21 +376,22 @@ def execute_update(soort, obj, postdict, files=None):
 
 def execute_update_for_link(soort, obj, postdict, files):
     "oude versie van upload bijwerken"
-    model = models.get_model('myprojects', soort.capitalize())
-    manipulator = my.rectypes[soort].AddManipulator()
-    new_data = postdict.copy()
-    new_data.update({'project': proj})
-    for name, type_, length in get_field_attr(soort):
-        if name == 'link' and type_ == 'File':
-            new_data.update(files)
-            continue
-    # return HttpResponse(str(new_data))
-    errors = manipulator.get_validation_errors(new_data)
-    manipulator.do_html2python(new_data)
-    if errors:
-        return 'errors', HttpResponse('\n'.join((str(errors),str(new_data))))
-    new_object = manipulator.save(new_data)
-    return 'ok', my.rectypes[soort].objects.get(pk=new_object.id)
+    # zit momenteel alleen in een gedeactiveerd gedeelte van update_document
+    # model = models.get_model('myprojects', soort.capitalize())
+    # manipulator = my.rectypes[soort].AddManipulator()
+    # new_data = postdict.copy()
+    # new_data.update({'project': proj})
+    # for name, type_, length in get_field_attr(soort):
+    #     if name == 'link' and type_ == 'File':
+    #         new_data.update(files)
+    #         continue
+    # # return HttpResponse(str(new_data))
+    # errors = manipulator.get_validation_errors(new_data)
+    # manipulator.do_html2python(new_data)
+    # if errors:
+    #     return 'errors', HttpResponse('\n'.join((str(errors), str(new_data))))
+    # new_object = manipulator.save(new_data)
+    # return 'ok', my.rectypes[soort].objects.get(pk=new_object.id)
 
 
 def update_link_from_actiereg(obj, arid, arnum):
@@ -463,10 +464,10 @@ class GetRelations:
                                          str(my.rectypes[srt]._meta.verbose_name))),
                        'links': []}
                 if result:
-                    rel['links'].append(RELTXT.format(self.obj.project.id, srt, result.id, result) +
-                                        " " +
-                                        BTNTXT.format(self.obj.project.id, self.soort, self.obj.id,
-                                                      "unrel/van/" + srt, result.id, REMOVE_TEXT))
+                    rel['links'].append(RELTXT.format(self.obj.project.id, srt, result.id, result)
+                                        + " "
+                                        + BTNTXT.format(self.obj.project.id, self.soort, self.obj.id,
+                                                        "unrel/van/" + srt, result.id, REMOVE_TEXT))
                 else:
                     rel['btn'] = BTNTXT.format(self.obj.project.id, srt, "rel", self.soort,
                                                self.obj.id, ADD_TEXT)
@@ -485,9 +486,9 @@ class GetRelations:
                  'links': []}
             result = self.obj.__getattribute__(x.name)
             for item in result.all():
-                y['links'].append(RELTXT.format(self.obj.project.id, srt, item.id, item) + " " +
-                                  BTNTXT.format(self.obj.project.id, self.soort, self.obj.id,
-                                                "unrel/van/" + srt, item.id, REMOVE_TEXT))
+                y['links'].append(RELTXT.format(self.obj.project.id, srt, item.id, item) + " "
+                                  + BTNTXT.format(self.obj.project.id, self.soort, self.obj.id,
+                                                  "unrel/van/" + srt, item.id, REMOVE_TEXT))
             m2ms_to.append(y)
         return m2ms_to
 
@@ -514,15 +515,15 @@ class GetRelations:
                      'btn': BTNTXT.format(self.obj.project.id, self.soort, self.obj.id, "rel", srt,
                                           ADD_TEXT),
                      'links': []}
-                #result = get_related(self.obj, relobj)
+                # result = get_related(self.obj, relobj)
                 result = self.obj.__getattribute__(relobj.related_name).all()
                 if result:
                     for item in result.all():
-                        y['links'].append(RELTXT.format(self.obj.project.id, srt, item.id, item) +
-                                          " " +
-                                          BTNTXT.format(self.obj.project.id, srt, item.id,
-                                                        "unrel/naar/" + self.soort, self.obj.id,
-                                                        REMOVE_TEXT))
+                        y['links'].append(RELTXT.format(self.obj.project.id, srt, item.id, item)
+                                          + " "
+                                          + BTNTXT.format(self.obj.project.id, srt, item.id,
+                                                          "unrel/naar/" + self.soort, self.obj.id,
+                                                          REMOVE_TEXT))
                 fkeys_from.append(y)
         return button_lijst, fkeys_from, andere, attrs
 
@@ -543,9 +544,9 @@ class GetRelations:
             result = self.obj.__getattribute__(x.related_name).all()
             if result:
                 for item in result.all():
-                    y['links'].append(RELTXT.format(self.obj.project.id, srt, item.id, item) + " " +
-                                      BTNTXT.format(self.obj.project.id, srt, item.id,
-                                                    "unrel/naar/" + self.soort, self.obj.id,
-                                                    REMOVE_TEXT))
+                    y['links'].append(RELTXT.format(self.obj.project.id, srt, item.id, item) + " "
+                                      + BTNTXT.format(self.obj.project.id, srt, item.id,
+                                                      "unrel/naar/" + self.soort, self.obj.id,
+                                                      REMOVE_TEXT))
             m2ms_from.append(y)
         return button_lijst, m2ms_from
