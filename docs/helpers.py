@@ -1,7 +1,7 @@
 """Processing for MyProjects Web Application
 """
 import datetime
-from django.http import Http404, HttpResponse
+from django.http import Http404  # , HttpResponse
 from django.core.exceptions import ObjectDoesNotExist  # , FieldError    # , DoesNotExist
 from django.utils.timezone import now as django_now
 from django.utils.translation import gettext as _
@@ -68,6 +68,8 @@ def get_relation(srt, soort):
 
 
 def set_relation(o, soort, r, srt):
+    ""
+    "set or change a relation between document types"
     attr_name, multiple = get_relation(soort, srt)
     if multiple:
         o.__getattribute__(attr_name).add(r)
@@ -77,6 +79,7 @@ def set_relation(o, soort, r, srt):
 
 
 def remove_relation(o, soort, r, srt):
+    "remove a relation between document types"
     attr_name, multiple = get_relation(soort, srt)
     if multiple:
         o.__getattribute__(attr_name).remove(r)
@@ -276,6 +279,7 @@ def get_list_title_attrs(proj, soort, srt, id, rel):
 
 
 def init_infodict_for_detail(proj, soort, edit, meld):
+    "return dict of template iwith initial variables and values"
     return {'start': '', 'soort': soort, 'prev': '', 'notnw': 'new', 'next': '', "sites": SITES,
             'proj': '' if proj == 'proj' else proj, 'sect': '', 'meld': meld,
             'projecten': get_projectlist(),
@@ -350,7 +354,7 @@ def execute_update(soort, obj, postdict, files=None):
     "document opslaan na bijwerken velden die niet in het scherm staan"
     if soort in ('userwijz', 'userprob', 'bevinding'):
         gereed = obj.gereed
-    for name, type_, length in get_field_attr(soort):
+    for name, _type, _length in get_field_attr(soort):
         if name == 'datum_gereed':
             if postdict['gereed'] == '1' and not gereed:
                 obj.datum_gereed = django_now()  # datetime.datetime.today()

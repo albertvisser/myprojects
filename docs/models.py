@@ -27,9 +27,11 @@ class Project(models.Model):
     status = models.TextField()
 
     def __str__(self):
+        "retourneer niet alleen de naam maar ook de korte omschrijving"
         return f"{self.naam}: {self.kort}"
 
     class Meta:
+        "model metadata"
         verbose_name = _("project")
         verbose_name_plural = _("projecten")
 
@@ -52,9 +54,11 @@ class Userspec(models.Model):
     opmerkingen = models.TextField()
 
     def __str__(self):
+        "retourneer niet alleen de naam maar ook de korte omschrijving"
         return f"{self.naam}: {self.kort}"
 
     class Meta:
+        "model metadata"
         verbose_name = _("gebruikersspecificatie")
         verbose_name_plural = _("gebruikersspecificaties")
 
@@ -72,9 +76,11 @@ class Userdoc(models.Model):
     tekst = models.TextField()
 
     def __str__(self):
+        "retourneer niet alleen de naam maar ook de korte omschrijving"
         return f"{self.naam}: {self.oms}"
 
     class Meta:
+        "model metadata"
         verbose_name = _("naslagdocument")
         verbose_name_plural = _("naslagdocumenten")
 
@@ -99,10 +105,12 @@ class Userwijz(models.Model):
     actienummer = models.CharField(max_length=10)
 
     def __str__(self):
+        "retourneer nummer en omschrijving eventueel gevolgd door afsluitstatus"
         oms = _(" [afgesloten]") if self.gereed else ""
         return f"{self.nummer}: {self.wens} {oms}"
 
     class Meta:
+        "model metadata"
         verbose_name = _("aanvraag wijziging")
         verbose_name_plural = _("aanvraag wijzigingen")
 
@@ -125,10 +133,12 @@ class Userprob(models.Model):
     actienummer = models.CharField(max_length=10)
 
     def __str__(self):
+        "retourneer nummer en omschrijving eventueel gevolgd door afsluitstatus"
         oms = _(" [afgesloten]") if self.gereed else ""
         return f"{self.nummer}: {self.kort} {oms}"
 
     class Meta:
+        "model metadata"
         verbose_name = _("incident/probleem")
         verbose_name_plural = _("incidenten/problemen")
 
@@ -146,9 +156,11 @@ class Funcdoc(models.Model):
     tekst = models.TextField()
 
     def __str__(self):
+        "retourneer niet alleen de naam maar ook de korte omschrijving"
         return f"{self.naam}: {self.oms}"
 
     class Meta:
+        "model metadata"
         verbose_name = _("functioneel document")
         verbose_name_plural = _("functionele documenten")
 
@@ -176,9 +188,11 @@ class Gebrtaak(models.Model):
     rfc = models.ManyToManyField(Userwijz, related_name="gtaken")
 
     def __str__(self):
+        "retourneer niet alleen de naam maar ook de korte omschrijving"
         return f"{self.naam}: {self.doel}"
 
     class Meta:
+        "model metadata"
         verbose_name = _("gebruikerstaak")
         verbose_name_plural = _("gebruikerstaken")
 
@@ -207,9 +221,11 @@ class Funcproc(models.Model):
     bom = models.ManyToManyField('self', symmetrical=False, related_name="used_by")
 
     def __str__(self):
+        "retourneer niet alleen de naam maar ook de korte omschrijving"
         return f"{self.naam}: {self.doel}"
 
     class Meta:
+        "model metadata"
         verbose_name = _("functioneel proces")
         verbose_name_plural = _("functionele processen")
 
@@ -231,9 +247,11 @@ class Entiteit(models.Model):
     fp = models.ManyToManyField(Funcproc, related_name="fdata")
 
     def __str__(self):
+        "retourneer niet alleen de naam maar ook de korte omschrijving"
         return f"{self.naam}: {self.kort}"
 
     class Meta:
+        "model metadata"
         verbose_name = _("entiteit")
         verbose_name_plural = _("entiteiten")
 
@@ -255,9 +273,11 @@ class Attribuut(models.Model):
                                 on_delete=models.CASCADE)
 
     def __str__(self):
+        "retourneer niet alleen de naam maar ook de korte omschrijving"
         return self.naam
 
     class Meta:
+        "model metadata"
         verbose_name = _("attribuut")
         verbose_name_plural = _("attributen")
 
@@ -277,9 +297,11 @@ class Techtask(models.Model):
     gt = models.ForeignKey(Gebrtaak, related_name="ttask", null=True, on_delete=models.CASCADE)
 
     def __str__(self):
+        "retourneer niet alleen de naam maar ook de korte omschrijving"
         return f"{self.naam}: {self.kort}"
 
     class Meta:
+        "model metadata"
         verbose_name = _("systeemtaak")
         verbose_name_plural = _("systeemtaken")
 
@@ -307,9 +329,11 @@ class Techproc(models.Model):
     bom = models.ManyToManyField('self', symmetrical=False, related_name="used_by")
 
     def __str__(self):
+        "retourneer niet alleen de naam maar ook de korte omschrijving"
         return f"{self.naam}: {self.doel}"
 
     class Meta:
+        "model metadata"
         verbose_name = _("technisch proces")
         verbose_name_plural = _("technische processen")
 
@@ -329,9 +353,11 @@ class Dataitem(models.Model):
     tp = models.ManyToManyField(Techproc, related_name="tdata")
 
     def __str__(self):
+        "retourneer niet alleen de naam maar ook de korte omschrijving"
         return f"{self.naam}: {self.functie}"
 
     class Meta:
+        "model metadata"
         verbose_name = _("data-item")
         verbose_name_plural = _("data-items")
 
@@ -349,9 +375,11 @@ class Dataelement(models.Model):
                                 on_delete=models.CASCADE)
 
     def __str__(self):
+        "retourneer niet alleen de naam maar ook de korte omschrijving"
         return f"{self.naam}: {self.omschrijving}"
 
     class Meta:
+        "model metadata"
         verbose_name = _("data-element")
         verbose_name_plural = _("data-elementen")
 
@@ -372,7 +400,14 @@ class Layout(models.Model):
     tp = models.ManyToManyField(Techproc, related_name="layout")
 
     def __str__(self):
+        "retourneer niet alleen de naam maar ook de korte omschrijving"
         return f"{self.naam}: {self.kort}"
+
+    class Meta:
+        "model metadata"
+        verbose_name = _("uitvoerstructuurt")
+        verbose_name_plural = _("uitvoerstructuren")
+
 
 
 class Procproc(models.Model):
@@ -392,9 +427,11 @@ class Procproc(models.Model):
     tp = models.ManyToManyField(Techproc, related_name="pproc")
 
     def __str__(self):
+        "retourneer niet alleen de naam maar ook de korte omschrijving"
         return f"{self.naam}: {self.doel}"
 
     class Meta:
+        "model metadata"
         verbose_name = _("programmabeschrijving")
         verbose_name_plural = _("programmabeschrijvingen")
 
@@ -417,9 +454,11 @@ class Testplan(models.Model):
     ent = models.ManyToManyField(Entiteit, related_name="tplan")
 
     def __str__(self):
+        "retourneer niet alleen de naam maar ook de korte omschrijving"
         return f"{self.naam}: {self.oms}"
 
     class Meta:
+        "model metadata"
         verbose_name = _("testplan")
         verbose_name_plural = _("testplannen")
 
@@ -437,9 +476,11 @@ class Testcase(models.Model):
     tplan = models.ManyToManyField(Testplan, related_name="tcase")
 
     def __str__(self):
+        "retourneer niet alleen de naam maar ook de korte omschrijving"
         return f"{self.naam}: {self.oms}"
 
     class Meta:
+        "model metadata"
         verbose_name = _("testgeval")
         verbose_name_plural = _("testgevallen")
 
@@ -463,10 +504,12 @@ class Bevinding(models.Model):
     tplan = models.ManyToManyField(Testplan, related_name="tbev")
 
     def __str__(self):
+        "retourneer nummer en omschrijving eventueel gevolgd door afsluitstatus"
         oms = _(" [afgehandeld]") if self.gereed else ""
         return f"{self.nummer}: {self.kort} {oms}"
 
     class Meta:
+        "model metadata"
         verbose_name = _("bevinding")
         verbose_name_plural = _("bevindingen")
 

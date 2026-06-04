@@ -5,6 +5,7 @@ import sys
 
 
 def main():
+    "start manager"
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'myprojects.settings')
     try:
         from django.core.management import execute_from_command_line
